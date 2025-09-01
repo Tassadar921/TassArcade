@@ -1,0 +1,25 @@
+name: Prettier Format Check
+
+on:
+    push:
+    pull_request:
+    workflow_dispatch:
+
+jobs:
+    prettier_check:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: '24'
+
+            - name: Install dependencies
+              run: npm install
+
+            - name: Run Prettier check
+              run: make format-check
