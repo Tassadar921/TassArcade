@@ -187,67 +187,6 @@
             "keywords": "unknown error, unexpected issue, error handling, troubleshooting, TassArcade"
         }
     },
-    "social": {
-        "title": "Social",
-        "description": "Manage your friends & blocked users",
-        "meta": {
-            "title": "Social Hub – TassArcade",
-            "description": "Access your social dashboard: manage your friends, blocked users, and profile settings from one place.",
-            "keywords": "social hub, manage friends, blocked users, user profile, TassArcade"
-        },
-        "friends": {
-            "title": "Friends",
-            "description": "Manage your friends",
-            "meta": {
-                "title": "Manage Your Friends – TassArcade",
-                "description": "Add, remove, accept friend requests, and block users easily with TassArcade. Manage your social connections seamlessly.",
-                "keywords": "manage friends, add friends, remove friends, friend requests, block users, social management, TassArcade"
-            },
-            "none": "No friend found",
-            "search": {
-                "placeholder": "John123",
-                "label": "Friend's username"
-            },
-            "add": {
-                "title": "Ask a new friend",
-                "none": "No user available",
-                "search": {
-                    "placeholder": "John123",
-                    "label": "User's username"
-                }
-            },
-            "remove": {
-                "modal": {
-                    "title": "Remove a friend",
-                    "text": "{username} will be removed from your friends"
-                }
-            }
-        },
-        "blocked": {
-            "title": "Blocked users",
-            "description": "Manage your blocked users",
-            "meta": {
-                "title": "Blocked Users - Manage Your Block List | TassArcade",
-                "description": "Easily view and manage the users you've blocked on TassArcade. Take control of your social connections and ensure a safer experience.",
-                "keywords": "blocked users, block list, manage blocked users, social settings, privacy control, TassArcade"
-            },
-            "none": "No blocked user found",
-            "search": {
-                "placeholder": "John123",
-                "label": "Blocked user's username"
-            },
-            "modal": {
-                "title": "Blocking user",
-                "text": "{username} will be blocked"
-            }
-        },
-        "unblock": {
-            "modal": {
-                "title": "Unblocking user",
-                "text": "{username} will be unblocked"
-            }
-        }
-    },
     "admin": {
         "title": "Dashboard",
         "datatable": {

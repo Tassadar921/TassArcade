@@ -187,67 +187,6 @@
             "keywords": "erreur inconnue, problème inattendu, gestion des erreurs, dépannage, TassArcade"
         }
     },
-    "social": {
-        "title": "Social",
-        "description": "Gérez vos amis et les utilisateurs bloqués",
-        "meta": {
-            "title": "Espace social – TassArcade",
-            "description": "Accédez à votre espace social : gérez vos amis, utilisateurs bloqués et paramètres de profil depuis un seul endroit.",
-            "keywords": "espace social, gérer amis, utilisateurs bloqués, profil utilisateur, TassArcade"
-        },
-        "friends": {
-            "title": "Amis",
-            "description": "Gérez vos amis",
-            "meta": {
-                "title": "Gérez vos amis – TassArcade",
-                "description": "Ajoutez, supprimez, acceptez les demandes d’amis et bloquez des utilisateurs facilement avec TassArcade. Gérez vos connexions sociales simplement.",
-                "keywords": "gérer amis, ajouter amis, supprimer amis, demandes d’amis, bloquer utilisateurs, gestion sociale, TassArcade"
-            },
-            "none": "Pas d'ami trouvé",
-            "search": {
-                "placeholder": "Jean123",
-                "label": "Nom d'utilisateur de l'ami"
-            },
-            "add": {
-                "title": "Inviter un nouvel ami",
-                "none": "Aucun utilisateur disponible",
-                "search": {
-                    "placeholder": "Jean123",
-                    "label": "Pseudonyme de l'utilisateur"
-                }
-            },
-            "remove": {
-                "modal": {
-                    "title": "Retirer un ami",
-                    "text": "{username} sera supprimé de vos amis"
-                }
-            }
-        },
-        "blocked": {
-            "title": "Utilisateurs bloqués",
-            "description": "Gérez les utilisateurs bloqués",
-            "meta": {
-                "title": "Utilisateurs bloqués – Gérer votre liste de blocage | TassArcade",
-                "description": "Consultez et gérez facilement les utilisateurs que vous avez bloqués sur TassArcade. Prenez le contrôle de votre expérience sociale et renforcez votre confidentialité.",
-                "keywords": "utilisateurs bloqués, liste de blocage, gérer les utilisateurs bloqués, paramètres sociaux, confidentialité"
-            },
-            "none": "Pas d'utilisateur bloqué trouvé",
-            "search": {
-                "placeholder": "Jean123",
-                "label": "Pseudonyme de l'utilisateur bloqué"
-            },
-            "modal": {
-                "title": "Bloquer l'utilisateur",
-                "text": "{username} sera bloqué"
-            }
-        },
-        "unblock": {
-            "modal": {
-                "title": "Débloquer l'utilisateur",
-                "text": "{username} sera débloqué"
-            }
-        }
-    },
     "admin": {
         "title": "Tableau de bord",
         "datatable": {

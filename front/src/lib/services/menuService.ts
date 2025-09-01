@@ -21,11 +21,6 @@ export const mainMenu: MenuItemsList = {
             title: m['home.title'](),
         },
         {
-            href: '/social',
-            icon: Handshake,
-            title: m['social.title'](),
-        },
-        {
             href: '/profile',
             icon: UserPen,
             title: m['profile.title'](),
