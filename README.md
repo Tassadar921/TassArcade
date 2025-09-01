@@ -3,7 +3,7 @@
 ![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
 ![GitHub repo size](https://img.shields.io/github/repo-size/Tassadar921/tassarcade)
 ![GitHub top language](https://img.shields.io/github/languages/top/Tassadar921/tassarcade)
-![GitHub stars](https://img.shields.io/github/stars/Tassadar921/tassarcade?style=social)
+![GitHub stars](https://img.shields.io/github/stars/Tassadar921/tassarcade)
 
 **TassArcade** is the **ultimate app to find and share your favorite gaming spots**: pool tables, darts, and foosball, anywhere around you.
 
