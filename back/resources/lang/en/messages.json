@@ -46,6 +46,7 @@
             "success": "Logged out"
         },
         "send-account-creation-email": {
+            "subject": "Account creation",
             "success": "Check your mails to confirm account creation",
             "error": {
                 "consent-required": "You must accept the terms of service to create an account",
@@ -117,6 +118,7 @@
     },
     "profile": {
         "send-reset-password-email": {
+            "subject": "Reset your password",
             "success": "Check your mails to reset your password",
             "error": {
                 "mail-not-sent": "An error occurred while sending the email, please try again later"

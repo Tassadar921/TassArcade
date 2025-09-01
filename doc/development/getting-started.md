@@ -1,11 +1,11 @@
-# Adonis & Svelte Starter Kit Getting Started
+# TassArcade Getting Started
 
 ---
 
 ### 1) Clone the repository
 
 ```bash
-  git clone git@github.com:Tassadar921/Adonis-Svelte-starter-kit.git
+  git clone git@github.com:Tassadar921/TassArcade.git
 ```
 
 ---

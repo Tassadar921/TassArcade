@@ -66,7 +66,7 @@ export default class ProfileController {
         });
 
         try {
-            await this.mailService.sendResetPasswordEmail(user, encodeURI(`${env.get('FRONT_URI')}/reset-password/confirm?token=${token}`));
+            await this.mailService.sendResetPasswordEmail(user, encodeURI(`${env.get('FRONT_URI')}/reset-password/confirm?token=${token}`), i18n);
         } catch (error: any) {
             response.notFound({ error: i18n.t('profile.send-reset-password-email.error.mail-not-sent') });
         }

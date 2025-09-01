@@ -46,6 +46,7 @@
             "success": "Déconnexion réussie"
         },
         "send-account-creation-email": {
+            "subject": "Création de compte",
             "success": "Vérifiez vos e-mails pour confirmer la création du compte",
             "error": {
                 "consent-required": "Vous devez accepter les conditions d'utilisation pour créer un compte",
@@ -117,6 +118,7 @@
     },
     "profile": {
         "send-reset-password-email": {
+            "subject": "Réinitialisation de votre mot de passe",
             "success": "Vérifiez vos e-mails pour réinitialiser votre mot de passe",
             "error": {
                 "mail-not-sent": "Une erreur s'est produite lors de l'envoi de l'e-mail, veuillez réessayer plus tard"

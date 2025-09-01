@@ -84,7 +84,7 @@ migrate-prod:
 	cd back && node ace migration:run && node ace migration:run --connection=logs
 
 start-prod:
-	pm2 describe adonis-svelte-starter-kit-backend > /dev/null
-	pm2 restart adonis-svelte-starter-kit-backend || pm2 start back/build/bin/server.js --name adonis-svelte-starter-kit-backend
+	pm2 describe tassarcade-backend > /dev/null
+	pm2 restart tassarcade-backend || pm2 start back/build/bin/server.js --name tassarcade-backend
 
 deploy: build-prod migrate-prod start-prod

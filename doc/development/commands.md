@@ -1,4 +1,4 @@
-# Adonis & Svelte Starter Kit Development Commands
+# TassArcade Development Commands
 
 ---
 

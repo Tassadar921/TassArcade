@@ -57,7 +57,7 @@
         },
         "consent": "I agree to the terms and conditions",
         "logo": {
-            "alt": "Adonis & Svelte Starter Kit's logo"
+            "alt": "TassArcade's logo"
         }
     },
     "open-graph": {
@@ -80,9 +80,9 @@
         "title": "Profile",
         "description": "Update your profile",
         "meta": {
-            "title": "Edit Profile – Adonis & Svelte Starter Kit",
-            "description": "Update your username and profile picture easily on Adonis & Svelte Starter Kit. Manage your personal information securely.",
-            "keywords": "edit profile, update username, change profile picture, user settings, Adonis & Svelte Starter Kit"
+            "title": "Edit Profile – TassArcade",
+            "description": "Update your username and profile picture easily on TassArcade. Manage your personal information securely.",
+            "keywords": "edit profile, update username, change profile picture, user settings, TassArcade"
         },
         "reset-password": "Reset password",
         "profile-picture": {
@@ -93,25 +93,25 @@
     "reset-password": {
         "title": "Reset password",
         "meta": {
-            "title": "Reset Password – Adonis & Svelte Starter Kit",
+            "title": "Reset Password – TassArcade",
             "description": "Enter your email to receive a password reset link. The email field is prefilled if you are logged in.",
-            "keywords": "reset password, password recovery, forgot password, password reset email, Adonis & Svelte Starter Kit"
+            "keywords": "reset password, password recovery, forgot password, password reset email, TassArcade"
         },
         "confirm": {
             "title": "Finish reset password",
             "meta": {
-                "title": "Password Reset Confirmation – Adonis & Svelte Starter Kit",
+                "title": "Password Reset Confirmation – TassArcade",
                 "description": "Confirm your password reset by clicking the link sent to your email. Securely update your password and regain access to your account.",
-                "keywords": "password reset confirmation, reset password, email verification, Adonis & Svelte Starter Kit"
+                "keywords": "password reset confirmation, reset password, email verification, TassArcade"
             }
         }
     },
     "home": {
         "title": "Home",
         "meta": {
-            "title": "Welcome to Adonis & Svelte Starter Kit – Your Full-Stack Starter Solution",
-            "description": "Get started quickly with Adonis & Svelte Starter Kit, a powerful full-stack starter template combining Adonis backend and Svelte frontend. Build your projects faster and smarter.",
-            "keywords": "Adonis starter kit, Svelte starter kit, full-stack template, web development, backend, frontend, Adonis & Svelte Starter Kit"
+            "title": "Welcome to TassArcade – Your Full-Stack Starter Solution",
+            "description": "Get started quickly with TassArcade, a powerful full-stack starter template combining Adonis backend and Svelte frontend. Build your projects faster and smarter.",
+            "keywords": "Adonis starter kit, Svelte starter kit, full-stack template, web development, backend, frontend, TassArcade"
         }
     },
     "login": {
@@ -120,25 +120,25 @@
         "forgot-password": "Forgot password ?",
         "create-account": "No account yet ?",
         "meta": {
-            "title": "Login – Adonis & Svelte Starter Kit",
-            "description": "Log in to Adonis & Svelte Starter Kit using your email and password, or quickly via Google, GitHub, or Discord OAuth.",
-            "keywords": "login, sign in, email login, password login, OAuth login, Google login, GitHub login, Discord login, Adonis & Svelte Starter Kit"
+            "title": "Login – TassArcade",
+            "description": "Log in to TassArcade using your email and password, or quickly via Google, GitHub, or Discord OAuth.",
+            "keywords": "login, sign in, email login, password login, OAuth login, Google login, GitHub login, Discord login, TassArcade"
         }
     },
     "create-account": {
         "title": "Create account",
         "meta": {
-            "title": "Create Your Account – Adonis & Svelte Starter Kit",
-            "description": "Sign up for Adonis & Svelte Starter Kit by creating your account with username, email, and password. Or quickly register using Google, Discord, or GitHub.",
-            "keywords": "create account, sign up, register, username, email, password, OAuth, Google login, Discord login, GitHub login, Adonis & Svelte Starter Kit"
+            "title": "Create Your Account – TassArcade",
+            "description": "Sign up for TassArcade by creating your account with username, email, and password. Or quickly register using Google, Discord, or GitHub.",
+            "keywords": "create account, sign up, register, username, email, password, OAuth, Google login, Discord login, GitHub login, TassArcade"
         }
     },
     "logout": {
         "title": "Logout",
         "meta": {
-            "title": "Confirm Logout – Adonis & Svelte Starter Kit",
-            "description": "Are you sure you want to log out? Confirm your logout to end your session safely on Adonis & Svelte Starter Kit.",
-            "keywords": "confirm logout, logout confirmation, end session, Adonis & Svelte Starter Kit"
+            "title": "Confirm Logout – TassArcade",
+            "description": "Are you sure you want to log out? Confirm your logout to end your session safely on TassArcade.",
+            "keywords": "confirm logout, logout confirmation, end session, TassArcade"
         },
         "modal": {
             "title": "Logout",
@@ -149,59 +149,59 @@
         "title": "Unauthorized",
         "subtitle": "You are not authorized to view this page.",
         "meta": {
-            "title": "Unauthorized Access – Adonis & Svelte Starter Kit",
+            "title": "Unauthorized Access – TassArcade",
             "description": "Your credentials do not grant access to this page. Please log in or contact support if you think this is a mistake.",
-            "keywords": "unauthorized access, 401 error, login required, permission denied, Adonis & Svelte Starter Kit"
+            "keywords": "unauthorized access, 401 error, login required, permission denied, TassArcade"
         }
     },
     "forbidden": {
         "title": "Forbidden",
         "subtitle": "You have to be logged to access this app's part.",
         "meta": {
-            "title": "Access Forbidden – Adonis & Svelte Starter Kit",
+            "title": "Access Forbidden – TassArcade",
             "description": "You do not have permission to access this page. If you believe this is an error, please contact support.",
-            "keywords": "access forbidden, 403 error, permission denied, restricted access, Adonis & Svelte Starter Kit"
+            "keywords": "access forbidden, 403 error, permission denied, restricted access, TassArcade"
         }
     },
     "not-found": {
         "title": "Page not found",
         "meta": {
-            "title": "Page Not Found – Adonis & Svelte Starter Kit",
-            "description": "The page you are looking for does not exist. Check the URL or return to the homepage of Adonis & Svelte Starter Kit.",
-            "keywords": "404 error, page not found, missing page, Adonis & Svelte Starter Kit"
+            "title": "Page Not Found – TassArcade",
+            "description": "The page you are looking for does not exist. Check the URL or return to the homepage of TassArcade.",
+            "keywords": "404 error, page not found, missing page, TassArcade"
         }
     },
     "already-connected": {
         "title": "Already connected",
         "meta": {
-            "title": "Already Logged In – Return to Your Dashboard | Adonis & Svelte Starter Kit",
-            "description": "You're already logged in to Adonis & Svelte Starter Kit. Continue to your dashboard or return to the homepage to explore more features.",
-            "keywords": "already logged in, user session, dashboard, homepage, Adonis & Svelte Starter Kit"
+            "title": "Already Logged In – Return to Your Dashboard | TassArcade",
+            "description": "You're already logged in to TassArcade. Continue to your dashboard or return to the homepage to explore more features.",
+            "keywords": "already logged in, user session, dashboard, homepage, TassArcade"
         }
     },
     "unknown-error": {
         "title": "Unknown error",
         "meta": {
-            "title": "Unknown Error – Something Went Wrong | Adonis & Svelte Starter Kit",
-            "description": "An unexpected error occurred while using the Adonis & Svelte Starter Kit. Please try again later or return to the homepage for support.",
-            "keywords": "unknown error, unexpected issue, error handling, troubleshooting, Adonis & Svelte Starter Kit"
+            "title": "Unknown Error – Something Went Wrong | TassArcade",
+            "description": "An unexpected error occurred while using the TassArcade. Please try again later or return to the homepage for support.",
+            "keywords": "unknown error, unexpected issue, error handling, troubleshooting, TassArcade"
         }
     },
     "social": {
         "title": "Social",
         "description": "Manage your friends & blocked users",
         "meta": {
-            "title": "Social Hub – Adonis & Svelte Starter Kit",
+            "title": "Social Hub – TassArcade",
             "description": "Access your social dashboard: manage your friends, blocked users, and profile settings from one place.",
-            "keywords": "social hub, manage friends, blocked users, user profile, Adonis & Svelte Starter Kit"
+            "keywords": "social hub, manage friends, blocked users, user profile, TassArcade"
         },
         "friends": {
             "title": "Friends",
             "description": "Manage your friends",
             "meta": {
-                "title": "Manage Your Friends – Adonis & Svelte Starter Kit",
-                "description": "Add, remove, accept friend requests, and block users easily with Adonis & Svelte Starter Kit. Manage your social connections seamlessly.",
-                "keywords": "manage friends, add friends, remove friends, friend requests, block users, social management, Adonis & Svelte Starter Kit"
+                "title": "Manage Your Friends – TassArcade",
+                "description": "Add, remove, accept friend requests, and block users easily with TassArcade. Manage your social connections seamlessly.",
+                "keywords": "manage friends, add friends, remove friends, friend requests, block users, social management, TassArcade"
             },
             "none": "No friend found",
             "search": {
@@ -227,9 +227,9 @@
             "title": "Blocked users",
             "description": "Manage your blocked users",
             "meta": {
-                "title": "Blocked Users - Manage Your Block List | Adonis & Svelte Starter Kit",
-                "description": "Easily view and manage the users you've blocked on Adonis & Svelte Starter Kit. Take control of your social connections and ensure a safer experience.",
-                "keywords": "blocked users, block list, manage blocked users, social settings, privacy control, Adonis & Svelte Starter Kit"
+                "title": "Blocked Users - Manage Your Block List | TassArcade",
+                "description": "Easily view and manage the users you've blocked on TassArcade. Take control of your social connections and ensure a safer experience.",
+                "keywords": "blocked users, block list, manage blocked users, social settings, privacy control, TassArcade"
             },
             "none": "No blocked user found",
             "search": {

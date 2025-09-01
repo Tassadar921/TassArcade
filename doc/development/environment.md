@@ -1,4 +1,4 @@
-# Adonis & Svelte Starter Kit - Development Environment Variables
+# TassArcade - Development Environment Variables
 
 ---
 
@@ -19,11 +19,11 @@ DB_HOST=db
 DB_PORT=5432
 DB_USER=superadmin
 DB_PASSWORD=xxx
-DB_DATABASE=adonis_svelte_starter_kit_db
+DB_DATABASE=tassarcade_db
 
 LOGS_DB_USER=superadmin
 LOGS_DB_PASSWORD=xxx
-LOGS_DB_DATABASE=adonis_svelte_starter_kit_db_logs
+LOGS_DB_DATABASE=tassarcade_db_logs
 
 REDIS_HOST=127.0.0.1
 REDIS_PORT=6379
@@ -37,8 +37,8 @@ GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 
 FRONT_PORT=5173
-GITHUB_REPOSITORY=https://github.com/Tassadar921/Adonis-Svelte-starter-kit
-ACCOUNT_SENDER_EMAIL=account@adonis_svelte_starter_kit.fr
+GITHUB_REPOSITORY=https://github.com/Tassadar921/TassArcade
+ACCOUNT_SENDER_EMAIL=account@tassarcade.com
 BREVO_API_KEY=
 ADMIN_EMAIL=
 FRIEND_EMAILS=[]
@@ -56,10 +56,10 @@ FRIEND_EMAILS=[]
 | `DB_PORT`               | 5432                                                                        |
 | `DB_USER`               | superadmin                                                                  |
 | `DB_PASSWORD`           | xxx                                                                         |
-| `DB_DATABASE`           | adonis_svelte_starter_kit_db                                                |
+| `DB_DATABASE`           | tassarcade_db                                                               |
 | `LOG_DB_USER`           | superadmin                                                                  |
 | `LOG_DB_PASSWORD`       | xxx                                                                         |
-| `LOG_DB_DATABASE`       | adonis_svelte_starter_kit_db_logs                                           |
+| `LOG_DB_DATABASE`       | tassarcade_db_logs                                                          |
 | `REDIS_HOST`            | 127.0.0.1                                                                   |
 | `REDIS_PORT`            | 6379                                                                        |
 | `REDIS_PASSWORD`        |                                                                             |
@@ -70,8 +70,8 @@ FRIEND_EMAILS=[]
 | `GOOGLE_CLIENT_ID`      | **`A valid Google client ID`**                                              |
 | `GOOGLE_CLIENT_SECRET`  | **`A valid Google client secret`**                                          |
 | `FRONT_PORT`            | 5173                                                                        |
-| `GITHUB_REPOSITORY`     | https://github.com/Tassadar921/Adonis-Svelte-starter-kit                    |
-| `ACCOUNT_SENDER_EMAIL`  | account@adonis_svelte_starter_kit.fr                                        |
+| `GITHUB_REPOSITORY`     | https://github.com/Tassadar921/TassArcade                                   |
+| `ACCOUNT_SENDER_EMAIL`  | account@tassarcade.com                                                      |
 | `BREVO_API_KEY`         | **`A valid Brevo API key`**                                                 |
 | `ADMIN_EMAIL`           | **`Put your email here`**                                                   |
 | `FRIEND_EMAILS`         | [] **Feel free to add other emails to create other users or test emailing** |

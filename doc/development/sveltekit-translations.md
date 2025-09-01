@@ -1,4 +1,4 @@
-# Adonis & Svelte Starter Kit Sveltekit translations
+# TassArcade Sveltekit translations
 
 ---
 

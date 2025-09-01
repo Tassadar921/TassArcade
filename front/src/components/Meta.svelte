@@ -56,7 +56,7 @@
             description,
             url: `${PUBLIC_FRONT_URI}${get(location)}`,
             locale: get(language),
-            siteName: 'Adonis & Svelte Starter Kit',
+            siteName: 'Tassarcade',
             images: [baseImage, ...additionalOpenGraphImages],
         },
         twitter: {

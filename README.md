@@ -1,35 +1,65 @@
-# Adonis & Svelte starter kit
+# 🎮 TassArcade
 
-This is a starter kit for building web applications using AdonisJS for the backend and Svelte for the frontend (API setup). It includes essential features such as user authentication, OAuth2 integration, and many other things.
+![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
+![GitHub repo size](https://img.shields.io/github/repo-size/Tassadar921/tassarcade)
+![GitHub top language](https://img.shields.io/github/languages/top/Tassadar921/tassarcade)
+![GitHub stars](https://img.shields.io/github/stars/Tassadar921/tassarcade?style=social)
 
-It is designed to be a solid foundation for your projects, allowing you to focus on building your application without worrying about the boilerplate code.
+**TassArcade** is the **ultimate app to find and share your favorite gaming spots**: pool tables, darts, and foosball, anywhere around you.
 
-### Front : Svelte 5, Sveltekit, Tailwind 4, Axios
+Whether you’re a passionate player or a venue hosting equipment, TassArcade makes discovering, rating, and sharing experiences simple and fun.
 
-### Back : Adonisjs 6, Redis, VineJS
+---
 
-### Databases : PostgreSQL
+## ✨ Why TassArcade?
 
-### ORM : Lucid
+- 📍 **Find nearby venues** easily with geolocation
+- 🎯 **Smart filters**: pool, darts, foosball
+- ⭐ **Ratings & reviews**: check and share experiences
+- 🏢 **Pro space**: register and manage your equipment easily
+- 🗺️ **Interactive map** using **Leaflet + OpenStreetMap**
+- 📱 **Multi-platform**: web and mobile via Capacitor
 
-### Features
+---
 
-- Classic Account creation + Authentication (email + password)
-- Oauth2 (Google, Github, Discord)
-- Reset password
-- Forgot password
-- Friends
-- Blocked users
-- Multi languages (English & French natively, easy to add more languages)
-- Multi themes (Light & Dark)
-- API healthcheck
-- API internationalization (i18n)
-- Front optimized for SEO
+## 🛠️ Tech Stack
 
-### Production links
+- **Frontend**: SvelteKit, TailwindCSS, Leaflet
+- **Backend**: AdonisJS v6, Redis, PostgreSQL + PostGIS
+- **Mobile**: Capacitor for native iOS & Android builds
+- **Geocoding**: OpenStreetMap Nominatim (address ↔ latitude/longitude)
 
-- [Production](https://app.my-domain.fr)
-- [MIT License](/doc/LICENSE.md)
+---
 
-### Development documentation
-- [Documentation](doc/development/index.md)
+## 🚀 Goal
+
+Build **a community of players** and make discovering gaming venues **fast, easy, and fun**.  
+TassArcade combines convenience, mobility, and social interactions around bar games.
+
+---
+
+## 👾 Name Origin
+
+**TassArcade** is a nod to *Tassadar* and the world of games (*Arcade* 🎮), blending **geek culture with shared fun**.
+
+---
+
+## 🔥 Why use TassArcade?
+
+- Stop wasting time searching for pool tables or darts
+- Reliable user reviews and ratings
+- Intuitive interactive map
+- Perfect for players and venue owners
+
+---
+
+## 🌐 Join the Community
+
+**TassArcade** brings players and gaming venues together.  
+Whether you’re a casual player or a pro, join the experience and discover your next gaming spot!
+
+---
+
+## 📄 License
+
+This project is licensed under **[MIT License](doc/LICENSE.md)**.

@@ -1,18 +1,18 @@
-# Adonis & Svelte Starter Kit Development Adminer
+# TassArcade Kit Development Adminer
 
 ---
 
 ## The application and logs database are separated and accessible via Adminer
 
-### Go to http://localhost:8080 and log in with the following credentials (generally we want to go to `adonis_svelte_starter_kit_db`, which is the app's database):
+### Go to http://localhost:8080 and log in with the following credentials (generally we want to go to `tassarcade_db`, which is the app's database):
 
-| Field     | Value                                                             |
-|-----------|-------------------------------------------------------------------|
-| System    | PostgreSQL                                                        |
-| Server    | db                                                                |
-| Username  | superadmin                                                        |
-| Password  | xxx                                                               |
-| Databases | adonis_svelte_starter_kit_db \| adonis_svelte_starter_kit_db_logs |
+| Field     | Value                               |
+|-----------|-------------------------------------|
+| System    | PostgreSQL                          |
+| Server    | db                                  |
+| Username  | superadmin                          |
+| Password  | xxx                                 |
+| Databases | tassarcade_db \| tassarcade_db_logs |
 
 ---
 

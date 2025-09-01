@@ -91,7 +91,7 @@ export default class AuthController {
                 type: UserTokenTypeEnum.ACCOUNT_CREATION,
             });
 
-            await this.mailService.sendAccountCreationEmail(email, encodeURI(`${env.get('FRONT_URI')}/${language.code}/create-account/confirm?token=${token}`));
+            await this.mailService.sendAccountCreationEmail(existingUser, encodeURI(`${env.get('FRONT_URI')}/${language.code}/create-account/confirm?token=${token}`), i18n);
         } catch (error: any) {
             return response.badGateway({ error: i18n.t('messages.auth.send-account-creation-email.error.mail-not-sent') });
         }
