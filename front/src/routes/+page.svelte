@@ -13,14 +13,7 @@
         description: string;
     }
 
-    const pages: Page[] = [
-        {
-            title: m['social.title'](),
-            icon: Handshake,
-            href: '/social',
-            description: m['social.description'](),
-        },
-    ];
+    const pages: Page[] = [];
 </script>
 
 <Meta title={m['home.meta.title']()} description={m['home.meta.description']()} keywords={m['home.meta.keywords']().split(', ')} pathname="/" />
