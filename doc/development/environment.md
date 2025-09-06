@@ -41,7 +41,10 @@ GITHUB_REPOSITORY=https://github.com/Tassadar921/TassArcade
 ACCOUNT_SENDER_EMAIL=account@tassarcade.com
 BREVO_API_KEY=
 ADMIN_EMAIL=
-FRIEND_EMAILS=[]
+ADDITIONAL_EMAILS=[]
+
+FRONT_URI=""
+API_URI=""
 ```
 
 | Variable                | Value                                                                       |
@@ -74,7 +77,9 @@ FRIEND_EMAILS=[]
 | `ACCOUNT_SENDER_EMAIL`  | account@tassarcade.com                                                      |
 | `BREVO_API_KEY`         | **`A valid Brevo API key`**                                                 |
 | `ADMIN_EMAIL`           | **`Put your email here`**                                                   |
-| `FRIEND_EMAILS`         | [] **Feel free to add other emails to create other users or test emailing** |
+| `ADDITIONAL_EMAILS`     | [] **Feel free to add other emails to create other users or test emailing** |
+| `FRONT_URI`             | "" **`Injected from Docker`**                                               |
+| `API_URI`               | "" **`Injected from Docker`**                                               |
 
 ---
 
