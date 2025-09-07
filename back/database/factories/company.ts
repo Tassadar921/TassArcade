@@ -4,6 +4,8 @@ import UserRoleEnum from '#types/enum/user_role_enum';
 import { FactoryContextContract } from '@adonisjs/lucid/types/factory';
 import Address from '#models/address';
 import Company from '#models/company';
+import CompanyAdministrator from '#models/company_administrator';
+import CompanyAdministratorRoleEnum from '#types/enum/company_administrator_role_enum';
 
 export const AddressFactory = Factory.define(Address, ({ faker }: FactoryContextContract) => {
     return {
@@ -33,5 +35,11 @@ export const UserFactory = Factory.define(User, ({ faker }: FactoryContextContra
         role: UserRoleEnum.USER,
         enabled: true,
         acceptedTermsAndConditions: true,
+    };
+}).build();
+
+export const CompanyAdministratorFactory = Factory.define(CompanyAdministrator, ({ faker }: FactoryContextContract) => {
+    return {
+        role: CompanyAdministratorRoleEnum.ADMINISTRATOR,
     };
 }).build();

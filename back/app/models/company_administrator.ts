@@ -3,8 +3,8 @@ import { BaseModel, beforeFetch, beforeFind, belongsTo, column } from '@adonisjs
 import type { BelongsTo } from '@adonisjs/lucid/types/relations';
 import Company from '#models/company';
 import User from '#models/user';
-import CompanyAdministratorEnum from '#types/enum/company_administrator_enum';
 import SerializedCompanyAdministrator from '#types/serialized/serialized_company_administrator';
+import CompanyAdministratorRoleEnum from '#types/enum/company_administrator_role_enum';
 
 export default class CompanyAdministrator extends BaseModel {
     @column({ isPrimary: true })
@@ -14,7 +14,7 @@ export default class CompanyAdministrator extends BaseModel {
     declare frontId: number;
 
     @column()
-    declare type: CompanyAdministratorEnum;
+    declare role: CompanyAdministratorRoleEnum;
 
     @column()
     declare companyId: string;
@@ -43,7 +43,7 @@ export default class CompanyAdministrator extends BaseModel {
     public apiSerialize(): SerializedCompanyAdministrator {
         return {
             id: this.frontId,
-            type: this.type,
+            role: this.role,
             user: this.user.apiSerialize(),
             updatedAt: this.updatedAt.toString(),
             createdAt: this.createdAt.toString(),
