@@ -11,7 +11,7 @@ export default class extends BaseSchema {
             table.string('street_number', 10).notNullable();
             table.boolean('is_bis').defaultTo(false);
             table.string('street', 100).notNullable();
-            table.string('postal_code', 10).notNullable();
+            table.string('zip_code', 10).notNullable();
             table.string('city', 100).notNullable();
             table.string('complement', 100).nullable();
             table.string('country', 100).notNullable();

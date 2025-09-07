@@ -4,7 +4,7 @@ import SerializedAddress from '#types/serialized/serialized_address';
 
 export default class Address extends BaseModel {
     @column({ isPrimary: true })
-    declare id: number;
+    declare id: string;
 
     @column()
     declare frontId: number;
@@ -19,7 +19,7 @@ export default class Address extends BaseModel {
     declare street: string;
 
     @column()
-    declare postalCode: string;
+    declare zipCode: string;
 
     @column()
     declare city: string;
@@ -43,7 +43,7 @@ export default class Address extends BaseModel {
     declare updatedAt: DateTime;
 
     get fullAddress(): string {
-        return `${this.streetNumber} ${this.isBis ? 'Bis' : ''} ${this.street}, ${this.postalCode} ${this.city}, ${this.complement}, ${this.country}`;
+        return `${this.streetNumber} ${this.isBis ? 'Bis' : ''} ${this.street}, ${this.zipCode} ${this.city}, ${this.complement}, ${this.country}`;
     }
 
     get encodedAddress(): string {
@@ -56,7 +56,7 @@ export default class Address extends BaseModel {
             streetNumber: this.streetNumber,
             isBis: this.isBis,
             street: this.street,
-            postalCode: this.postalCode,
+            zipCode: this.zipCode,
             city: this.city,
             country: this.country,
             complement: this.complement,

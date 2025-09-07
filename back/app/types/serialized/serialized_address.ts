@@ -3,7 +3,7 @@ export type SerializedAddress = {
     streetNumber: string;
     isBis: boolean;
     street: string;
-    postalCode: string;
+    zipCode: string;
     city: string;
     complement: string;
     country: string;

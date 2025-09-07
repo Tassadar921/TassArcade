@@ -18,7 +18,7 @@ export default class extends BaseSeeder {
         for (const email of [...emails, env.get('ADMIN_EMAIL')]) {
             if (!(await userRepository.findOneBy({ email }))) {
                 await User.create({
-                    username: email.split('@')[0],
+                    username: email.split('@')[0].replaceAll('.', ''),
                     email,
                     password: 'xxx',
                     role: email === env.get('ADMIN_EMAIL') ? UserRoleEnum.ADMIN : UserRoleEnum.USER,
