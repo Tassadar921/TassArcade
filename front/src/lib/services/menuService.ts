@@ -16,11 +16,6 @@ interface MenuItemsList {
 export const mainMenu: MenuItemsList = {
     connected: [
         {
-            href: '/',
-            icon: House,
-            title: m['home.title'](),
-        },
-        {
             href: '/profile',
             icon: UserPen,
             title: m['profile.title'](),
@@ -37,6 +32,11 @@ export const mainMenu: MenuItemsList = {
         },
     ],
     notConnected: [
+        {
+            href: '/',
+            icon: House,
+            title: m['home.title'](),
+        },
         {
             href: '/login',
             icon: User,

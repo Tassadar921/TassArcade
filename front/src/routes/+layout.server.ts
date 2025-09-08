@@ -5,21 +5,15 @@ import { type LanguageCode } from '#lib/stores/languageStore';
 import { locales } from '../paraglide/runtime';
 import type { FormError } from '../app';
 
-interface OpenedPathName {
+interface ProtectedPath {
     pathname: string;
-    hybrid: boolean;
 }
 
 export const load: LayoutServerLoad = loadFlash(async (event): Promise<{ user?: SerializedUser; language: LanguageCode; location: string; formError?: FormError }> => {
     const { cookies, url, locals } = event;
 
-    // Paths that don't require authentication
-    const openedPathNames: OpenedPathName[] = [
-        { pathname: '/create-account', hybrid: false },
-        { pathname: '/login', hybrid: false },
-        { pathname: '/oauth', hybrid: false },
-        { pathname: '/reset-password', hybrid: true },
-    ];
+    // Paths that require authentication
+    const protectedPaths: ProtectedPath[] = [{ pathname: '/profile' }, { pathname: '/admin' }];
 
     const match: RegExpMatchArray | null = url.pathname.match(/^\/([a-z]{2})(\/|$)/);
     const language: LanguageCode | undefined = match ? (match[1] as LanguageCode) : undefined;
@@ -44,59 +38,36 @@ export const load: LayoutServerLoad = loadFlash(async (event): Promise<{ user?: 
 
     const formError: string | undefined = cookies.get('formError');
 
-    if (!userCookie) {
-        cookies.delete('token', { path: '/' });
-        if (openedPathNames.some((openedPathName: OpenedPathName): boolean => location.startsWith(openedPathName.pathname))) {
-            if (formError) {
-                cookies.delete('formError', { path: '/' });
+    // Check if current path is protected
+    const requiresAuth = protectedPaths.some((p) => location.startsWith(p.pathname));
 
-                return {
-                    language,
-                    location,
-                    formError: JSON.parse(formError),
-                };
-            }
+    if (requiresAuth && !userCookie) {
+        cookies.set('previousPathName', `${location}${url.search}`, {
+            path: '/',
+            httpOnly: false,
+            sameSite: 'lax',
+            maxAge: 60 * 60,
+        });
 
-            return { language, location };
-        } else {
-            cookies.set('previousPathName', `${location}${url.search}`, {
-                path: '/',
-                httpOnly: false,
-                sameSite: 'lax',
-                maxAge: 60 * 60,
-            });
-
-            redirect(303, `/${language}/login`);
-        }
+        redirect(303, `/${language}/login`);
     }
 
-    if (cookies.get('token')) {
+    // Verify token if present
+    if (userCookie && cookies.get('token')) {
         try {
             const response = await locals.client.get('/api');
             if (response.status !== 200) {
                 throw response;
             }
-        } catch (error: any) {
+        } catch {
             cookies.delete('user', { path: '/' });
             cookies.delete('token', { path: '/' });
-
             redirect(303, `/${language}/login`);
         }
-    } else {
-        cookies.delete('user', { path: '/' });
-
-        redirect(303, `/${language}/login`);
     }
-
-    if (openedPathNames.some((openedPathName: OpenedPathName): boolean => location.startsWith(openedPathName.pathname) && !openedPathName.hybrid)) {
-        redirect(303, `/${language}/`);
-    }
-
-    cookies.delete('previousPathName', { path: '/' });
 
     if (formError) {
         cookies.delete('formError', { path: '/' });
-
         return {
             user,
             language,
