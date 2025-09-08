@@ -38,7 +38,7 @@ export const UserFactory = Factory.define(User, ({ faker }: FactoryContextContra
     };
 }).build();
 
-export const CompanyAdministratorFactory = Factory.define(CompanyAdministrator, ({ faker }: FactoryContextContract) => {
+export const CompanyAdministratorFactory = Factory.define(CompanyAdministrator, () => {
     return {
         role: CompanyAdministratorRoleEnum.ADMINISTRATOR,
     };
