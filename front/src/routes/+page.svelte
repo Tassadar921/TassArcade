@@ -1,27 +1,43 @@
 <script lang="ts">
-    import SmallCard from '#components/SmallCard.svelte';
     import { m } from '#lib/paraglide/messages';
     import { Title } from '#lib/components/ui/title';
     import Meta from '#components/Meta.svelte';
-    import { Handshake } from '@lucide/svelte';
-    import type { Component } from 'svelte';
+    import { MapLibre } from 'svelte-maplibre';
+    import { onMount } from 'svelte';
 
-    interface Page {
-        title: string;
-        icon: Component;
-        href: string;
-        description: string;
-    }
+    let latitude: number = $state(48.866667);
+    let longitude: number = $state(2.333333);
+    let map: maplibregl.Map;
 
-    const pages: Page[] = [];
+    onMount((): void => {
+        if (!navigator.geolocation) return;
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                latitude = position.coords.latitude;
+                longitude = position.coords.longitude;
+            },
+            (error) => {
+                console.error(error);
+            }
+        );
+    });
+
+    const handleLoad = (map: maplibregl.Map): void => {
+        map.setPitch(0);
+        map.setBearing(0);
+
+        if (typeof map.setMaxPitch === 'function') {
+            map.setMaxPitch(0);
+        }
+
+        map.dragRotate.disable();
+        map.touchZoomRotate.disableRotation();
+    };
 </script>
 
 <Meta title={m['home.meta.title']()} description={m['home.meta.description']()} keywords={m['home.meta.keywords']().split(', ')} pathname="/" />
 
 <Title title={m['home.title']()} />
 
-<div class="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 p-5">
-    {#each pages as page}
-        <SmallCard title={page.title} icon={page.icon} href={page.href} description={page.description} />
-    {/each}
-</div>
+<MapLibre bind:map center={[longitude, latitude]} zoom={15} class="h-[800px]" style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json" onload={handleLoad} />
