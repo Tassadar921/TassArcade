@@ -1,8 +1,8 @@
 import BaseRepository from '#repositories/base/base_repository';
-import CompanyAdministrator from '#models/company_administrator';
+import CompanyEquipment from '#models/company_equipment';
 
-export default class CompanyAdministratorRepository extends BaseRepository<typeof CompanyAdministrator> {
+export default class CompanyEquipmentRepository extends BaseRepository<typeof CompanyEquipment> {
     constructor() {
-        super(CompanyAdministrator);
+        super(CompanyEquipment);
     }
 }
