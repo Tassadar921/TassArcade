@@ -147,11 +147,11 @@ export default class extends BaseSeeder {
         ];
 
         for (const equipmentData of equipments) {
-            let picture: File | null = await fileRepository.findOneBy({ name: `${equipmentData.category}.svg`, type: FileTypeEnum.EQUIPMENT_PICTURE });
-            if (!picture) {
+            let thumbnail: File | null = await fileRepository.findOneBy({ name: `${equipmentData.category}.svg`, type: FileTypeEnum.EQUIPMENT_PICTURE });
+            if (!thumbnail) {
                 const path: string = await this.moveEquipmentPicture(equipmentData.category);
                 const { size, mimeType, extension, name } = await fileService.getFileInfo(app.makePath(`${path}/${equipmentData.category}.svg`));
-                picture = await File.create({
+                thumbnail = await File.create({
                     name,
                     path: `${path}/${equipmentData.category}.svg`,
                     extension,
@@ -159,22 +159,22 @@ export default class extends BaseSeeder {
                     size,
                     type: FileTypeEnum.EQUIPMENT_PICTURE,
                 });
-                await picture.refresh();
+                await thumbnail.refresh();
             }
 
             // Assume that if it exists, all of its types & related translations also exist
             if (!(await equipmentRepository.findOneBy({ category: equipmentData.category }))) {
                 const equipment: Equipment = await Equipment.create({
-                    name: Translation.from(equipmentData.translations),
+                    name: Translation.from({ ...equipmentData.translations }),
                     category: equipmentData.category,
-                    pictureId: picture.id,
+                    thumbnailId: thumbnail.id,
                 });
                 await equipment.refresh();
 
                 for (const type of equipmentData.types) {
                     await EquipmentType.create({
                         code: type.code,
-                        name: Translation.from(type.translations),
+                        name: Translation.from({ ...type.translations }),
                         equipmentId: equipment.id,
                     });
                 }

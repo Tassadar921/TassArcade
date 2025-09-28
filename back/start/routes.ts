@@ -115,6 +115,7 @@ router
                     .group((): void => {
                         router.get('/profile-picture/:userId', [FileController, 'serveStaticProfilePictureFile']);
                         router.get('/language-flag/:languageCode', [FileController, 'serveStaticLanguageFlagFile']);
+                        router.get('/equipment-thumbnail/:equipmentId', [FileController, 'serveStaticEquipmentThumbnailFile']);
                     })
                     .prefix('static');
             })

@@ -9,7 +9,7 @@ export default class extends BaseSchema {
             table.uuid('id').primary().defaultTo(this.raw('uuid_generate_v4()'));
             table.json('name').notNullable();
             table.string('category', 100).notNullable().unique();
-            table.uuid('picture_id').notNullable().references('id').inTable('files');
+            table.uuid('thumbnail_id').notNullable().references('id').inTable('files');
             table.timestamp('created_at');
             table.timestamp('updated_at');
         });

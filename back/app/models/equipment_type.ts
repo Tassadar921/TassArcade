@@ -2,7 +2,7 @@ import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm';
 import { DateTime } from 'luxon';
 import type { BelongsTo } from '@adonisjs/lucid/types/relations';
 import Equipment from '#models/equipment';
-import { Translation } from '@stouder-io/adonis-translatable';
+import { translation, Translation } from '@stouder-io/adonis-translatable';
 import Language from '#models/language';
 import SerializedEquipmentType from '#types/serialized/serialized_equipment_type';
 
@@ -15,7 +15,7 @@ export default class EquipmentType extends BaseModel {
     @column()
     declare code: string;
 
-    @column()
+    @translation()
     declare name: Translation;
 
     @column()

@@ -5,20 +5,24 @@
     import { MapLibre } from 'svelte-maplibre';
     import { onMount } from 'svelte';
     import { MultiSelectWithTags } from '#lib/components/ui/multi-select-with-tags';
+    import { page } from '$app/state';
+    import type { SerializedEquipment, SerializedEquipmentType } from 'backend/types';
 
     let latitude: number = $state(48.866667);
     let longitude: number = $state(2.333333);
     let map: maplibregl.Map;
 
     onMount((): void => {
-        if (!navigator.geolocation) return;
+        if (!navigator.geolocation) {
+            return;
+        }
 
         navigator.geolocation.getCurrentPosition(
-            (position) => {
+            (position: GeolocationPosition) => {
                 latitude = position.coords.latitude;
                 longitude = position.coords.longitude;
             },
-            (error) => {
+            (error: GeolocationPositionError) => {
                 console.error(error);
             }
         );
@@ -42,12 +46,15 @@
 <Title title={m['home.title']()} />
 
 <MultiSelectWithTags
-    items={[
-        { value: 1, label: 'test' },
-        { value: 2, label: 'test2' },
-        { value: 3, label: 'test3' },
-        { value: 4, label: 'test4' },
-    ]}
+    categories={page.data.data.map((equipment: SerializedEquipment) => ({
+        label: equipment.name,
+        thumbnailPath: `/assets/equipment-thumbnail/${equipment.id}`,
+        items: equipment.types.map((type: SerializedEquipmentType) => ({
+            value: type.id,
+            label: type.name,
+            category: equipment.name,
+        })),
+    }))}
     selectedItems={[]}
 />
 

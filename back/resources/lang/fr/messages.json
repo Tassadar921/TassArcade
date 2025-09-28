@@ -78,10 +78,22 @@
         }
     },
     "file": {
-        "serve-status-profile-picture-file": {
+        "serve-profile-picture": {
             "error": {
                 "user-not-found": "Utilisateur non trouvé",
-                "no-picture": "Photo de profil de l'utilisateur introuvable"
+                "no-file": "Photo de profil de l'utilisateur introuvable"
+            }
+        },
+        "serve-language-flag": {
+            "error": {
+                "language-not-found": "Langue non trouvée",
+                "no-file": "Drapeau de la langue introuvable"
+            }
+        },
+        "serve-equipment-thumbnail": {
+            "error": {
+                "equipment-not-found": "Équipement non trouvé",
+                "no-file": "Miniature de l'équipement introuvable"
             }
         }
     },

@@ -5,7 +5,7 @@ export type SerializedEquipment = {
     id: string;
     name: string;
     category: string;
-    picture: SerializedFile;
+    thumbnail: SerializedFile;
     types: SerializedEquipmentType[];
     updatedAt?: string;
     createdAt?: string;

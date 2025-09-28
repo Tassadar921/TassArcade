@@ -11,3 +11,8 @@ export type { SerializedLanguage } from './serialized/serialized_language.js';
 export type { SerializedLog } from './serialized/serialized_log.js';
 export type { SerializedLogUser } from './serialized/serialized_log_user.js';
 export type { SerializedUser } from './serialized/serialized_user.js';
+export type { SerializedEquipment } from './serialized/serialized_equipment.js';
+export type { SerializedEquipmentType } from './serialized/serialized_equipment_type.js';
+export type { SerializedCompany } from './serialized/serialized_company.js';
+export type { SerializedCompanyAdministrator } from './serialized/serialized_company_administrator.js';
+export type { SerializedAddress } from './serialized/serialized_address.js';

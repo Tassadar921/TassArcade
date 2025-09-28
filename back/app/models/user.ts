@@ -1,15 +1,14 @@
 import { DateTime } from 'luxon';
 import hash from '@adonisjs/core/services/hash';
 import { compose } from '@adonisjs/core/helpers';
-import { afterCreate, beforeFind, beforeFetch, BaseModel, belongsTo, column, hasOne } from '@adonisjs/lucid/orm';
+import { afterCreate, beforeFind, beforeFetch, BaseModel, belongsTo, column } from '@adonisjs/lucid/orm';
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid';
-import type { BelongsTo, HasOne } from '@adonisjs/lucid/types/relations';
+import type { BelongsTo } from '@adonisjs/lucid/types/relations';
 import SerializedUser from '#types/serialized/serialized_user';
 import { AccessToken, DbAccessTokensProvider } from '@adonisjs/auth/access_tokens';
 import File from '#models/file';
 import UserRoleEnum from '#types/enum/user_role_enum';
 import LogUser from '#models/log_user';
-import CompanyAdministrator from '#models/company_administrator';
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
     uids: ['email'],
@@ -52,9 +51,6 @@ export default class User extends compose(BaseModel, AuthFinder) {
         foreignKey: 'profilePictureId',
     })
     declare profilePicture: BelongsTo<typeof File>;
-
-    @hasOne((): typeof CompanyAdministrator => CompanyAdministrator)
-    declare companyAdministrator: HasOne<typeof CompanyAdministrator>;
 
     @column.dateTime({ autoCreate: true })
     declare createdAt: DateTime;

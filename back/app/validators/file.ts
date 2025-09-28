@@ -11,3 +11,9 @@ export const serveStaticLanguageFlagFileValidator = vine.compile(
         languageCode: vine.string().fixedLength(2).toLowerCase(),
     })
 );
+
+export const serveStaticEquipmentThumbnailFileValidator = vine.compile(
+    vine.object({
+        equipmentId: vine.string().uuid(),
+    })
+);

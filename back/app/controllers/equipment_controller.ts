@@ -9,11 +9,8 @@ export default class EquipmentController {
     constructor(private readonly equipmentRepository: EquipmentRepository) {}
 
     public async getAll({ response, language }: HttpContext): Promise<void> {
-        const equipments: Equipment[] = await this.equipmentRepository.all(['types']);
+        const equipments: Equipment[] = await this.equipmentRepository.all(['thumbnail', 'types']);
 
-        const test = equipments.map((equipment: Equipment): SerializedEquipment => equipment.apiSerialize(language));
-        console.log(test);
-
-        return response.json([]);
+        return response.ok(equipments.map((equipment: Equipment): SerializedEquipment => equipment.apiSerialize(language)));
     }
 }
