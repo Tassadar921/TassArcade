@@ -1,12 +1,19 @@
 import { BaseCommand } from '@adonisjs/core/ace';
 import type { CommandOptions } from '@adonisjs/core/types/ace';
-import { CompanyFactory, AddressFactory, UserFactory, CompanyAdministratorFactory } from '#database/factories/company';
+import { CompanyFactory } from '#database/factories/company';
+import { AddressFactory } from '#database/factories/address';
+import { UserFactory } from '#database/factories/user';
+import { CompanyAdministratorFactory } from '#database/factories/company_administrator';
 import Address from '#models/address';
 import User from '#models/user';
 import Company from '#models/company';
 import CompanyAdministratorRoleEnum from '#types/enum/company_administrator_role_enum';
+import EquipmentType from '#models/equipment_type';
+import EquipmentTypeRepository from '#repositories/equipment_type_repository';
+import { CompanyEquipmentTypeFactory } from '#database/factories/company_equipment_type';
 
 export default class ExecTest extends BaseCommand {
+    public readonly equipmentTypeRepository: EquipmentTypeRepository = new EquipmentTypeRepository();
     public companiesAmount: number = 3;
 
     public static commandName: string = 'db:factory:company';
@@ -34,5 +41,17 @@ export default class ExecTest extends BaseCommand {
                 companyId: companies[index].id,
             }))
         ).createMany(this.companiesAmount);
+
+        const equipmentTypes: EquipmentType[] = await this.equipmentTypeRepository.all();
+        await Promise.all(
+            companies.map(async (company: Company): Promise<void> => {
+                for (let i = 0; i < Math.round(Math.random() * 10); i++) {
+                    await CompanyEquipmentTypeFactory.merge({
+                        companyId: company.id,
+                        equipmentTypeId: equipmentTypes[Math.floor(Math.random() * equipmentTypes.length)].id,
+                    }).create();
+                }
+            })
+        );
     }
 }
