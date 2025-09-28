@@ -12,6 +12,7 @@ tmp
 # Assets & compiled code
 static/profile-picture
 static/language-flag
+static/equipment-picture
 .persist
 .adonisjs
 
