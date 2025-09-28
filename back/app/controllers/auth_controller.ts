@@ -21,7 +21,7 @@ export default class AuthController {
         private readonly mailService: BrevoMailService
     ) {}
 
-    public async login({ request, response, i18n }: HttpContext) {
+    public async login({ request, response, i18n }: HttpContext): Promise<void> {
         try {
             const { email, password } = await request.validateUsing(loginValidator);
 
@@ -39,14 +39,14 @@ export default class AuthController {
         }
     }
 
-    public async logout({ auth, response, i18n }: HttpContext) {
+    public async logout({ auth, response, i18n }: HttpContext): Promise<void> {
         const user: User = await auth.use('api').authenticate();
         await User.accessTokens.delete(user, user.currentAccessToken!.identifier);
 
         return response.ok({ message: i18n.t('messages.auth.logout.success') });
     }
 
-    public async sendAccountCreationEmail({ request, response, language, i18n }: HttpContext) {
+    public async sendAccountCreationEmail({ request, response, language, i18n }: HttpContext): Promise<void> {
         const { username, email, password, consent } = await request.validateUsing(sendAccountCreationEmailValidator);
 
         if (!consent) {
@@ -99,7 +99,7 @@ export default class AuthController {
         return response.ok({ message: i18n.t('messages.auth.send-account-creation-email.success') });
     }
 
-    public async confirmAccountCreation({ request, response, i18n }: HttpContext) {
+    public async confirmAccountCreation({ request, response, i18n }: HttpContext): Promise<void> {
         const { token: creationToken } = await confirmAccountCreationValidator.validate(request.params());
 
         const token: UserToken | null = await this.userTokenRepository.findOneBy({ token: creationToken }, ['user']);

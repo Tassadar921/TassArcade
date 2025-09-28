@@ -20,7 +20,7 @@ export default class AdminLanguageController {
         private readonly fileService: FileService
     ) {}
 
-    public async getAll({ request, response }: HttpContext) {
+    public async getAll({ request, response }: HttpContext): Promise<void> {
         const { query, page, limit, sortBy: inputSortBy } = await request.validateUsing(searchAdminLanguagesValidator);
 
         return response.ok(
@@ -38,7 +38,7 @@ export default class AdminLanguageController {
         );
     }
 
-    public async delete({ request, response, i18n }: HttpContext) {
+    public async delete({ request, response, i18n }: HttpContext): Promise<void> {
         const { languages } = await request.validateUsing(deleteLanguagesValidator);
 
         const statuses: { isDeleted: boolean; isFallback?: boolean; name?: string; code: string }[] = await this.languageRepository.delete(languages);
@@ -61,7 +61,7 @@ export default class AdminLanguageController {
         });
     }
 
-    public async create({ request, response, i18n }: HttpContext) {
+    public async create({ request, response, i18n }: HttpContext): Promise<void> {
         const { name, code, flag: inputFlag } = await request.validateUsing(createLanguageValidator);
 
         let language: Language | null = await this.languageRepository.findOneBy({ code });
@@ -82,7 +82,7 @@ export default class AdminLanguageController {
         return response.created({ language: language.apiSerialize(), message: i18n.t('messages.admin.language.create.success', { name }) });
     }
 
-    public async update({ request, response, i18n }: HttpContext) {
+    public async update({ request, response, i18n }: HttpContext): Promise<void> {
         const { name, code, flag: inputFlag } = await request.validateUsing(updateLanguageValidator);
 
         const language: Language = await this.languageRepository.firstOrFail({ code });
@@ -106,7 +106,7 @@ export default class AdminLanguageController {
         return response.ok({ language: language.apiSerialize(), message: i18n.t('messages.admin.language.update.success', { name }) });
     }
 
-    public async get({ request, response }: HttpContext) {
+    public async get({ request, response }: HttpContext): Promise<void> {
         const { languageCode: code } = await getAdminLanguageValidator.validate(request.params());
         const language: Language = await this.languageRepository.firstOrFail({ code });
 

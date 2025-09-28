@@ -29,7 +29,7 @@ export default class ProfileController {
         private readonly slugifyService: SlugifyService
     ) {}
 
-    public async getProfile({ response, user }: HttpContext) {
+    public async getProfile({ response, user }: HttpContext): Promise<void> {
         return response.ok({
             user: await cache.getOrSet({
                 key: `user:${user.id}`,
@@ -42,7 +42,7 @@ export default class ProfileController {
         });
     }
 
-    public async sendResetPasswordEmail({ request, response, i18n }: HttpContext) {
+    public async sendResetPasswordEmail({ request, response, i18n }: HttpContext): Promise<void> {
         const { email } = await request.validateUsing(sendResetPasswordEmailValidator);
 
         const user: User = await this.userRepository.firstOrFail({ email });
@@ -76,7 +76,7 @@ export default class ProfileController {
         });
     }
 
-    public async resetPassword({ request, response, i18n }: HttpContext) {
+    public async resetPassword({ request, response, i18n }: HttpContext): Promise<void> {
         const { token } = await resetPasswordParamsValidator.validate(request.params());
 
         const userToken: UserToken = await this.userTokenRepository.firstOrFail(
@@ -99,7 +99,7 @@ export default class ProfileController {
         });
     }
 
-    public async updateProfile({ request, response, user, i18n }: HttpContext) {
+    public async updateProfile({ request, response, user, i18n }: HttpContext): Promise<void> {
         const { username, profilePicture } = await request.validateUsing(updateProfileValidator);
 
         user.username = username;

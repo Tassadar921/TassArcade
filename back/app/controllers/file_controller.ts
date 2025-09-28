@@ -15,7 +15,7 @@ export default class FileController {
         private readonly languageRepository: LanguageRepository
     ) {}
 
-    public async serveStaticProfilePictureFile({ request, response, i18n }: HttpContext) {
+    public async serveStaticProfilePictureFile({ request, response, i18n }: HttpContext): Promise<void> {
         const { userId } = await serveStaticProfilePictureFileValidator.validate(request.params());
         const user: User | null = await this.userRepository.findOneBy({ id: userId });
         if (!user) {
@@ -43,7 +43,7 @@ export default class FileController {
         }
     }
 
-    public async serveStaticLanguageFlagFile({ request, response }: HttpContext) {
+    public async serveStaticLanguageFlagFile({ request, response }: HttpContext): Promise<void> {
         const { languageCode } = await serveStaticLanguageFlagFileValidator.validate(request.params());
 
         const filePath: string = await cache.getOrSet({

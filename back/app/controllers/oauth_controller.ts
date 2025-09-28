@@ -35,7 +35,7 @@ export default class OauthController {
         return ally.use('github').redirect();
     }
 
-    public async githubCallback({ ally, response, i18n }: HttpContext) {
+    public async githubCallback({ ally, response, i18n }: HttpContext): Promise<void> {
         const client: GithubDriver = ally.use('github');
         const { error, token } = await this.handleCallback(client, i18n);
         if (error) {
@@ -49,7 +49,7 @@ export default class OauthController {
         return ally.use('discord').redirect();
     }
 
-    public async discordCallback({ ally, response, i18n }: HttpContext) {
+    public async discordCallback({ ally, response, i18n }: HttpContext): Promise<void> {
         const client: DiscordDriver = ally.use('discord');
         const { error, token } = await this.handleCallback(client, i18n);
         if (error) {
@@ -63,7 +63,7 @@ export default class OauthController {
         return ally.use('google').redirect();
     }
 
-    public async googleCallback({ ally, response, i18n }: HttpContext) {
+    public async googleCallback({ ally, response, i18n }: HttpContext): Promise<void> {
         const client: GoogleDriver = ally.use('google');
         const { error, token } = await this.handleCallback(client, i18n);
         if (error) {
@@ -73,7 +73,7 @@ export default class OauthController {
         return response.redirect(`${env.get('FRONT_URI')}/en/oauth?token=${token}&provider=google`);
     }
 
-    public async confirmOauthConnection({ request, response, i18n }: HttpContext) {
+    public async confirmOauthConnection({ request, response, i18n }: HttpContext): Promise<void> {
         const { provider, token: creationToken } = await confirmOauthConnectionValidator.validate(request.params());
 
         const oauthToken: UserToken | null = await this.userTokenRepository.findOneBy({ token: creationToken, type: UserTokenTypeEnum.OAUTH }, ['user']);

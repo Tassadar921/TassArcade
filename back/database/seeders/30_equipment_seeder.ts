@@ -1,6 +1,4 @@
 import { BaseSeeder } from '@adonisjs/lucid/seeders';
-import Language from '#models/language';
-import LanguageRepository from '#repositories/language_repository';
 import path from 'path';
 import fsPromises from 'fs/promises';
 import app from '@adonisjs/core/services/app';
@@ -11,113 +9,142 @@ import FileRepository from '#repositories/file_repository';
 import EquipmentRepository from '#repositories/equipment_repository';
 import Equipment from '#models/equipment';
 import EquipmentType from '#models/equipment_type';
-import EquipmentTranslation from '#models/equipment_translation';
-import EquipmentTypeTranslation from '#models/equipment_type_translation';
+import { Translation } from '@stouder-io/adonis-translatable';
 
 interface LocalEquipment {
     category: string;
-    fr: string;
-    en: string;
-    types: {
-        code: string;
+    translations: {
         fr: string;
         en: string;
+    };
+    types: {
+        code: string;
+        translations: {
+            fr: string;
+            en: string;
+        };
     }[];
 }
 
 export default class extends BaseSeeder {
     public async run(): Promise<void> {
         const fileService: FileService = new FileService();
-        const languageRepository: LanguageRepository = new LanguageRepository(fileService);
         const equipmentRepository: EquipmentRepository = new EquipmentRepository();
         const fileRepository: FileRepository = new FileRepository();
 
         const equipments: LocalEquipment[] = [
             {
                 category: 'dart',
-                fr: 'Fléchettes',
-                en: 'Dart',
+                translations: {
+                    fr: 'Fléchettes',
+                    en: 'Dart',
+                },
                 types: [
                     {
                         code: 'steel',
-                        fr: 'Fléchettes',
-                        en: 'Steel darts',
+                        translations: {
+                            fr: 'Fléchettes',
+                            en: 'Steel darts',
+                        },
                     },
                     {
                         code: 'soft',
-                        fr: 'Fléchettes électroniques',
-                        en: 'Soft darts',
+                        translations: {
+                            fr: 'Fléchettes électroniques',
+                            en: 'Soft darts',
+                        },
                     },
                 ],
             },
             {
                 category: 'pool',
-                fr: 'Billard',
-                en: 'Pool',
+                translations: {
+                    fr: 'Billard',
+                    en: 'Pool',
+                },
                 types: [
                     {
                         code: 'pool',
-                        fr: 'Billard américain (Pool)',
-                        en: 'Pool',
+                        translations: {
+                            fr: 'Billard américain (Pool)',
+                            en: 'Pool',
+                        },
                     },
                     {
                         code: 'snooker',
-                        fr: 'Snooker',
-                        en: 'Snooker',
+                        translations: {
+                            fr: 'Snooker',
+                            en: 'Snooker',
+                        },
                     },
                     {
                         code: 'carom',
-                        fr: 'Billard français (Carambole)',
-                        en: 'Carom billiards',
+                        translations: {
+                            fr: 'Billard français (Carambole)',
+                            en: 'Carom billiards',
+                        },
                     },
                     {
                         code: 'russian',
-                        fr: 'Billard russe (Russian Pyramid)',
-                        en: 'Russian pyramid',
+                        translations: {
+                            fr: 'Billard russe (Russian Pyramid)',
+                            en: 'Russian pyramid',
+                        },
                     },
                     {
                         code: 'artistic',
-                        fr: 'Billard artistique (Artistic billiards)',
-                        en: 'Artistic billiards',
+                        translations: {
+                            fr: 'Billard artistique (Artistic billiards)',
+                            en: 'Artistic billiards',
+                        },
                     },
                 ],
             },
             {
                 category: 'bowling',
-                fr: 'Bowling',
-                en: 'Bowling',
+                translations: {
+                    fr: 'Bowling',
+                    en: 'Bowling',
+                },
                 types: [
                     {
                         code: 'ten-pin',
-                        fr: 'Bowling classique / standard',
-                        en: 'Ten-pin bowling',
+                        translations: {
+                            fr: 'Bowling classique / standard',
+                            en: 'Ten-pin bowling',
+                        },
                     },
                     {
                         code: 'five-pin',
-                        fr: 'Bowling à 5 quilles',
-                        en: 'Five-pin bowling',
+                        translations: {
+                            fr: 'Bowling à 5 quilles',
+                            en: 'Five-pin bowling',
+                        },
                     },
                     {
                         code: 'nine-pin',
-                        fr: 'Bowling à 9 quilles',
-                        en: 'Nine-pin bowling',
+                        translations: {
+                            fr: 'Bowling à 9 quilles',
+                            en: 'Nine-pin bowling',
+                        },
                     },
                     {
                         code: 'candlepin',
-                        fr: 'Bowling à boules fixes (Candlepin)',
-                        en: 'Candlepin bowling',
+                        translations: {
+                            fr: 'Bowling à boules fixes (Candlepin)',
+                            en: 'Candlepin bowling',
+                        },
                     },
                     {
                         code: 'duckpin',
-                        fr: 'Bowling à quilles américaines (Duckpin)',
-                        en: 'Duckpin bowling',
+                        translations: {
+                            fr: 'Bowling à quilles américaines (Duckpin)',
+                            en: 'Duckpin bowling',
+                        },
                     },
                 ],
             },
         ];
-
-        const french: Language = await languageRepository.firstOrFail({ code: Language.LANGUAGE_FRENCH.code });
-        const english: Language = await languageRepository.firstOrFail({ code: Language.LANGUAGE_ENGLISH.code });
 
         for (const equipmentData of equipments) {
             let picture: File | null = await fileRepository.findOneBy({ name: `${equipmentData.category}.svg`, type: FileTypeEnum.EQUIPMENT_PICTURE });
@@ -138,32 +165,18 @@ export default class extends BaseSeeder {
             // Assume that if it exists, all of its types & related translations also exist
             if (!(await equipmentRepository.findOneBy({ category: equipmentData.category }))) {
                 const equipment: Equipment = await Equipment.create({
+                    name: Translation.from(equipmentData.translations),
                     category: equipmentData.category,
                     pictureId: picture.id,
                 });
-
-                for (const language of [english, french]) {
-                    await EquipmentTranslation.create({
-                        equipmentId: equipment.id,
-                        languageId: language.id,
-                        name: equipmentData[language.code as 'fr' | 'en'],
-                    });
-                }
+                await equipment.refresh();
 
                 for (const type of equipmentData.types) {
-                    const equipmentType: EquipmentType = await EquipmentType.create({
+                    await EquipmentType.create({
                         code: type.code,
+                        name: Translation.from(type.translations),
                         equipmentId: equipment.id,
                     });
-                    await equipmentType.refresh();
-
-                    for (const language of [english, french]) {
-                        await EquipmentTypeTranslation.create({
-                            equipmentTypeId: equipment.id,
-                            languageId: language.id,
-                            name: type[language.code as 'fr' | 'en'],
-                        });
-                    }
                 }
             }
         }

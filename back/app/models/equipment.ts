@@ -1,30 +1,51 @@
 import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm';
 import { DateTime } from 'luxon';
-import EquipmentTranslation from '#models/equipment_translation';
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations';
 import File from '#models/file';
+import { Translation } from '@stouder-io/adonis-translatable';
+import Language from '#models/language';
+import EquipmentType from '#models/equipment_type';
+import SerializedEquipmentType from '#types/serialized/serialized_equipment_type';
+import SerializedEquipment from '#types/serialized/serialized_equipment';
 
 export default class Equipment extends BaseModel {
+    public static table: string = 'equipments';
+
     @column({ isPrimary: true })
     declare id: string;
+
+    @column()
+    declare name: Translation;
 
     @column()
     declare category: string;
 
     @column()
-    declare pictureId: string | null;
+    declare pictureId: string;
 
     @belongsTo((): typeof File => File, {
         foreignKey: 'pictureId',
     })
     declare picture: BelongsTo<typeof File>;
 
-    @hasMany((): typeof EquipmentTranslation => EquipmentTranslation)
-    declare translations: HasMany<typeof EquipmentTranslation>;
+    @hasMany((): typeof EquipmentType => EquipmentType)
+    declare types: HasMany<typeof EquipmentType>;
 
     @column.dateTime({ autoCreate: true })
     declare createdAt: DateTime;
 
     @column.dateTime({ autoCreate: true, autoUpdate: true })
     declare updatedAt: DateTime;
+
+    public apiSerialize(language: Language): SerializedEquipment {
+        return {
+            id: this.id,
+            name: this.name.get(language.code) || this.name.get(Language.LANGUAGE_ENGLISH.code) || '',
+            category: this.category,
+            picture: this.picture.apiSerialize(),
+            types: this.types.map((type: EquipmentType): SerializedEquipmentType => type.apiSerialize(language)),
+            createdAt: this.createdAt?.toString(),
+            updatedAt: this.updatedAt?.toString(),
+        };
+    }
 }
