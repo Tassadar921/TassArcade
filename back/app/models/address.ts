@@ -7,9 +7,6 @@ export default class Address extends BaseModel {
     declare id: string;
 
     @column()
-    declare frontId: number;
-
-    @column()
     declare streetNumber: string;
 
     @column()
@@ -52,7 +49,7 @@ export default class Address extends BaseModel {
 
     public apiSerialize(): SerializedAddress {
         return {
-            id: this.frontId,
+            id: this.id,
             streetNumber: this.streetNumber,
             isBis: this.isBis,
             street: this.street,

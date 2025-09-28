@@ -2,7 +2,7 @@ import SerializedAddress from '#types/serialized/serialized_address';
 import SerializedCompanyAdministrator from '#types/serialized/serialized_company_administrator';
 
 export type SerializedCompany = {
-    id: number;
+    id: string;
     name: string;
     address: SerializedAddress;
     administrators: SerializedCompanyAdministrator[];

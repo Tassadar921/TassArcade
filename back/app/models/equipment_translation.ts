@@ -9,9 +9,6 @@ export default class EquipmentTranslation extends BaseModel {
     declare id: string;
 
     @column()
-    declare frontId: number;
-
-    @column()
     declare name: string;
 
     @column()
@@ -34,7 +31,7 @@ export default class EquipmentTranslation extends BaseModel {
 
     @beforeFind()
     @beforeFetch()
-    public static preloadDefaults(companyAdministratorQuery: any): void {
-        companyAdministratorQuery.preload('language');
+    public static preloadDefaults(equipmentTranslationQuery: any): void {
+        equipmentTranslationQuery.preload('language');
     }
 }

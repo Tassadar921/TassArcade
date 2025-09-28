@@ -21,7 +21,7 @@
 
     type Props = {
         children: Snippet;
-        id?: string | number;
+        id?: string;
         canSubmit: boolean;
         deleteTitle?: string;
         deleteText?: string;

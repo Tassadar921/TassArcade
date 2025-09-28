@@ -2,7 +2,7 @@
     import type { Component } from 'svelte';
 
     export type SelectItem = {
-        value: string | number;
+        value: string;
         label: string;
         disabled?: boolean;
         icon?: Component;

@@ -13,6 +13,9 @@
             <img src="/icons/favicon-96x96.png" alt={m['common.logo.alt']()} class="w-48 rounded-xl" />
         </div>
         <FooterGroup title={m['footer.navigation']()} class="order-1 lg:order-2">
+            {#each mainMenu.both as item (item.title)}
+                <FooterGroupItem name={item.title} href={item.href} icon={item.icon} />
+            {/each}
             {#if $profile}
                 {#each mainMenu.connected as item (item.title)}
                     {#if !item.href.startsWith('/admin') || $profile.role === 'admin'}

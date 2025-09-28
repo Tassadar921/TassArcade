@@ -9,7 +9,7 @@ export default class Equipment extends BaseModel {
     declare id: string;
 
     @column()
-    declare frontId: number;
+    declare category: string;
 
     @column()
     declare pictureId: string | null;

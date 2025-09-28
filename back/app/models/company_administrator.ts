@@ -11,9 +11,6 @@ export default class CompanyAdministrator extends BaseModel {
     declare id: string;
 
     @column()
-    declare frontId: number;
-
-    @column()
     declare role: CompanyAdministratorRoleEnum;
 
     @column()
@@ -42,7 +39,7 @@ export default class CompanyAdministrator extends BaseModel {
 
     public apiSerialize(): SerializedCompanyAdministrator {
         return {
-            id: this.frontId,
+            id: this.id,
             role: this.role,
             user: this.user.apiSerialize(),
             updatedAt: this.updatedAt.toString(),

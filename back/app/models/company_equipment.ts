@@ -9,9 +9,6 @@ export default class CompanyEquipment extends BaseModel {
     declare id: string;
 
     @column()
-    declare frontId: number;
-
-    @column()
     declare companyId: string;
 
     @belongsTo((): typeof Company => Company)

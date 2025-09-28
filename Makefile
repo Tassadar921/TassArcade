@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: format format-check install upgrade list-routes db-fresh db-migrate db-seed init-logs-db db paraglide stop up rm prune build-prod migrate-prod start-prod deploy
+.PHONY: format format-check install upgrade list-routes db-fresh db-migrate db-seed init-logs-db db paraglide stop up rm prune build-prod migrate-prod start-back-prod start-front-prod deploy
 
 format:
 	node ./format/command.js
@@ -58,6 +58,8 @@ prune:
 	docker system prune -f
 
 build-prod:
+	mkdir -p back/static
+
 	# Temporary persisted directories creation
 	mkdir -p back/.persist
 	[ -d back/build/public ] && cp -r back/build/public back/.persist/public || true
@@ -68,23 +70,33 @@ build-prod:
 
 	# Persisted directories restoration
 	[ -d back/.persist/public ] && cp -r back/.persist/public back/build/ || true
-	[ -d back/.persist/static ] && cp -r back/.persist/static/* back/build/static/ || true
+	[ -d back/.persist/static ] && cp -r back/.persist/static/. back/build/static/ || true
 
 	# Fixture clearing
 	mkdir -p back/build/static
-	cp -r back/static/* back/build/static/
+	cp -r back/static/. back/build/static/
 
 	# Clear temporary persisted directories
 	rm -rf back/.persist
 
+	# Copy backend types
+	mkdir -p front/back/app/types
+	cp -r back/app/types/. front/back/app/types/
+
 	# Frontend build
-	cd front && npm install && npm run build
+	cd front && npm install && npx paraglide-js compile && NODE_OPTIONS="--max-old-space-size=3000" npm run build && cd build && npm install --omit=dev
 
 migrate-prod:
-	cd back && node ace migration:run && node ace migration:run --connection=logs
+	cd back/build && node ace migration:run && node ace migration:run --connection=logs
 
-start-prod:
-	pm2 describe tassarcade-backend > /dev/null
-	pm2 restart tassarcade-backend || pm2 start back/build/bin/server.js --name tassarcade-backend
+start-back-prod:
+	@echo "Restarting tassarcade-backend..."
+	@pm2 delete tassarcade-backend > /dev/null 2>&1 || true
+	@pm2 start back/build/bin/server.js --name essaimons-v1-backend --update-env
 
-deploy: build-prod migrate-prod start-prod
+start-front-prod:
+	@echo "Restarting tassarcade-frontend..."
+	@pm2 delete tassarcade-frontend > /dev/null 2>&1 || true
+	@PORT=4173 pm2 start front/build/index.js --name essaimons-v1-frontend --update-env
+
+deploy: build-prod migrate-prod start-back-prod start-front-prod

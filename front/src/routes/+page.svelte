@@ -4,6 +4,7 @@
     import Meta from '#components/Meta.svelte';
     import { MapLibre } from 'svelte-maplibre';
     import { onMount } from 'svelte';
+    import { MultiSelectWithTags } from '#lib/components/ui/multi-select-with-tags';
 
     let latitude: number = $state(48.866667);
     let longitude: number = $state(2.333333);
@@ -39,5 +40,15 @@
 <Meta title={m['home.meta.title']()} description={m['home.meta.description']()} keywords={m['home.meta.keywords']().split(', ')} pathname="/" />
 
 <Title title={m['home.title']()} />
+
+<MultiSelectWithTags
+    items={[
+        { value: 1, label: 'test' },
+        { value: 2, label: 'test2' },
+        { value: 3, label: 'test3' },
+        { value: 4, label: 'test4' },
+    ]}
+    selectedItems={[]}
+/>
 
 <MapLibre bind:map center={[longitude, latitude]} zoom={15} class="h-[800px]" style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json" onload={handleLoad} />

@@ -12,7 +12,7 @@
         accept: string;
         fileName?: string;
         pathPrefix: string;
-        id: number | string;
+        id: string;
         disabled?: boolean;
         file?: File;
     };
@@ -76,9 +76,9 @@
         isDragging = false;
 
         if (event.dataTransfer?.files?.length) {
-            const dataTransfert = new DataTransfer();
-            dataTransfert.items.add(event.dataTransfer.files[0]);
-            inputRef.files = dataTransfert.files;
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(event.dataTransfer.files[0]);
+            inputRef.files = dataTransfer.files;
             inputRef.dispatchEvent(new Event('change', { bubbles: true }));
         }
     };

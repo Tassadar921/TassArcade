@@ -17,7 +17,10 @@ export default class FileController {
 
     public async serveStaticProfilePictureFile({ request, response, i18n }: HttpContext) {
         const { userId } = await serveStaticProfilePictureFileValidator.validate(request.params());
-        const user: User = await this.userRepository.firstOrFail({ frontId: userId });
+        const user: User | null = await this.userRepository.findOneBy({ id: userId });
+        if (!user) {
+            return response.notFound({ error: i18n.t('messages.file.serve-status-profile-picture-file.error.user-not-found') });
+        }
 
         try {
             const filePath: string = await cache.getOrSet({
@@ -35,7 +38,7 @@ export default class FileController {
             return response.download(filePath);
         } catch (error: any) {
             if (error.message === 'NO_PICTURE') {
-                return response.notFound({ error: i18n.t('messages.file.serve-status-profile-picture-file.error') });
+                return response.notFound({ error: i18n.t('messages.file.serve-status-profile-picture-file.error.no-picture') });
             }
         }
     }

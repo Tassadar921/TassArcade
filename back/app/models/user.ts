@@ -23,9 +23,6 @@ export default class User extends compose(BaseModel, AuthFinder) {
     declare id: string;
 
     @column()
-    declare frontId: number;
-
-    @column()
     declare username: string;
 
     @column()
@@ -86,7 +83,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
     public apiSerialize(): SerializedUser {
         return {
-            id: this.frontId,
+            id: this.id,
             username: this.username,
             email: this.email,
             role: this.role,

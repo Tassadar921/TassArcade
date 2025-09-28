@@ -19,7 +19,7 @@
     import { showToast } from '#lib/services/toastService';
 
     type Props = {
-        id: string | number;
+        id: string;
         onDelete?: (ids: string[]) => void;
         deleteTitle?: string;
         deleteText?: string;

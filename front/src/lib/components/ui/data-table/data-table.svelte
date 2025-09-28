@@ -41,7 +41,7 @@
         selectedRows?: string[];
         batchDeleteTitle?: string;
         batchDeleteText?: string;
-        onBatchDelete?: (ids: string[] | number[]) => void;
+        onBatchDelete?: (ids: string[]) => void;
         onPaginationChange: (page: number, limit: number) => void;
     };
 

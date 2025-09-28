@@ -16,7 +16,7 @@ export default class extends BaseSeeder {
         const fileRepository: FileRepository = new FileRepository();
 
         for (const language of [Language.LANGUAGE_ENGLISH, Language.LANGUAGE_FRENCH]) {
-            let flag: File | null = await fileRepository.findOneBy({ name: `${language.code}.svg` });
+            let flag: File | null = await fileRepository.findOneBy({ name: `${language.code}.svg`, type: FileTypeEnum.LANGUAGE_FLAG });
             if (!flag) {
                 const path: string = await this.moveLanguageFlag(language.code);
                 const { size, mimeType, extension, name } = await fileService.getFileInfo(app.makePath(`${path}/${language.code}.svg`));

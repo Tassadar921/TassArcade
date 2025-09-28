@@ -27,12 +27,12 @@
         getUsers();
     };
 
-    const handleDelete = (ids: number[] | string[]): void => {
+    const handleDelete = (ids: string[]): void => {
         if (!paginatedUsers) {
             return;
         }
 
-        ids.forEach((id: number | string): void => {
+        ids.forEach((id: string): void => {
             paginatedUsers!.users = paginatedUsers!.users.filter((user: SerializedUser): boolean => user.id !== id);
             paginatedUsers!.total = paginatedUsers!.total - 1;
         });

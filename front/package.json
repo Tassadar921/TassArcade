@@ -17,7 +17,7 @@
     "devDependencies": {
         "@fontsource/fira-mono": "^5.2.6",
         "@internationalized/date": "^3.9.0",
-        "@lucide/svelte": "^0.542.0",
+        "@lucide/svelte": "^0.515.0",
         "@neoconfetti/svelte": "^2.2.2",
         "@playwright/test": "^1.55.0",
         "@sveltejs/adapter-node": "^5.3.1",

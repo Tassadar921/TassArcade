@@ -11,9 +11,6 @@ export default class Company extends BaseModel {
     declare id: string;
 
     @column()
-    declare frontId: number;
-
-    @column()
     declare name: string;
 
     @column()
@@ -33,7 +30,7 @@ export default class Company extends BaseModel {
 
     public apiSerialize(): SerializedCompany {
         return {
-            id: this.frontId,
+            id: this.id,
             name: this.name,
             address: this.address.apiSerialize(),
             administrators: this.administrators.map((administrator: CompanyAdministrator): SerializedCompanyAdministrator => administrator.apiSerialize()),

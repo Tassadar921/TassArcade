@@ -19,11 +19,16 @@
             }
         },
         "user": {
+            "get": {
+                "error": {
+                    "not-found": "User not found"
+                }
+            },
             "delete": {
                 "success": "Successfully deleted {username}",
                 "error": {
                     "current": "You cannot delete your own account from back-office ({username})",
-                    "default": "Error while deleting user with identifier {frontId}"
+                    "default": "Error while deleting user with identifier {id}"
                 }
             },
             "create": {
@@ -74,7 +79,10 @@
     },
     "file": {
         "serve-status-profile-picture-file": {
-            "error": "User's profile picture not found"
+            "error": {
+                "user-not-found": "User not found",
+                "no-picture": "User's profile picture not found"
+            }
         }
     },
     "friend": {
