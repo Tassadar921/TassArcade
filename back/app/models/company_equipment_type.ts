@@ -5,6 +5,8 @@ import Company from '#models/company';
 import EquipmentType from '#models/equipment_type';
 
 export default class CompanyEquipmentType extends BaseModel {
+    public static table: string = 'company_equipment_types';
+
     @column({ isPrimary: true })
     declare id: string;
 

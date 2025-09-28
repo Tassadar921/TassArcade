@@ -7,6 +7,7 @@ import LogResponseStatusEnum from '#types/enum/log_response_status_enum';
 import SerializedLog from '#types/serialized/serialized_log';
 
 export default class Log extends BaseModel {
+    public static table: string = 'logs';
     static connection: string = 'logs';
 
     @column({ isPrimary: true })

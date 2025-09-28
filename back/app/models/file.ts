@@ -4,6 +4,8 @@ import SerializedFile from '#types/serialized/serialized_file';
 import FileTypeEnum from '#types/enum/file_type_enum';
 
 export default class File extends BaseModel {
+    public static table: string = 'files';
+
     @column({ isPrimary: true })
     declare id: string;
 

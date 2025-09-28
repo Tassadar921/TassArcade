@@ -7,6 +7,8 @@ import Language from '#models/language';
 import SerializedEquipmentType from '#types/serialized/serialized_equipment_type';
 
 export default class EquipmentType extends BaseModel {
+    public static table: string = 'equipment_types';
+
     @column({ isPrimary: true })
     declare id: string;
 

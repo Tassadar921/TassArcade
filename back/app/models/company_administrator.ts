@@ -7,6 +7,8 @@ import SerializedCompanyAdministrator from '#types/serialized/serialized_company
 import CompanyAdministratorRoleEnum from '#types/enum/company_administrator_role_enum';
 
 export default class CompanyAdministrator extends BaseModel {
+    public static table: string = 'company_administrators';
+
     @column({ isPrimary: true })
     declare id: string;
 

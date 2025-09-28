@@ -5,6 +5,8 @@ import type { BelongsTo } from '@adonisjs/lucid/types/relations';
 import UserTokenTypeEnum from '#types/enum/user_token_type_enum';
 
 export default class UserToken extends BaseModel {
+    public static table: string = 'user_tokens';
+
     @column({ isPrimary: true })
     declare id: string;
 

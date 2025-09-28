@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: format format-check install upgrade list-routes db-fresh db-migrate db-seed init-logs-db db paraglide stop up rm prune build-prod migrate-prod start-back-prod start-front-prod deploy
+.PHONY: format format-check install upgrade list-routes db-fresh db-migrate db-seed db-factory init-logs-db db paraglide stop up rm prune build-prod migrate-prod start-back-prod start-front-prod deploy
 
 format:
 	node ./format/command.js
@@ -31,10 +31,13 @@ db-migrate:
 db-seed:
 	./compose-env.sh exec -T backend node ace db:seed
 
+db-factory:
+	./compose-env.sh exec -T backend node ace db:factory:company
+
 init-logs-db:
 	./init-logs-db.sh
 
-db: init-logs-db db-fresh db-seed
+db: init-logs-db db-fresh db-seed db-factory
 
 paraglide:
 	cd front && npx paraglide-js compile

@@ -3,6 +3,8 @@ import { DateTime } from 'luxon';
 import SerializedAddress from '#types/serialized/serialized_address';
 
 export default class Address extends BaseModel {
+    public static table: string = 'addresses';
+
     @column({ isPrimary: true })
     declare id: string;
 

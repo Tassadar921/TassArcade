@@ -7,6 +7,8 @@ import SerializedCompany from '#types/serialized/serialized_company';
 import SerializedCompanyAdministrator from '#types/serialized/serialized_company_administrator';
 
 export default class Company extends BaseModel {
+    public static table: string = 'companies';
+
     @column({ isPrimary: true })
     declare id: string;
 
