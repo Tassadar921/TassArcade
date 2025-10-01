@@ -2,16 +2,19 @@
     import { m } from '#lib/paraglide/messages';
     import { Title } from '#lib/components/ui/title';
     import Meta from '#components/Meta.svelte';
-    import { MapLibre, Control, ScaleControl } from 'svelte-maplibre';
+    import { MapLibre, Control, ScaleControl, type MapMoveEvent, DefaultMarker, Popup, Marker } from 'svelte-maplibre';
     import { onMount } from 'svelte';
     import { MultiSelectWithTags } from '#lib/components/ui/multi-select-with-tags';
     import { page } from '$app/state';
     import type { SerializedEquipment, SerializedEquipmentType } from 'backend/types';
     import MapControls from '#lib/partials/map/MapControls.svelte';
     import { mode } from 'mode-watcher';
+    import { wrappedFetch } from '#lib/services/requestService';
+    import { MapPinned } from '@lucide/svelte';
 
-    let latitude: number = $state(48.866667);
-    let longitude: number = $state(2.333333);
+    let latitude: number = $state(page.data.latitude);
+    let longitude: number = $state(page.data.longitude);
+    let clusters: { lat: number; lng: number; isCluster: boolean }[] = $state([]);
 
     const styles = {
         light: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
@@ -48,6 +51,19 @@
         map.touchZoomRotate.disableRotation();
         map.setStyle(styles[current]);
     };
+
+    const fetchClusters = async (event: MapMoveEvent): Promise<void> => {
+        const bounds = event.target.getBounds();
+        const minLat = bounds.getSouth();
+        const maxLat = bounds.getNorth();
+        const minLng = bounds.getWest();
+        const maxLng = bounds.getEast();
+        const zoom = event.target.getZoom();
+
+        await wrappedFetch(`/map/clusters?minLat=${minLat}&maxLat=${maxLat}&minLng=${minLng}&maxLng=${maxLng}&zoom=${zoom}`, { method: 'GET' }, ({ data }): void => {
+            clusters = data;
+        });
+    };
 </script>
 
 <Meta title={m['home.meta.title']()} description={m['home.meta.description']()} keywords={m['home.meta.keywords']().split(', ')} pathname="/" />
@@ -55,7 +71,7 @@
 <Title title={m['home.title']()} />
 
 <MultiSelectWithTags
-    categories={page.data.data.map((equipment: SerializedEquipment) => ({
+    categories={page.data.equipments.map((equipment: SerializedEquipment) => ({
         label: equipment.name,
         thumbnailPath: `/assets/equipment-thumbnail/${equipment.id}`,
         items: equipment.types.map((type: SerializedEquipmentType) => ({
@@ -71,14 +87,25 @@
     center={[longitude, latitude]}
     style={'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'}
     class="relative w-full aspect-[9/16] h-[800px] sm:max-h-full sm:aspect-video"
-    zoom={15}
+    zoom={7}
     attributionControl={false}
     onload={handleLoad}
+    onmoveend={fetchClusters}
+    onzoom={fetchClusters}
 >
     {#snippet children({ map })}
         <ScaleControl />
         <Control>
             <MapControls {map} bind:current {styles} />
         </Control>
+        {#each clusters as point}
+            {#if point.isCluster}
+                <Marker lngLat={[point.lng, point.lat]}>
+                    <MapPinned />
+                </Marker>
+            {:else}
+                <DefaultMarker lngLat={[point.lng, point.lat]} />
+            {/if}
+        {/each}
     {/snippet}
 </MapLibre>

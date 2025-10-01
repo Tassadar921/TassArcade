@@ -17,6 +17,7 @@ const ProfileController = () => import('#controllers/profile_controller');
 const FileController = () => import('#controllers/file_controller');
 const OauthController = () => import('#controllers/oauth_controller');
 const EquipmentController = () => import('#controllers/equipment_controller');
+const ClusterController = () => import('#controllers/cluster_controller');
 
 router.get('healthcheck', [HealthCheckController]);
 
@@ -110,6 +111,7 @@ router
                     .prefix('profile');
 
                 router.get('/equipments', [EquipmentController, 'getAll']);
+                router.get('/clusters', [ClusterController, 'get']);
 
                 router
                     .group((): void => {

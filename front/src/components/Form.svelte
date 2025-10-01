@@ -51,7 +51,7 @@
 {/if}
 
 <div class:mt-20={hasBackground} class={cn('flex items-center justify-center', className)}>
-    <Card class="w-10/12 sm:w-lg">
+    <Card class="px-8 w-10/12 sm:w-lg">
         <form use:enhance method="POST" enctype="multipart/form-data" class="z-10 flex flex-col gap-3">
             <CardHeader>
                 {@render header?.()}
@@ -64,8 +64,8 @@
             </CardContent>
 
             {#if submittable}
-                <CardFooter class="flex justify-center">
-                    <Button type="submit" disabled={isSendButtonDisabled} size="lg" class="w-md">
+                <CardFooter class="flex justify-center pt-2">
+                    <Button type="submit" disabled={isSendButtonDisabled} size="lg" class="w-full max-w-xs sm:max-w-sm">
                         {#if isLoading}
                             <Icon name="spinner" size={40} />
                         {:else if submitContent}

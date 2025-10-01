@@ -8,20 +8,25 @@ import AddressRepository from '#repositories/address_repository';
 export default class ClusterController {
     constructor(private readonly addressRepository: AddressRepository) {}
 
-    public async get({ request, response }: HttpContext) {
-        const { minLat, maxLat, minLon, maxLon, zoom } = await request.validateUsing(getClustersValidator);
+    public async get({ request, response }: HttpContext): Promise<void> {
+        const { minLat, maxLat, minLng, maxLng, zoom } = await request.validateUsing(getClustersValidator);
 
-        let precision: number = 3;
-        if (zoom >= 5 && zoom < 10) {
+        let precision: number = 2;
+        if (zoom >= 3 && zoom < 6) {
+            precision = 3;
+        } else if (zoom >= 6 && zoom < 8) {
+            precision = 4;
+        } else if (zoom >= 8 && zoom < 10) {
             precision = 5;
-        } else if (zoom >= 10 && zoom < 13) {
+        } else if (zoom >= 10 && zoom < 12) {
+            precision = 7;
+        } else if (zoom >= 12 && zoom < 13) {
             precision = 7;
         } else if (zoom >= 13) {
-            precision = 9;
+            precision = 8;
         }
 
-        const clusters: Address[] = await this.addressRepository.getClusters(minLat, maxLat, minLon, maxLon, precision);
-        console.log(clusters);
+        const clusters: Address[] = await this.addressRepository.getClusters(minLat, maxLat, minLng, maxLng, precision);
 
         return response.ok(clusters);
     }

@@ -1,7 +1,7 @@
 import { BaseModel, beforeSave, column } from '@adonisjs/lucid/orm';
 import { DateTime } from 'luxon';
 import SerializedAddress from '#types/serialized/serialized_address';
-import * as ngeohash from 'ngeohash';
+import ngeohash from 'ngeohash';
 
 export default class Address extends BaseModel {
     public static table: string = 'addresses';

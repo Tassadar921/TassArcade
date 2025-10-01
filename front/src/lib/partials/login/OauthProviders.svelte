@@ -16,7 +16,7 @@
     };
 </script>
 
-<div class="flex flex-col gap-1 items-center px-8">
+<div class="flex flex-col gap-1 items-center">
     <Button type="button" size="icon" class="w-full" onclick={() => handleOauthClick('google')}>
         <Icon name="google" size={42} />
         <p>{m['login.login-with']()} Google</p>

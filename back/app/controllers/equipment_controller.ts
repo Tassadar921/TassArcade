@@ -10,14 +10,14 @@ export default class EquipmentController {
     constructor(private readonly equipmentRepository: EquipmentRepository) {}
 
     public async getAll({ response, language }: HttpContext): Promise<void> {
-        const equipments: Equipment[] = await this.equipmentRepository.all(['types']);
-
         return response.ok(
             await cache.getOrSet({
                 key: 'equipments',
                 tags: ['equipments'],
                 ttl: '1h',
                 factory: async (): Promise<SerializedEquipment[]> => {
+                    const equipments: Equipment[] = await this.equipmentRepository.all(['types']);
+
                     return equipments
                         .map((equipment: Equipment): SerializedEquipment => equipment.apiSerialize(language))
                         .sort((a: SerializedEquipment, b: SerializedEquipment): number => a.name.localeCompare(b.name));
