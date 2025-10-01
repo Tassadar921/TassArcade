@@ -54,11 +54,11 @@
 
     const fetchClusters = async (event: MapMoveEvent): Promise<void> => {
         const bounds = event.target.getBounds();
-        const minLat = bounds.getSouth();
-        const maxLat = bounds.getNorth();
-        const minLng = bounds.getWest();
-        const maxLng = bounds.getEast();
-        const zoom = event.target.getZoom();
+        const minLat: number = bounds.getSouth();
+        const maxLat: number = bounds.getNorth();
+        const minLng: number = bounds.getWest();
+        const maxLng: number = bounds.getEast();
+        const zoom: number = event.target.getZoom();
 
         await wrappedFetch(`/map/clusters?minLat=${minLat}&maxLat=${maxLat}&minLng=${minLng}&maxLng=${maxLng}&zoom=${zoom}`, { method: 'GET' }, ({ data }): void => {
             clusters = data;
