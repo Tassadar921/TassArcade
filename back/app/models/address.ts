@@ -1,6 +1,7 @@
-import { BaseModel, column } from '@adonisjs/lucid/orm';
+import { BaseModel, beforeSave, column } from '@adonisjs/lucid/orm';
 import { DateTime } from 'luxon';
 import SerializedAddress from '#types/serialized/serialized_address';
+import * as ngeohash from 'ngeohash';
 
 export default class Address extends BaseModel {
     public static table: string = 'addresses';
@@ -34,6 +35,16 @@ export default class Address extends BaseModel {
 
     @column()
     declare longitude: number | null;
+
+    @column()
+    public geohash: string = '';
+
+    @beforeSave()
+    public static setGeohash(address: Address): void {
+        if (address.latitude && address.longitude) {
+            address.geohash = ngeohash.encode(address.latitude, address.longitude);
+        }
+    }
 
     @column.dateTime({ autoCreate: true })
     declare createdAt: DateTime;

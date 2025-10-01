@@ -58,6 +58,18 @@
         "consent": "I agree to the terms and conditions",
         "logo": {
             "alt": "TassArcade's logo"
+        },
+        "multiselect": {
+            "selected": [
+                {
+                    "declarations": ["input count"],
+                    "match": {
+                        "count=0": "No items selected",
+                        "count=1": "{count} item selected",
+                        "count=*": "{count} items selected"
+                    }
+                }
+            ]
         }
     },
     "open-graph": {

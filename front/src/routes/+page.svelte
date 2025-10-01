@@ -2,15 +2,23 @@
     import { m } from '#lib/paraglide/messages';
     import { Title } from '#lib/components/ui/title';
     import Meta from '#components/Meta.svelte';
-    import { MapLibre } from 'svelte-maplibre';
+    import { MapLibre, Control, ScaleControl } from 'svelte-maplibre';
     import { onMount } from 'svelte';
     import { MultiSelectWithTags } from '#lib/components/ui/multi-select-with-tags';
     import { page } from '$app/state';
     import type { SerializedEquipment, SerializedEquipmentType } from 'backend/types';
+    import MapControls from '#lib/partials/map/MapControls.svelte';
+    import { mode } from 'mode-watcher';
 
     let latitude: number = $state(48.866667);
     let longitude: number = $state(2.333333);
-    let map: maplibregl.Map;
+
+    const styles = {
+        light: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+        dark: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+    };
+
+    let current: 'light' | 'dark' = $state(mode.current === 'dark' ? 'dark' : 'light');
 
     onMount((): void => {
         if (!navigator.geolocation) {
@@ -38,6 +46,7 @@
 
         map.dragRotate.disable();
         map.touchZoomRotate.disableRotation();
+        map.setStyle(styles[current]);
     };
 </script>
 
@@ -58,4 +67,18 @@
     selectedItems={[]}
 />
 
-<MapLibre bind:map center={[longitude, latitude]} zoom={15} class="h-[800px]" style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json" onload={handleLoad} />
+<MapLibre
+    center={[longitude, latitude]}
+    style={'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'}
+    class="relative w-full aspect-[9/16] h-[800px] sm:max-h-full sm:aspect-video"
+    zoom={15}
+    attributionControl={false}
+    onload={handleLoad}
+>
+    {#snippet children({ map })}
+        <ScaleControl />
+        <Control>
+            <MapControls {map} bind:current {styles} />
+        </Control>
+    {/snippet}
+</MapLibre>

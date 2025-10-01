@@ -3,6 +3,8 @@
     import { Button } from '#lib/components/ui/button';
     import { Command, CommandList, CommandItem, CommandGroup } from '#lib/components/ui/command';
     import { X } from '@lucide/svelte';
+    import { mode } from 'mode-watcher';
+    import { m } from '#lib/paraglide/messages';
 
     export type SelectItem = {
         value: string;
@@ -27,7 +29,7 @@
 
     const selectItem = (item: SelectItem, category: SelectCategory): void => {
         selectedItems = [...selectedItems, item];
-        category.items = category.items.filter((listItem) => listItem.value !== item.value);
+        category.items = category.items.filter((listItem: SelectItem) => listItem.value !== item.value);
         categories = [...categories];
 
         if (categories.every((c) => !c.items.length)) {
@@ -38,20 +40,24 @@
     const removeItem = (item: SelectItem): void => {
         selectedItems = selectedItems.filter((selectedItem) => selectedItem.value !== item.value);
 
-        const category: SelectCategory | undefined = categories.find((c) => c.label === item.category);
-        if (category) {
-            category.items = [...category.items, item];
-            categories = [...categories];
-        }
+        categories = categories.map((category: SelectCategory) => {
+            if (category.label === item.category) {
+                return {
+                    ...category,
+                    items: [...category.items, item].sort((a, b) => a.label.localeCompare(b.label)),
+                };
+            }
+            return category;
+        });
     };
 </script>
 
 <div class="flex flex-col gap-2 my-3">
     <Popover bind:open={isOpen}>
         <div class="flex gap-5">
-            <PopoverTrigger disabled={categories.every((c) => !c.items.length)}>
-                <Button disabled={categories.every((c) => !c.items.length)}>
-                    {selectedItems.length > 0 ? `${selectedItems.length} sélectionné(s)` : 'Sélectionner'}
+            <PopoverTrigger disabled={categories.every((category: SelectCategory) => !category.items.length)}>
+                <Button disabled={categories.every((category: SelectCategory) => !category.items.length)}>
+                    {m['common.multiselect.selected']({ count: selectedItems.length })}
                 </Button>
             </PopoverTrigger>
 
@@ -65,7 +71,7 @@
             </div>
         </div>
 
-        <PopoverContent class="w-60">
+        <PopoverContent class="w-72">
             <Command>
                 <CommandList>
                     {#each categories as category}
@@ -73,7 +79,11 @@
                             <CommandGroup>
                                 <div class="flex items-center gap-2 mb-1">
                                     {#if category.thumbnailPath}
-                                        <img src={category.thumbnailPath} alt={category.label} class="size-6 rounded" />
+                                        <img
+                                            src={category.thumbnailPath}
+                                            alt={category.label}
+                                            class="size-6 rounded {mode.current === 'dark' ? 'filter invert sepia-100 saturate-500 hue-rotate-180' : ''}"
+                                        />
                                     {/if}
                                     <p class="font-bold">{category.label}</p>
                                 </div>

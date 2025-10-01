@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ fetch }) => {
-    const response: Response = await fetch('/equipments');
+    const response: Response = await fetch('/map/equipments');
 
     const { isSuccess, data } = await response.json();
 

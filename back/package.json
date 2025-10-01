@@ -42,6 +42,7 @@
         "@swc/core": "1.13.5",
         "@types/luxon": "^3.7.1",
         "@types/mime-types": "^3.0.1",
+        "@types/ngeohash": "^0.6.8",
         "@types/node": "^24.5.2",
         "hot-hook": "^0.4.0",
         "typescript": "~5.9"
@@ -63,6 +64,7 @@
         "file-type": "^21.0.0",
         "luxon": "^3.7.2",
         "mime-types": "^3.0.1",
+        "ngeohash": "^0.6.3",
         "pg": "^8.16.3",
         "pino-pretty": "^13.1.1",
         "reflect-metadata": "^0.2.2",

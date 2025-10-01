@@ -16,8 +16,12 @@ export default class extends BaseSchema {
             table.string('country', 100).notNullable();
             table.float('latitude').notNullable();
             table.float('longitude').notNullable();
+            table.string('geohash', 12).nullable();
             table.timestamp('created_at');
             table.timestamp('updated_at');
+
+            table.index(['geohash']);
+            table.index(['latitude', 'longitude']);
         });
     }
 
