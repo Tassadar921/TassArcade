@@ -12,9 +12,7 @@ export default class ClusterController {
         const { minLat, maxLat, minLng, maxLng, zoom } = await request.validateUsing(getClustersValidator);
 
         let precision: number = 2;
-        if (zoom >= 2 && zoom < 4) {
-            precision = 2;
-        } else if (zoom >= 4 && zoom < 6) {
+        if (zoom >= 4 && zoom < 6) {
             precision = 3;
         } else if (zoom >= 6 && zoom < 8) {
             precision = 4;

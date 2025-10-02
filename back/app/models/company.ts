@@ -35,7 +35,6 @@ export default class Company extends BaseModel {
             id: this.id,
             name: this.name,
             address: this.address.apiSerialize(),
-            administrators: this.administrators.map((administrator: CompanyAdministrator): SerializedCompanyAdministrator => administrator.apiSerialize()),
             createdAt: this.createdAt.toString(),
             updatedAt: this.updatedAt.toString(),
         };
