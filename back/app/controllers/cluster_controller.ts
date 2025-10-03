@@ -1,14 +1,13 @@
-import Address from '#models/address';
 import { HttpContext } from '@adonisjs/core/http';
 import { getClustersValidator } from '#validators/cluster';
 import { inject } from '@adonisjs/core';
-import AddressRepository from '#repositories/address_repository';
+import CompanyRepository from '#repositories/company_repository';
 
 @inject()
 export default class ClusterController {
-    constructor(private readonly addressRepository: AddressRepository) {}
+    constructor(private readonly companyRepository: CompanyRepository) {}
 
-    public async get({ request, response }: HttpContext): Promise<void> {
+    public async get({ request, response, language }: HttpContext): Promise<void> {
         const { minLat, maxLat, minLng, maxLng, zoom } = await request.validateUsing(getClustersValidator);
 
         let precision: number = 2;
@@ -28,8 +27,6 @@ export default class ClusterController {
             precision = 9;
         }
 
-        const clusters: Address[] = await this.addressRepository.getClusters(minLat, maxLat, minLng, maxLng, precision);
-
-        return response.ok(clusters);
+        return response.ok(await this.companyRepository.getClusters(minLat, maxLat, minLng, maxLng, precision, language));
     }
 }

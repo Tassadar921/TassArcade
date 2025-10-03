@@ -6,21 +6,24 @@
     import { onMount } from 'svelte';
     import { MultiSelectWithTags } from '#lib/components/ui/multi-select-with-tags';
     import { page } from '$app/state';
-    import type { SerializedEquipment, SerializedEquipmentType } from 'backend/types';
+    import type { Cluster, SerializedEquipment, SerializedEquipmentType } from 'backend/types';
     import MapControls from '#lib/partials/map/MapControls.svelte';
     import { mode } from 'mode-watcher';
     import { wrappedFetch } from '#lib/services/requestService';
-    import { MapPinned } from '@lucide/svelte';
+    import { MapPinned, MapPin } from '@lucide/svelte';
+    import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogPortal } from '#lib/components/ui/dialog';
 
     let latitude: number = $state(page.data.latitude);
     let longitude: number = $state(page.data.longitude);
-    let clusters: { lat: number; lng: number; isCluster: boolean }[] = $state([]);
+    let clusters: Cluster[] = $state([]);
+    let selectedPoint: Cluster | null = $state(null);
 
     const styles = {
         light: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
         dark: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
     };
 
+    let showModal = $state(false);
     let current: 'light' | 'dark' = $state(mode.current === 'dark' ? 'dark' : 'light');
 
     onMount((): void => {
@@ -64,6 +67,16 @@
             clusters = data;
         });
     };
+
+    const handleMarkerClick = (point: Cluster): void => {
+        console.log('ici')
+        selectedPoint = point;
+        showModal = true;
+    };
+
+    $effect(() => {
+        console.log(selectedPoint?.companies[0].equipments);
+    })
 </script>
 
 <Meta title={m['home.meta.title']()} description={m['home.meta.description']()} keywords={m['home.meta.keywords']().split(', ')} pathname="/" />
@@ -104,8 +117,26 @@
                     <MapPinned />
                 </Marker>
             {:else}
-                <DefaultMarker lngLat={[point.lng, point.lat]} />
+                <Marker lngLat={[point.lng, point.lat]} onclick={() => handleMarkerClick(point)}>
+                    <MapPin />
+                </Marker>
             {/if}
         {/each}
     {/snippet}
 </MapLibre>
+
+<Dialog bind:open={showModal}>
+    <DialogPortal>
+        <DialogContent>
+            {#if selectedPoint}
+                <DialogHeader>
+                    <DialogTitle>{selectedPoint.companies[0].name}</DialogTitle>
+                    <DialogDescription>{selectedPoint.companies[0].address.fullAddress}</DialogDescription>
+                </DialogHeader>
+                {#each selectedPoint.companies[0].equipments as equipment}
+                    <p>{equipment.name}</p>
+                {/each}
+            {/if}
+        </DialogContent>
+    </DialogPortal>
+</Dialog>
