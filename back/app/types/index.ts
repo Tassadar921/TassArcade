@@ -16,6 +16,6 @@ export type { SerializedEquipmentType } from './serialized/serialized_equipment_
 export type { SerializedCompany } from './serialized/serialized_company.js';
 export type { SerializedCompanyAdministrator } from './serialized/serialized_company_administrator.js';
 export type { SerializedAddress } from './serialized/serialized_address.js';
-export type { SerializedCompanyEquipmentType } from './serialized/serialized_company_equipment_type.js'
+export type { SerializedCompanyEquipmentType } from './serialized/serialized_company_equipment_type.js';
 
 export type { Cluster } from './cluster.js';

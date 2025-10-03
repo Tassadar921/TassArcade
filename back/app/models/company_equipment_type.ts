@@ -5,7 +5,7 @@ import Company from '#models/company';
 import EquipmentType from '#models/equipment_type';
 import { Translation, translation } from '@stouder-io/adonis-translatable';
 import Language from '#models/language';
-import  { SerializedCompanyEquipmentType } from '#types/serialized/serialized_company_equipment_type';
+import { SerializedCompanyEquipmentType } from '#types/serialized/serialized_company_equipment_type';
 
 export default class CompanyEquipmentType extends BaseModel {
     public static table: string = 'company_equipment_types';
@@ -44,7 +44,7 @@ export default class CompanyEquipmentType extends BaseModel {
         return {
             id: this.id,
             name: this.equipmentType.name.get(language.code) || this.equipmentType.name.get(Language.LANGUAGE_ENGLISH.code) || '',
-            description: this.description.get(language.code) || this.description.get(Language.LANGUAGE_ENGLISH.code) || '',
+            description: this.description?.get(language.code) || this.description?.get(Language.LANGUAGE_ENGLISH.code) || undefined,
             createdAt: this.createdAt?.toString(),
             updatedAt: this.updatedAt?.toString(),
         };

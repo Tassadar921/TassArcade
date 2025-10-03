@@ -5,7 +5,7 @@ export type SerializedCompany = {
     id: string;
     name: string;
     address: SerializedAddress;
-    equipments: SerializedEquipmentType[]
+    equipments: SerializedEquipmentType[];
     createdAt?: string;
     updatedAt?: string;
 };

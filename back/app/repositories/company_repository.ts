@@ -25,7 +25,7 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
                 GROUP BY cluster
             `,
             [precision, minLat, maxLat, minLng, maxLng]
-        )
+        );
 
         const clusters: Cluster[] = [];
 

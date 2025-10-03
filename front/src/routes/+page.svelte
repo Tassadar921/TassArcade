@@ -2,7 +2,7 @@
     import { m } from '#lib/paraglide/messages';
     import { Title } from '#lib/components/ui/title';
     import Meta from '#components/Meta.svelte';
-    import { MapLibre, Control, ScaleControl, type MapMoveEvent, DefaultMarker, Popup, Marker } from 'svelte-maplibre';
+    import { MapLibre, Control, ScaleControl, type MapMoveEvent, Marker } from 'svelte-maplibre';
     import { onMount } from 'svelte';
     import { MultiSelectWithTags } from '#lib/components/ui/multi-select-with-tags';
     import { page } from '$app/state';
@@ -11,7 +11,8 @@
     import { mode } from 'mode-watcher';
     import { wrappedFetch } from '#lib/services/requestService';
     import { MapPinned, MapPin } from '@lucide/svelte';
-    import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogPortal } from '#lib/components/ui/dialog';
+    import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogPortal } from '#lib/components/ui/dialog';
+    import Address from '#components/Address.svelte';
 
     let latitude: number = $state(page.data.latitude);
     let longitude: number = $state(page.data.longitude);
@@ -69,14 +70,10 @@
     };
 
     const handleMarkerClick = (point: Cluster): void => {
-        console.log('ici')
+        console.log('ici');
         selectedPoint = point;
         showModal = true;
     };
-
-    $effect(() => {
-        console.log(selectedPoint?.companies[0].equipments);
-    })
 </script>
 
 <Meta title={m['home.meta.title']()} description={m['home.meta.description']()} keywords={m['home.meta.keywords']().split(', ')} pathname="/" />
@@ -131,7 +128,9 @@
             {#if selectedPoint}
                 <DialogHeader>
                     <DialogTitle>{selectedPoint.companies[0].name}</DialogTitle>
-                    <DialogDescription>{selectedPoint.companies[0].address.fullAddress}</DialogDescription>
+                    <DialogDescription>
+                        <Address latitude={selectedPoint.lat} longitude={selectedPoint.lng} address={selectedPoint.companies[0].address.fullAddress} />
+                    </DialogDescription>
                 </DialogHeader>
                 {#each selectedPoint.companies[0].equipments as equipment}
                     <p>{equipment.name}</p>
