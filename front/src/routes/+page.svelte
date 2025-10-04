@@ -12,7 +12,7 @@
     import { wrappedFetch } from '#lib/services/requestService';
     import { MapPinned, MapPin } from '@lucide/svelte';
     import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogPortal } from '#lib/components/ui/dialog';
-    import Address from '#components/Address.svelte';
+    import AddressExternalLink from '#components/AddressExternalLink.svelte';
 
     let latitude: number = $state(page.data.latitude);
     let longitude: number = $state(page.data.longitude);
@@ -25,7 +25,7 @@
     };
 
     let showModal = $state(false);
-    let current: 'light' | 'dark' = $state(mode.current === 'dark' ? 'dark' : 'light');
+    let currentMapTheme: 'light' | 'dark' = $state(mode.current === 'dark' ? 'dark' : 'light');
 
     onMount((): void => {
         if (!navigator.geolocation) {
@@ -53,7 +53,7 @@
 
         map.dragRotate.disable();
         map.touchZoomRotate.disableRotation();
-        map.setStyle(styles[current]);
+        map.setStyle(styles[currentMapTheme]);
     };
 
     const fetchClusters = async (event: MapMoveEvent): Promise<void> => {
@@ -106,16 +106,16 @@
     {#snippet children({ map })}
         <ScaleControl />
         <Control>
-            <MapControls {map} bind:current {styles} />
+            <MapControls {map} bind:currentMapTheme {styles} />
         </Control>
         {#each clusters as point}
             {#if point.isCluster}
                 <Marker lngLat={[point.lng, point.lat]}>
-                    <MapPinned />
+                    <MapPinned class={currentMapTheme === 'dark' ? 'text-white' : 'text-black'} />
                 </Marker>
             {:else}
                 <Marker lngLat={[point.lng, point.lat]} onclick={() => handleMarkerClick(point)}>
-                    <MapPin />
+                    <MapPin class={currentMapTheme === 'dark' ? 'text-white' : 'text-black'} />
                 </Marker>
             {/if}
         {/each}
@@ -129,7 +129,7 @@
                 <DialogHeader>
                     <DialogTitle>{selectedPoint.companies[0].name}</DialogTitle>
                     <DialogDescription>
-                        <Address latitude={selectedPoint.lat} longitude={selectedPoint.lng} address={selectedPoint.companies[0].address.fullAddress} />
+                        <AddressExternalLink latitude={selectedPoint.lat} longitude={selectedPoint.lng} address={selectedPoint.companies[0].address.fullAddress} />
                     </DialogDescription>
                 </DialogHeader>
                 {#each selectedPoint.companies[0].equipments as equipment}
