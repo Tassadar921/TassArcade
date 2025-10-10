@@ -14,11 +14,13 @@
     import { Dialog, DialogContent, DialogPortal } from '#lib/components/ui/dialog';
     import { goto } from '$app/navigation';
     import CompanyDialogContent from '#lib/partials/map/CompanyDialogContent.svelte';
+    import CompanyEquipmentDialogContent from '#lib/partials/map/CompanyEquipmentDialogContent.svelte';
 
     let latitude: number = $state(page.data.latitude);
     let longitude: number = $state(page.data.longitude);
     let clusters: Cluster[] = $state([]);
     let selectedCompany: SerializedCompany | null = $state(null);
+    let selectedCompanyEquipment: SerializedCompanyEquipmentType | null = $state(null);
     let reorganizedEquipments: Record<string, { category: SerializedEquipmentLight; items: SerializedCompanyEquipmentType[] }> | undefined = $state();
 
     const styles = {
@@ -26,7 +28,8 @@
         dark: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
     };
 
-    let showModal: boolean = $state(false);
+    let showCompanyDialog: boolean = $state(false);
+    let showCompanyEquipmentDialog: boolean = $state(false);
     let currentMapTheme: 'light' | 'dark' = $state(mode.current === 'dark' ? 'dark' : 'light');
 
     onMount((): void => {
@@ -77,6 +80,16 @@
                 if (initialCompany) {
                     if (data.company) {
                         handleMarkerClick({ companies: [data.company] });
+                        if (url.searchParams.get('equipment')) {
+                            const initialEquipment: SerializedCompanyEquipmentType | undefined = data.company.equipments.find(
+                                (equipment: SerializedCompanyEquipmentType) => equipment.id === url.searchParams.get('equipment')
+                            );
+                            if (!initialEquipment) {
+                                handleCloseCompanyEquipmentsDialog();
+                            } else {
+                                handleCompanyEquipmentClicked(initialEquipment);
+                            }
+                        }
                     } else {
                         handleCloseCompanyDialog();
                     }
@@ -103,7 +116,7 @@
         );
         const url: URL = new URL(page.url);
         url.searchParams.set('company', selectedCompany.id);
-        showModal = true;
+        showCompanyDialog = true;
         goto(url);
     };
 
@@ -111,6 +124,21 @@
         selectedCompany = null;
         const url: URL = new URL(page.url);
         url.searchParams.delete('company');
+        goto(url);
+    };
+
+    const handleCompanyEquipmentClicked = (equipment: SerializedCompanyEquipmentType): void => {
+        selectedCompanyEquipment = equipment;
+        const url: URL = new URL(page.url);
+        url.searchParams.set('equipment', equipment.id);
+        showCompanyEquipmentDialog = true;
+        goto(url);
+    };
+
+    const handleCloseCompanyEquipmentsDialog = () => {
+        selectedCompanyEquipment = null;
+        const url: URL = new URL(page.url);
+        url.searchParams.delete('equipment');
         goto(url);
     };
 </script>
@@ -161,10 +189,18 @@
     {/snippet}
 </MapLibre>
 
-<Dialog bind:open={showModal} onOpenChange={handleCloseCompanyDialog}>
+<Dialog bind:open={showCompanyDialog} onOpenChange={handleCloseCompanyDialog}>
     <DialogPortal>
         <DialogContent class="min-w-[90%] md:min-w-[750px]">
-            <CompanyDialogContent {selectedCompany} {reorganizedEquipments} />
+            <CompanyDialogContent {handleCompanyEquipmentClicked} {selectedCompany} {reorganizedEquipments} />
+        </DialogContent>
+    </DialogPortal>
+</Dialog>
+
+<Dialog bind:open={showCompanyEquipmentDialog} onOpenChange={handleCloseCompanyEquipmentsDialog}>
+    <DialogPortal>
+        <DialogContent class="min-w-[90%] md:min-w-[750px]">
+            <CompanyEquipmentDialogContent {selectedCompany} {selectedCompanyEquipment} />
         </DialogContent>
     </DialogPortal>
 </Dialog>

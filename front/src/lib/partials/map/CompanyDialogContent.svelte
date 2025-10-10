@@ -6,11 +6,12 @@
     import type { SerializedCompany, SerializedCompanyEquipmentType, SerializedEquipmentLight } from 'backend/types';
 
     type Props = {
+        handleCompanyEquipmentClicked: (equipment: SerializedCompanyEquipmentType) => void;
         selectedCompany: SerializedCompany | null;
         reorganizedEquipments: Record<string, { category: SerializedEquipmentLight; items: SerializedCompanyEquipmentType[] }> | undefined;
     };
 
-    let { selectedCompany, reorganizedEquipments }: Props = $props();
+    let { handleCompanyEquipmentClicked, selectedCompany, reorganizedEquipments }: Props = $props();
 </script>
 
 {#if selectedCompany}
@@ -35,7 +36,7 @@
                     <ul class="flex flex-wrap gap-2">
                         {#each items as equipment}
                             <li>
-                                <Button variant="outline" class="flex flex-col items-center gap-1 w-56 h-20">
+                                <Button variant="outline" class="flex flex-col items-center gap-1 w-56 h-20" onclick={() => handleCompanyEquipmentClicked(equipment)}>
                                     <p>{equipment.name}</p>
                                     <p class="text-gray-700 dark:text-gray-500 text-sm text-wrap">{equipment.description}</p>
                                 </Button>

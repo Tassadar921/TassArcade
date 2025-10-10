@@ -30,10 +30,10 @@
 
     let { children, id, canSubmit, deleteTitle, deleteText, onError }: Props = $props();
 
-    let showModal: boolean = $state(false);
+    let showDialog: boolean = $state(false);
 
     const handleDelete = async (): Promise<void> => {
-        showModal = false;
+        showDialog = false;
         await wrappedFetch(`${$location.replace(`/edit/${id}`, '')}/delete`, { method: 'POST', body: { data: [id] } }, (data) => {
             const isSuccess: boolean = data.messages.map((status: { isSuccess: boolean; message: string; code: string }) => {
                 showToast(status.message, status.isSuccess ? 'success' : 'error');
@@ -62,7 +62,7 @@
     {@render children?.()}
     <div class="w-full flex justify-end gap-5 pr-5">
         {#if id}
-            <Button variant="destructive" onclick={() => (showModal = true)}>
+            <Button variant="destructive" onclick={() => (showDialog = true)}>
                 {m['common.delete']()}
             </Button>
         {/if}
@@ -70,7 +70,7 @@
     </div>
 </form>
 
-<AlertDialog open={showModal} onOpenChange={() => (showModal = false)}>
+<AlertDialog bind:open={showDialog}>
     <AlertDialogContent>
         <AlertDialogHeader>
             <AlertDialogTitle>{deleteTitle}</AlertDialogTitle>
