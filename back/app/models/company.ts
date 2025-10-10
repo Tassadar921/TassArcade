@@ -40,7 +40,9 @@ export default class Company extends BaseModel {
             id: this.id,
             name: this.name,
             address: this.address.apiSerialize(),
-            equipments: this.equipments.map((equipmentType: CompanyEquipmentType): SerializedCompanyEquipmentType => equipmentType.apiSerialize(language)),
+            equipments: this.equipments
+                .map((equipmentType: CompanyEquipmentType): SerializedCompanyEquipmentType => equipmentType.apiSerialize(language))
+                .sort((a: SerializedCompanyEquipmentType, b: SerializedCompanyEquipmentType): number => a.name.localeCompare(b.name)),
             createdAt: this.createdAt.toString(),
             updatedAt: this.updatedAt.toString(),
         };

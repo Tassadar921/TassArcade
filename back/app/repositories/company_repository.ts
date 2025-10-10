@@ -14,14 +14,16 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
         const result = await db.rawQuery(
             `
                 SELECT
-                    LEFT(geohash, ?) AS cluster,
-                    AVG(latitude) AS lat,
-                    AVG(longitude) AS lng,
-                    array_agg(id) AS address_ids,
-                    COUNT(*) > 1 AS "isCluster"
-                FROM addresses
-                WHERE latitude BETWEEN ? AND ?
-                  AND longitude BETWEEN ? AND ?
+                    LEFT(address.geohash, ?) AS cluster,
+                    AVG(address.latitude) AS lat,
+                    AVG(address.longitude) AS lng,
+                    array_agg(DISTINCT address.id) AS address_ids,
+                    COUNT(DISTINCT company.id) > 1 AS "isCluster"
+                FROM addresses address
+                    INNER JOIN companies company ON company.address_id = address.id
+                    INNER JOIN company_equipment_types equipment_type ON equipment_type.company_id = company.id
+                WHERE address.latitude BETWEEN ? AND ?
+                  AND address.longitude BETWEEN ? AND ?
                 GROUP BY cluster
             `,
             [precision, minLat, maxLat, minLng, maxLng]

@@ -31,10 +31,10 @@ export default class Address extends BaseModel {
     declare country: string;
 
     @column()
-    declare latitude: number | null;
+    declare latitude: number;
 
     @column()
-    declare longitude: number | null;
+    declare longitude: number;
 
     @column()
     public geohash: string = '';

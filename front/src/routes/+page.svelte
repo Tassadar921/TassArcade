@@ -6,25 +6,27 @@
     import { onMount } from 'svelte';
     import { MultiSelectWithTags } from '#lib/components/ui/multi-select-with-tags';
     import { page } from '$app/state';
-    import type { Cluster, SerializedEquipment, SerializedEquipmentType } from 'backend/types';
+    import type { Cluster, SerializedCompanyEquipmentType, SerializedEquipment, SerializedEquipmentType, SerializedEquipmentLight, SerializedCompany } from 'backend/types';
     import MapControls from '#lib/partials/map/MapControls.svelte';
     import { mode } from 'mode-watcher';
     import { wrappedFetch } from '#lib/services/requestService';
     import { MapPinned, MapPin } from '@lucide/svelte';
-    import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogPortal } from '#lib/components/ui/dialog';
-    import AddressExternalLink from '#components/AddressExternalLink.svelte';
+    import { Dialog, DialogContent, DialogPortal } from '#lib/components/ui/dialog';
+    import { goto } from '$app/navigation';
+    import CompanyDialogContent from '#lib/partials/map/CompanyDialogContent.svelte';
 
     let latitude: number = $state(page.data.latitude);
     let longitude: number = $state(page.data.longitude);
     let clusters: Cluster[] = $state([]);
-    let selectedPoint: Cluster | null = $state(null);
+    let selectedCompany: SerializedCompany | null = $state(null);
+    let reorganizedEquipments: Record<string, { category: SerializedEquipmentLight; items: SerializedCompanyEquipmentType[] }> | undefined = $state();
 
     const styles = {
         light: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
         dark: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
     };
 
-    let showModal = $state(false);
+    let showModal: boolean = $state(false);
     let currentMapTheme: 'light' | 'dark' = $state(mode.current === 'dark' ? 'dark' : 'light');
 
     onMount((): void => {
@@ -64,15 +66,52 @@
         const maxLng: number = bounds.getEast();
         const zoom: number = event.target.getZoom();
 
-        await wrappedFetch(`/map/clusters?minLat=${minLat}&maxLat=${maxLat}&minLng=${minLng}&maxLng=${maxLng}&zoom=${zoom}`, { method: 'GET' }, ({ data }): void => {
-            clusters = data;
-        });
+        const url: URL = new URL(page.url);
+        const initialCompany: string | null = url.searchParams.get('company');
+
+        await wrappedFetch(
+            `/map/clusters?minLat=${minLat}&maxLat=${maxLat}&minLng=${minLng}&maxLng=${maxLng}&zoom=${zoom}${initialCompany ? `&company=${initialCompany}` : ''}`,
+            { method: 'GET' },
+            ({ data }): void => {
+                clusters = data.clusters;
+                if (initialCompany) {
+                    if (data.company) {
+                        handleMarkerClick({ companies: [data.company] });
+                    } else {
+                        handleCloseCompanyDialog();
+                    }
+                }
+            }
+        );
     };
 
-    const handleMarkerClick = (point: Cluster): void => {
-        console.log('ici');
-        selectedPoint = point;
+    const handleMarkerClick = (point: Partial<Cluster>): void => {
+        selectedCompany = point.companies![0];
+        reorganizedEquipments = selectedCompany.equipments.reduce(
+            (acc, equipmentType) => {
+                const category = equipmentType.category;
+                if (!acc[category.id]) {
+                    acc[category.id] = {
+                        category: category,
+                        items: [],
+                    };
+                }
+                acc[category.id].items.push(equipmentType);
+                return acc;
+            },
+            {} as Record<string, { category: SerializedEquipmentLight; items: SerializedCompanyEquipmentType[] }>
+        );
+        const url: URL = new URL(page.url);
+        url.searchParams.set('company', selectedCompany.id);
         showModal = true;
+        goto(url);
+    };
+
+    const handleCloseCompanyDialog = () => {
+        selectedCompany = null;
+        const url: URL = new URL(page.url);
+        url.searchParams.delete('company');
+        goto(url);
     };
 </script>
 
@@ -122,20 +161,10 @@
     {/snippet}
 </MapLibre>
 
-<Dialog bind:open={showModal}>
+<Dialog bind:open={showModal} onOpenChange={handleCloseCompanyDialog}>
     <DialogPortal>
-        <DialogContent>
-            {#if selectedPoint}
-                <DialogHeader>
-                    <DialogTitle>{selectedPoint.companies[0].name}</DialogTitle>
-                    <DialogDescription>
-                        <AddressExternalLink latitude={selectedPoint.lat} longitude={selectedPoint.lng} address={selectedPoint.companies[0].address.fullAddress} />
-                    </DialogDescription>
-                </DialogHeader>
-                {#each selectedPoint.companies[0].equipments as equipment}
-                    <p>{equipment.name}</p>
-                {/each}
-            {/if}
+        <DialogContent class="min-w-[90%] md:min-w-[750px]">
+            <CompanyDialogContent {selectedCompany} {reorganizedEquipments} />
         </DialogContent>
     </DialogPortal>
 </Dialog>

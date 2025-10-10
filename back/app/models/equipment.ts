@@ -7,6 +7,7 @@ import Language from '#models/language';
 import EquipmentType from '#models/equipment_type';
 import SerializedEquipmentType from '#types/serialized/serialized_equipment_type';
 import SerializedEquipment from '#types/serialized/serialized_equipment';
+import SerializedEquipmentLight from '#types/serialized/serialized_equipment_light';
 
 export default class Equipment extends BaseModel {
     public static table: string = 'equipments';
@@ -52,6 +53,17 @@ export default class Equipment extends BaseModel {
             types: this.types
                 .map((type: EquipmentType): SerializedEquipmentType => type.apiSerialize(language))
                 .sort((a: SerializedEquipmentType, b: SerializedEquipmentType): number => a.name.localeCompare(b.name)),
+            createdAt: this.createdAt?.toString(),
+            updatedAt: this.updatedAt?.toString(),
+        };
+    }
+
+    public apiSerializeLight(language: Language): SerializedEquipmentLight {
+        return {
+            id: this.id,
+            name: this.name.get(language.code) || this.name.get(Language.LANGUAGE_ENGLISH.code) || '',
+            category: this.category,
+            thumbnail: this.thumbnail.apiSerialize(),
             createdAt: this.createdAt?.toString(),
             updatedAt: this.updatedAt?.toString(),
         };

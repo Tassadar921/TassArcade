@@ -37,12 +37,17 @@ export default class CompanyEquipmentType extends BaseModel {
     @beforeFind()
     @beforeFetch()
     public static preloadDefaults(companyEquipmentTypeQuery: any): void {
-        companyEquipmentTypeQuery.preload('equipmentType');
+        companyEquipmentTypeQuery.preload('equipmentType', (equipmentTypeQuery: any): void => {
+            equipmentTypeQuery.preload('equipment', (equipmentQuery: any): void => {
+                equipmentQuery.preload('thumbnail');
+            });
+        });
     }
 
     public apiSerialize(language: Language): SerializedCompanyEquipmentType {
         return {
             id: this.id,
+            category: this.equipmentType.equipment.apiSerializeLight(language),
             name: this.equipmentType.name.get(language.code) || this.equipmentType.name.get(Language.LANGUAGE_ENGLISH.code) || '',
             description: this.description?.get(language.code) || this.description?.get(Language.LANGUAGE_ENGLISH.code) || undefined,
             createdAt: this.createdAt?.toString(),

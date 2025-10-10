@@ -5,7 +5,9 @@ export const GET: RequestHandler = async ({ url, locals }): Promise<Response> =>
     const params = Object.fromEntries(url.searchParams);
 
     try {
-        const response = await locals.client.get(`/api/clusters?minLat=${params.minLat}&maxLat=${params.maxLat}&minLng=${params.minLng}&maxLng=${params.maxLng}&zoom=${params.zoom}`);
+        const response = await locals.client.get(
+            `/api/clusters?minLat=${params.minLat}&maxLat=${params.maxLat}&minLng=${params.minLng}&maxLng=${params.maxLng}&zoom=${params.zoom}${params.company ? `&company=${params.company}` : ''}`
+        );
 
         if (response.status !== 200) {
             throw response;

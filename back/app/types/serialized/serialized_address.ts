@@ -9,8 +9,8 @@ export type SerializedAddress = {
     country: string;
     fullAddress: string;
     encodedAddress: string;
-    latitude: number | null;
-    longitude: number | null;
+    latitude: number;
+    longitude: number;
     createdAt?: string;
     updatedAt?: string;
 };

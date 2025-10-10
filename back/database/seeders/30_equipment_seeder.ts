@@ -147,7 +147,7 @@ export default class extends BaseSeeder {
         ];
 
         for (const equipmentData of equipments) {
-            let thumbnail: File | null = await fileRepository.findOneBy({ name: `${equipmentData.category}.svg`, type: FileTypeEnum.EQUIPMENT_PICTURE });
+            let thumbnail: File | null = await fileRepository.findOneBy({ name: `${equipmentData.category}.svg`, type: FileTypeEnum.EQUIPMENT_THUMBNAIL });
             if (!thumbnail) {
                 const path: string = await this.moveEquipmentPicture(equipmentData.category);
                 const { size, mimeType, extension, name } = await fileService.getFileInfo(app.makePath(`${path}/${equipmentData.category}.svg`));
@@ -157,7 +157,7 @@ export default class extends BaseSeeder {
                     extension,
                     mimeType,
                     size,
-                    type: FileTypeEnum.EQUIPMENT_PICTURE,
+                    type: FileTypeEnum.EQUIPMENT_THUMBNAIL,
                 });
                 await thumbnail.refresh();
             }
@@ -183,7 +183,7 @@ export default class extends BaseSeeder {
     }
 
     private async moveEquipmentPicture(category: string): Promise<string> {
-        const targetDir: string = path.join(process.cwd(), 'static/equipment-picture');
+        const targetDir: string = path.join(process.cwd(), 'static/equipment-thumbnail');
         const targetFile: string = path.join(targetDir, `${category}.svg`);
 
         try {
