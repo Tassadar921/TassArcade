@@ -11,6 +11,8 @@ interface LanguageInterface {
 }
 
 export default class Language extends BaseModel {
+    public static table: string = 'languages';
+
     public static LANGUAGE_ENGLISH: LanguageInterface = {
         name: 'English',
         code: 'en',

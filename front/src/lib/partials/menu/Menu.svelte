@@ -7,6 +7,7 @@
     import { Link } from '#lib/components/ui/link';
     import { page } from '$app/state';
     import type { Snippet } from 'svelte';
+    import { FooterGroup, FooterGroupItem } from '#lib/components/ui/footer';
 
     type Props = {
         children: Snippet;
@@ -30,6 +31,14 @@
                             <Theme />
                         </div>
                         <div class="flex flex-col gap-5 mt-3">
+                            {#each mainMenu.both as item (item.title)}
+                                <SidebarMenuItem>
+                                    <Link href={item.href} class="flex justify-start items-center gap-3">
+                                        <item.icon class="size-6" />
+                                        <p class="text-2xl">{item.title}</p>
+                                    </Link>
+                                </SidebarMenuItem>
+                            {/each}
                             {#if $profile}
                                 {#if $profile.role === 'admin' && page.data.isAdmin}
                                     {#each adminMenu as item (item.title)}

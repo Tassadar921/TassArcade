@@ -7,11 +7,10 @@ import SerializedCompanyAdministrator from '#types/serialized/serialized_company
 import CompanyAdministratorRoleEnum from '#types/enum/company_administrator_role_enum';
 
 export default class CompanyAdministrator extends BaseModel {
+    public static table: string = 'company_administrators';
+
     @column({ isPrimary: true })
     declare id: string;
-
-    @column()
-    declare frontId: number;
 
     @column()
     declare role: CompanyAdministratorRoleEnum;
@@ -42,7 +41,7 @@ export default class CompanyAdministrator extends BaseModel {
 
     public apiSerialize(): SerializedCompanyAdministrator {
         return {
-            id: this.frontId,
+            id: this.id,
             role: this.role,
             user: this.user.apiSerialize(),
             updatedAt: this.updatedAt.toString(),

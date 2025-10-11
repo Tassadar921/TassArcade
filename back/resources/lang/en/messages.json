@@ -19,11 +19,16 @@
             }
         },
         "user": {
+            "get": {
+                "error": {
+                    "not-found": "User not found"
+                }
+            },
             "delete": {
                 "success": "Successfully deleted {username}",
                 "error": {
                     "current": "You cannot delete your own account from back-office ({username})",
-                    "default": "Error while deleting user with identifier {frontId}"
+                    "default": "Error while deleting user with identifier {id}"
                 }
             },
             "create": {
@@ -73,8 +78,23 @@
         }
     },
     "file": {
-        "serve-status-profile-picture-file": {
-            "error": "User's profile picture not found"
+        "serve-profile-picture": {
+            "error": {
+                "user-not-found": "User not found",
+                "no-file": "User's profile picture not found"
+            }
+        },
+        "serve-language-flag": {
+            "error": {
+                "language-not-found": "Language not found",
+                "no-file": "Language flag not found"
+            }
+        },
+        "serve-equipment-thumbnail": {
+            "error": {
+                "equipment-not-found": "Equipment not found",
+                "no-file": "Equipment thumbnail not found"
+            }
         }
     },
     "friend": {

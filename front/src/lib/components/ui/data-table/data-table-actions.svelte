@@ -19,7 +19,7 @@
     import { showToast } from '#lib/services/toastService';
 
     type Props = {
-        id: string | number;
+        id: string;
         onDelete?: (ids: string[]) => void;
         deleteTitle?: string;
         deleteText?: string;
@@ -27,11 +27,11 @@
 
     let { id, onDelete, deleteTitle, deleteText }: Props = $props();
 
-    let showModal: boolean = $state(false);
+    let showDialog: boolean = $state(false);
     const deletable: boolean = $state(!!(deleteTitle && deleteText));
 
     const handleDelete = async (): Promise<void> => {
-        showModal = false;
+        showDialog = false;
         await wrappedFetch(`${$location}/delete`, { method: 'POST', body: { data: [id] } }, (data) => {
             const isSuccess: boolean = data.messages.map((status: { isSuccess: boolean; message: string; code: string }) => {
                 showToast(status.message, status.isSuccess ? 'success' : 'error');
@@ -60,14 +60,14 @@
                 {m['common.edit']()}
             </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem disabled={!deletable} class="hover:underline underline-offset-4 flex gap-1 py-3" onclick={() => (showModal = true)}>
+        <DropdownMenuItem disabled={!deletable} class="hover:underline underline-offset-4 flex gap-1 py-3" onclick={() => (showDialog = true)}>
             <Trash class="size-4 text-red-500" />
             {m['common.delete']()}
         </DropdownMenuItem>
     </DropdownMenuContent>
 </DropdownMenu>
 
-<AlertDialog open={showModal} onOpenChange={() => (showModal = false)}>
+<AlertDialog bind:open={showDialog}>
     <AlertDialogContent>
         <AlertDialogHeader>
             <AlertDialogTitle>{deleteTitle}</AlertDialogTitle>

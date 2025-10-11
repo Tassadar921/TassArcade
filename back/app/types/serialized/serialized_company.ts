@@ -1,11 +1,11 @@
 import SerializedAddress from '#types/serialized/serialized_address';
-import SerializedCompanyAdministrator from '#types/serialized/serialized_company_administrator';
+import SerializedCompanyEquipmentType from '#types/serialized/serialized_company_equipment_type';
 
 export type SerializedCompany = {
-    id: number;
+    id: string;
     name: string;
     address: SerializedAddress;
-    administrators: SerializedCompanyAdministrator[];
+    equipments: SerializedCompanyEquipmentType[];
     createdAt?: string;
     updatedAt?: string;
 };

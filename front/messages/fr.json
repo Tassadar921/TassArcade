@@ -58,6 +58,18 @@
         "consent": "J'accepte les termes et conditions",
         "logo": {
             "alt": "Logo de TassArcade"
+        },
+        "multiselect": {
+            "selected": [
+                {
+                    "declarations": ["input count"],
+                    "match": {
+                        "count=0": "Aucune sélection",
+                        "count=1": "{count} sélection",
+                        "count=*": "{count} selections"
+                    }
+                }
+            ]
         }
     },
     "open-graph": {

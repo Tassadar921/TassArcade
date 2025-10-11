@@ -19,11 +19,16 @@
             }
         },
         "user": {
+            "get": {
+                "error": {
+                    "not-found": "Utilisateur non trouvé"
+                }
+            },
             "delete": {
                 "success": "Utilisateur {username} supprimé avec succès",
                 "error": {
                     "current": "Vous ne pouvez pas supprimer votre propre compte depuis le back-office ({username})",
-                    "default": "Erreur lors de la suppression de l’utilisateur avec l’identifiant {frontId}"
+                    "default": "Erreur lors de la suppression de l’utilisateur avec l’identifiant {id}"
                 }
             },
             "create": {
@@ -73,8 +78,23 @@
         }
     },
     "file": {
-        "serve-status-profile-picture-file": {
-            "error": "Photo de profil de l'utilisateur introuvable"
+        "serve-profile-picture": {
+            "error": {
+                "user-not-found": "Utilisateur non trouvé",
+                "no-file": "Photo de profil de l'utilisateur introuvable"
+            }
+        },
+        "serve-language-flag": {
+            "error": {
+                "language-not-found": "Langue non trouvée",
+                "no-file": "Drapeau de la langue introuvable"
+            }
+        },
+        "serve-equipment-thumbnail": {
+            "error": {
+                "equipment-not-found": "Équipement non trouvé",
+                "no-file": "Miniature de l'équipement introuvable"
+            }
         }
     },
     "friend": {

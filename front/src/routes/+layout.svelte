@@ -24,14 +24,6 @@
 
     const flash = initFlash(currentPage);
 
-    onMount((): void => {
-        const theme: string | null = localStorage.getItem('theme');
-        document.documentElement.classList.toggle('dark', theme === 'dark');
-        if (theme !== 'light' && theme !== 'dark') {
-            localStorage.setItem('theme', 'light');
-        }
-    });
-
     $effect((): void => {
         transmit.set(new Transmit({ baseUrl: PUBLIC_API_REAL_URI }));
         if ($flash) {

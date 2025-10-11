@@ -11,6 +11,7 @@ export type MenuItemsListItem = {
 interface MenuItemsList {
     connected: MenuItemsListItem[];
     notConnected: MenuItemsListItem[];
+    both: MenuItemsListItem[];
 }
 
 export const mainMenu: MenuItemsList = {
@@ -33,11 +34,6 @@ export const mainMenu: MenuItemsList = {
     ],
     notConnected: [
         {
-            href: '/',
-            icon: House,
-            title: m['home.title'](),
-        },
-        {
             href: '/login',
             icon: User,
             title: m['login.title'](),
@@ -46,6 +42,13 @@ export const mainMenu: MenuItemsList = {
             href: '/create-account',
             icon: User,
             title: m['create-account.title'](),
+        },
+    ],
+    both: [
+        {
+            href: '/',
+            icon: House,
+            title: m['home.title'](),
         },
     ],
 };

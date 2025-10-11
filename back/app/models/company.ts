@@ -4,14 +4,15 @@ import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations';
 import Address from '#models/address';
 import CompanyAdministrator from '#models/company_administrator';
 import SerializedCompany from '#types/serialized/serialized_company';
-import SerializedCompanyAdministrator from '#types/serialized/serialized_company_administrator';
+import CompanyEquipmentType from '#models/company_equipment_type';
+import Language from '#models/language';
+import { SerializedCompanyEquipmentType } from '../types/index.js';
 
 export default class Company extends BaseModel {
+    public static table: string = 'companies';
+
     @column({ isPrimary: true })
     declare id: string;
-
-    @column()
-    declare frontId: number;
 
     @column()
     declare name: string;
@@ -25,18 +26,23 @@ export default class Company extends BaseModel {
     @hasMany((): typeof CompanyAdministrator => CompanyAdministrator)
     declare administrators: HasMany<typeof CompanyAdministrator>;
 
+    @hasMany((): typeof CompanyEquipmentType => CompanyEquipmentType)
+    declare equipments: HasMany<typeof CompanyEquipmentType>;
+
     @column.dateTime({ autoCreate: true })
     declare createdAt: DateTime;
 
     @column.dateTime({ autoCreate: true, autoUpdate: true })
     declare updatedAt: DateTime;
 
-    public apiSerialize(): SerializedCompany {
+    public apiSerialize(language: Language): SerializedCompany {
         return {
-            id: this.frontId,
+            id: this.id,
             name: this.name,
             address: this.address.apiSerialize(),
-            administrators: this.administrators.map((administrator: CompanyAdministrator): SerializedCompanyAdministrator => administrator.apiSerialize()),
+            equipments: this.equipments
+                .map((equipmentType: CompanyEquipmentType): SerializedCompanyEquipmentType => equipmentType.apiSerialize(language))
+                .sort((a: SerializedCompanyEquipmentType, b: SerializedCompanyEquipmentType): number => a.name.localeCompare(b.name)),
             createdAt: this.createdAt.toString(),
             updatedAt: this.updatedAt.toString(),
         };

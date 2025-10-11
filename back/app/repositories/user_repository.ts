@@ -36,14 +36,14 @@ export default class UserRepository extends BaseRepository<typeof User> {
         };
     }
 
-    public async delete(frontIds: number[], currentUser: User): Promise<{ isDeleted: boolean; isCurrentUser?: boolean; username?: string; frontId: number; id?: string }[]> {
+    public async delete(ids: string[], currentUser: User): Promise<{ isDeleted: boolean; isCurrentUser?: boolean; username?: string; id: string }[]> {
         // Delete some other things if needed
         return await Promise.all([
-            ...frontIds.map(async (frontId: number): Promise<{ isDeleted: boolean; isCurrentUser?: boolean; username?: string; frontId: number; id?: string }> => {
+            ...ids.map(async (id: string): Promise<{ isDeleted: boolean; isCurrentUser?: boolean; username?: string; id: string }> => {
                 try {
-                    const user: User = await this.Model.query().where('front_id', frontId).firstOrFail();
+                    const user: User = await this.firstOrFail({ id });
                     if (user.id === currentUser.id) {
-                        return { isDeleted: false, isCurrentUser: true, username: user.username, frontId };
+                        return { isDeleted: false, isCurrentUser: true, username: user.username, id };
                     }
 
                     await user.delete();
@@ -55,9 +55,9 @@ export default class UserRepository extends BaseRepository<typeof User> {
 
                     await this.logUserRepository.deleteByUser(user);
 
-                    return { isDeleted: true, username: user.username, frontId, id: user.id };
+                    return { isDeleted: true, username: user.username, id };
                 } catch (error: any) {
-                    return { isDeleted: false, frontId };
+                    return { isDeleted: false, id };
                 }
             }),
         ]);

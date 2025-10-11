@@ -41,7 +41,7 @@
         selectedRows?: string[];
         batchDeleteTitle?: string;
         batchDeleteText?: string;
-        onBatchDelete?: (ids: string[] | number[]) => void;
+        onBatchDelete?: (ids: string[]) => void;
         onPaginationChange: (page: number, limit: number) => void;
     };
 
@@ -61,7 +61,7 @@
     let rowSelection = $state<RowSelectionState>({});
     let columnVisibility = $state<VisibilityState>({});
 
-    let showModal: boolean = $state(false);
+    let showDialog: boolean = $state(false);
     const deletable: boolean = $state(!!(batchDeleteTitle && batchDeleteText));
 
     const table = createSvelteTable({
@@ -96,7 +96,7 @@
     });
 
     const handleDelete = async (): Promise<void> => {
-        showModal = false;
+        showDialog = false;
         await wrappedFetch(`${$location}/delete`, { method: 'POST', body: { data: [...selectedRows] } }, (data) => {
             const filteredStatuses: { isSuccess: boolean; message: string; id: string }[] = data.messages.filter((status: { isSuccess: boolean; message: string; id: string }) => {
                 showToast(status.message, status.isSuccess ? 'success' : 'error');
@@ -184,7 +184,7 @@
     <Pagination {paginatedObject} onChange={(page: number, limit: number) => onPaginationChange(page, limit)} />
 
     <div class="w-full flex justify-end gap-5">
-        <Button variant="destructive" disabled={!deletable || ![...selectedRows].length} onclick={() => (showModal = true)}>
+        <Button variant="destructive" disabled={!deletable || ![...selectedRows].length} onclick={() => (showDialog = true)}>
             {m['common.delete']()}
         </Button>
         <Button variant="secondary">
@@ -195,7 +195,7 @@
     </div>
 </div>
 
-<AlertDialog open={showModal} onOpenChange={() => (showModal = false)}>
+<AlertDialog bind:open={showDialog}>
     <AlertDialogContent>
         <AlertDialogHeader>
             <AlertDialogTitle>{batchDeleteTitle}</AlertDialogTitle>

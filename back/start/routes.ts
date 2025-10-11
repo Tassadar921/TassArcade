@@ -16,6 +16,8 @@ const AuthController = () => import('#controllers/auth_controller');
 const ProfileController = () => import('#controllers/profile_controller');
 const FileController = () => import('#controllers/file_controller');
 const OauthController = () => import('#controllers/oauth_controller');
+const EquipmentController = () => import('#controllers/equipment_controller');
+const ClusterController = () => import('#controllers/cluster_controller');
 
 router.get('healthcheck', [HealthCheckController]);
 
@@ -92,7 +94,7 @@ router
                                 router.post('/delete', [AdminUserController, 'delete']);
                                 router.post('/create', [AdminUserController, 'create']);
                                 router.post('/update', [AdminUserController, 'update']);
-                                router.get('/:frontId', [AdminUserController, 'get']);
+                                router.get('/:id', [AdminUserController, 'get']);
                             })
                             .prefix('user');
                     })
@@ -108,10 +110,14 @@ router
                     })
                     .prefix('profile');
 
+                router.get('/equipments', [EquipmentController, 'getAll']);
+                router.get('/clusters', [ClusterController, 'get']);
+
                 router
                     .group((): void => {
                         router.get('/profile-picture/:userId', [FileController, 'serveStaticProfilePictureFile']);
                         router.get('/language-flag/:languageCode', [FileController, 'serveStaticLanguageFlagFile']);
+                        router.get('/equipment-thumbnail/:equipmentId', [FileController, 'serveStaticEquipmentThumbnailFile']);
                     })
                     .prefix('static');
             })
