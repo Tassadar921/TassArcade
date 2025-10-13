@@ -56,7 +56,7 @@
         id={profileData.id}
         bind:file={profilePicture}
     />
-    <Link href="/test">
+    <Link href="/register-company">
         <Button>
             {m['profile.register-company']()}
         </Button>

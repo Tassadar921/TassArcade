@@ -28,8 +28,6 @@ export default class ClusterController {
             precision = 9;
         }
 
-        console.log('equipments : ', equipmentIds);
-
         const company: Company | null = companyId ? await this.companyRepository.findOneBy({ id: companyId }, ['address', 'equipments']) : null;
 
         return response.ok({
