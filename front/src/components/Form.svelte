@@ -65,7 +65,7 @@
 
             {#if submittable}
                 <CardFooter class="flex justify-center pt-2">
-                    <Button type="submit" disabled={isSendButtonDisabled} size="lg" class="w-full max-w-xs sm:max-w-sm">
+                    <Button type="submit" disabled={isSendButtonDisabled} size="lg" class="w-full">
                         {#if isLoading}
                             <Icon name="spinner" size={40} />
                         {:else if submitContent}

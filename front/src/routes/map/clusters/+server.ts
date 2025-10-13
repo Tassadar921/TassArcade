@@ -1,12 +1,14 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
 import { m } from '#lib/paraglide/messages';
 
-export const GET: RequestHandler = async ({ url, locals }): Promise<Response> => {
+export const POST: RequestHandler = async ({ request, url, locals }): Promise<Response> => {
     const params = Object.fromEntries(url.searchParams);
+    const body = await request.json();
 
     try {
-        const response = await locals.client.get(
-            `/api/clusters?minLat=${params.minLat}&maxLat=${params.maxLat}&minLng=${params.minLng}&maxLng=${params.maxLng}&zoom=${params.zoom}${params.company ? `&company=${params.company}` : ''}`
+        const response = await locals.client.post(
+            `/api/clusters?minLat=${params.minLat}&maxLat=${params.maxLat}&minLng=${params.minLng}&maxLng=${params.maxLng}&zoom=${params.zoom}${params.company ? `&company=${params.company}` : ''}`,
+            body
         );
 
         if (response.status !== 200) {

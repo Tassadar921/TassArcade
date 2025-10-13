@@ -10,24 +10,35 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
         super(Company);
     }
 
-    public async getClusters(minLat: number, maxLat: number, minLng: number, maxLng: number, precision: number, language: Language): Promise<Cluster[]> {
-        const result = await db.rawQuery(
-            `
-                SELECT
-                    LEFT(address.geohash, ?) AS cluster,
-                    AVG(address.latitude) AS lat,
-                    AVG(address.longitude) AS lng,
-                    array_agg(DISTINCT address.id) AS address_ids,
-                    COUNT(DISTINCT company.id) > 1 AS "isCluster"
-                FROM addresses address
-                    INNER JOIN companies company ON company.address_id = address.id
-                    INNER JOIN company_equipment_types equipment_type ON equipment_type.company_id = company.id
-                WHERE address.latitude BETWEEN ? AND ?
-                  AND address.longitude BETWEEN ? AND ?
-                GROUP BY cluster
-            `,
-            [precision, minLat, maxLat, minLng, maxLng]
-        );
+    public async getClusters(minLat: number, maxLat: number, minLng: number, maxLng: number, precision: number, language: Language, equipmentIds: string[]): Promise<Cluster[]> {
+        let query = `
+            SELECT
+                LEFT(address.geohash, ?) AS cluster,
+                AVG(address.latitude) AS lat,
+                AVG(address.longitude) AS lng,
+                array_agg(DISTINCT address.id) AS address_ids,
+                COUNT(DISTINCT company.id) > 1 AS "isCluster"
+            FROM addresses address
+              INNER JOIN companies company ON company.address_id = address.id
+              INNER JOIN company_equipment_types equipment_type ON equipment_type.company_id = company.id
+            WHERE address.latitude BETWEEN ? AND ?
+              AND address.longitude BETWEEN ? AND ?
+        `;
+
+        const bindings: any[] = [precision, minLat, maxLat, minLng, maxLng];
+
+        if (equipmentIds.length > 0) {
+            query += `
+      AND equipment_type.equipment_type_id IN (${equipmentIds.map(() => '?').join(', ')})
+    `;
+            bindings.push(...equipmentIds);
+        }
+
+        query += `
+    GROUP BY cluster
+  `;
+
+        const result = await db.rawQuery(query, bindings);
 
         const clusters: Cluster[] = [];
 

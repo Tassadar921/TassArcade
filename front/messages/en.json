@@ -100,7 +100,8 @@
         "profile-picture": {
             "title": "Profile picture",
             "description": "Upload here a profile picture"
-        }
+        },
+        "register-company": "Register company"
     },
     "reset-password": {
         "title": "Reset password",

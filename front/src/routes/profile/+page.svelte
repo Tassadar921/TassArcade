@@ -9,6 +9,7 @@
     import { type SerializedUser } from 'backend/types';
     import Meta from '#components/Meta.svelte';
     import * as zod from 'zod';
+    import { Button } from '#lib/components/ui/button';
 
     const schema = zod.object({
         username: zod.string().min(3).max(50),
@@ -36,13 +37,15 @@
 <Meta title={m['profile.meta.title']()} description={m['profile.meta.description']()} keywords={m['profile.meta.keywords']().split(', ')} pathname="/profile" />
 
 <Title title={m['profile.title']()} hasBackground />
-<Link href="/reset-password">
-    {m['profile.reset-password']()}
-</Link>
 
 <Form isValid={canSubmit} onError={handleError}>
     <Input name="username" placeholder={m['common.username.label']()} label={m['common.username.label']()} min={3} max={50} bind:value={formValues.username} required />
-    <Input name="email" placeholder={m['common.email.label']()} label={m['common.email.label']()} max={100} bind:value={formValues.email} readonly required />
+    <div>
+        <Input name="email" placeholder={m['common.email.label']()} label={m['common.email.label']()} max={100} bind:value={formValues.email} readonly required />
+        <Link href="/reset-password" class="px-0">
+            {m['profile.reset-password']()}
+        </Link>
+    </div>
     <FileUpload
         name="profilePicture"
         accept="png jpg jpeg gif webp svg"
@@ -53,4 +56,9 @@
         id={profileData.id}
         bind:file={profilePicture}
     />
+    <Link href="/register-company">
+        <Button>
+            {m['profile.register-company']()}
+        </Button>
+    </Link>
 </Form>
