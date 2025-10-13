@@ -4,7 +4,7 @@
     import Meta from '#components/Meta.svelte';
     import { MapLibre, Control, ScaleControl, type MapMoveEvent, Marker } from 'svelte-maplibre';
     import { onMount } from 'svelte';
-    import { MultiSelectWithTags } from '#lib/components/ui/multi-select-with-tags';
+    import { MultiSelectWithTags, type SelectItem } from '#lib/components/ui/multi-select-with-tags';
     import { page } from '$app/state';
     import type { Cluster, SerializedCompanyEquipmentType, SerializedEquipment, SerializedEquipmentType, SerializedEquipmentLight, SerializedCompany } from 'backend/types';
     import MapControls from '#lib/partials/map/MapControls.svelte';
@@ -16,9 +16,14 @@
     import CompanyDialogContent from '#lib/partials/map/CompanyDialogContent.svelte';
     import CompanyEquipmentDialogContent from '#lib/partials/map/CompanyEquipmentDialogContent.svelte';
 
+    let mapInstance: maplibregl.Map | null = null;
+
     let latitude: number = $state(page.data.latitude);
     let longitude: number = $state(page.data.longitude);
     let clusters: Cluster[] = $state([]);
+
+    let selectedEquipments: SelectItem[] = $state([]);
+
     let selectedCompany: SerializedCompany | null = $state(null);
     let selectedCompanyEquipment: SerializedCompanyEquipmentType | null = $state(null);
     let reorganizedEquipments: Record<string, { category: SerializedEquipmentLight; items: SerializedCompanyEquipmentType[] }> | undefined = $state();
@@ -49,6 +54,8 @@
     });
 
     const handleLoad = (map: maplibregl.Map): void => {
+        mapInstance = map;
+
         map.setPitch(0);
         map.setBearing(0);
 
@@ -74,7 +81,7 @@
 
         await wrappedFetch(
             `/map/clusters?minLat=${minLat}&maxLat=${maxLat}&minLng=${minLng}&maxLng=${maxLng}&zoom=${zoom}${initialCompany ? `&company=${initialCompany}` : ''}`,
-            { method: 'GET' },
+            { method: 'POST', body: { equipments: selectedEquipments.map((equipment: SelectItem) => equipment.value) } },
             ({ data }): void => {
                 clusters = data.clusters;
                 if (initialCompany) {
@@ -120,7 +127,7 @@
         goto(url);
     };
 
-    const handleCloseCompanyDialog = () => {
+    const handleCloseCompanyDialog = (): void => {
         selectedCompany = null;
         const url: URL = new URL(page.url);
         url.searchParams.delete('company');
@@ -135,12 +142,25 @@
         goto(url);
     };
 
-    const handleCloseCompanyEquipmentsDialog = () => {
+    const handleCloseCompanyEquipmentsDialog = (): void => {
         selectedCompanyEquipment = null;
         const url: URL = new URL(page.url);
         url.searchParams.delete('equipment');
         goto(url);
     };
+
+    $effect((): void => {
+        if (!mapInstance) {
+            return;
+        }
+
+        // the only  way I found to make effect trigger on selectedEquipments change
+        console.log(selectedEquipments);
+
+        if (!showCompanyDialog && !showCompanyEquipmentDialog) {
+            fetchClusters({ target: mapInstance } as MapMoveEvent);
+        }
+    });
 </script>
 
 <Meta title={m['home.meta.title']()} description={m['home.meta.description']()} keywords={m['home.meta.keywords']().split(', ')} pathname="/" />
@@ -157,7 +177,7 @@
             category: equipment.name,
         })),
     }))}
-    selectedItems={[]}
+    bind:selectedItems={selectedEquipments}
 />
 
 <MapLibre

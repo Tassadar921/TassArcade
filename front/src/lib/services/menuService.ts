@@ -17,6 +17,11 @@ interface MenuItemsList {
 export const mainMenu: MenuItemsList = {
     connected: [
         {
+            href: '/',
+            icon: House,
+            title: m['home.title'](),
+        },
+        {
             href: '/profile',
             icon: UserPen,
             title: m['profile.title'](),
@@ -44,13 +49,7 @@ export const mainMenu: MenuItemsList = {
             title: m['create-account.title'](),
         },
     ],
-    both: [
-        {
-            href: '/',
-            icon: House,
-            title: m['home.title'](),
-        },
-    ],
+    both: [],
 };
 
 export const adminMenu: MenuItemsListItem[] = [

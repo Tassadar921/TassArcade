@@ -39,7 +39,7 @@ export const load: LayoutServerLoad = loadFlash(async (event): Promise<{ user?: 
     const formError: string | undefined = cookies.get('formError');
 
     // Check if current path is protected
-    const requiresAuth = protectedPaths.some((p) => location.startsWith(p.pathname));
+    const requiresAuth: boolean = protectedPaths.some((protectedPath: ProtectedPath): boolean => location.startsWith(protectedPath.pathname));
 
     if (requiresAuth && !userCookie) {
         cookies.set('previousPathName', `${location}${url.search}`, {

@@ -5,7 +5,7 @@
 ![GitHub top language](https://img.shields.io/github/languages/top/Tassadar921/tassarcade)
 ![GitHub stars](https://img.shields.io/github/stars/Tassadar921/tassarcade)
 
-**TassArcade** is the **ultimate app to find and share your favorite gaming spots**: pool tables, darts, and foosball, anywhere around you.
+**TassArcade** is the **ultimate app to find and share your favorite gaming spots**: pool tables, darts, and bowling, anywhere around you.
 
 Whether you’re a passionate player or a venue hosting equipment, TassArcade makes discovering, rating, and sharing experiences simple and fun.
 
@@ -14,20 +14,19 @@ Whether you’re a passionate player or a venue hosting equipment, TassArcade ma
 ## ✨ Why TassArcade?
 
 - 📍 **Find nearby venues** easily with geolocation
-- 🎯 **Smart filters**: pool, darts, foosball
+- 🎯 **Smart filters**: pool, darts, bowling
 - ⭐ **Ratings & reviews**: check and share experiences
 - 🏢 **Pro space**: register and manage your equipment easily
-- 🗺️ **Interactive map** using **Leaflet + OpenStreetMap**
+- 🗺️ **Interactive map** using **MapLibre**
 - 📱 **Multi-platform**: web and mobile via Capacitor
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: SvelteKit, TailwindCSS, Leaflet
-- **Backend**: AdonisJS v6, Redis, PostgreSQL + PostGIS
+- **Frontend**: SvelteKit, TailwindCSS, Svelte-MapLibre
+- **Backend**: AdonisJS v6, Redis, PostgreSQL
 - **Mobile**: Capacitor for native iOS & Android builds
-- **Geocoding**: OpenStreetMap Nominatim (address ↔ latitude/longitude)
 
 ---
 

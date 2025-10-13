@@ -7,6 +7,7 @@ export const getClustersValidator = vine.compile(
         minLng: vine.number().range([-180, 180]),
         maxLng: vine.number().range([-180, 180]),
         zoom: vine.number().range([0, 22]),
+        equipments: vine.array(vine.string().uuid()).optional(),
         company: vine.string().uuid().optional(),
     })
 );

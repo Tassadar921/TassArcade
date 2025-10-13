@@ -9,7 +9,7 @@ export default class ClusterController {
     constructor(private readonly companyRepository: CompanyRepository) {}
 
     public async get({ request, response, language }: HttpContext): Promise<void> {
-        const { minLat, maxLat, minLng, maxLng, zoom, company: companyId } = await request.validateUsing(getClustersValidator);
+        const { minLat, maxLat, minLng, maxLng, zoom, equipments: equipmentIds, company: companyId } = await request.validateUsing(getClustersValidator);
 
         let precision: number = 2;
         if (zoom >= 4 && zoom < 6) {
@@ -28,10 +28,12 @@ export default class ClusterController {
             precision = 9;
         }
 
+        console.log('equipments : ', equipmentIds);
+
         const company: Company | null = companyId ? await this.companyRepository.findOneBy({ id: companyId }, ['address', 'equipments']) : null;
 
         return response.ok({
-            clusters: await this.companyRepository.getClusters(minLat, maxLat, minLng, maxLng, precision, language),
+            clusters: await this.companyRepository.getClusters(minLat, maxLat, minLng, maxLng, precision, language, equipmentIds ?? []),
             company: company?.apiSerialize(language),
         });
     }

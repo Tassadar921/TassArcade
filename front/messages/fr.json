@@ -100,7 +100,8 @@
         "profile-picture": {
             "title": "Photo de profil",
             "description": "Uploadez ici une photo de profil"
-        }
+        },
+        "register-company": "Enregistrer une entreprise"
     },
     "reset-password": {
         "title": "Réinitialiser le mot de passe",

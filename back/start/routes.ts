@@ -110,18 +110,23 @@ router
                     })
                     .prefix('profile');
 
-                router.get('/equipments', [EquipmentController, 'getAll']);
-                router.get('/clusters', [ClusterController, 'get']);
-
                 router
                     .group((): void => {
                         router.get('/profile-picture/:userId', [FileController, 'serveStaticProfilePictureFile']);
-                        router.get('/language-flag/:languageCode', [FileController, 'serveStaticLanguageFlagFile']);
-                        router.get('/equipment-thumbnail/:equipmentId', [FileController, 'serveStaticEquipmentThumbnailFile']);
                     })
                     .prefix('static');
             })
             .use([middleware.auth()]);
+
+        router.get('/equipments', [EquipmentController, 'getAll']);
+        router.post('/clusters', [ClusterController, 'get']);
+
+        router
+            .group((): void => {
+                router.get('/language-flag/:languageCode', [FileController, 'serveStaticLanguageFlagFile']);
+                router.get('/equipment-thumbnail/:equipmentId', [FileController, 'serveStaticEquipmentThumbnailFile']);
+            })
+            .prefix('static');
     })
     .prefix('api')
     .use([middleware.log(), middleware.language()]);

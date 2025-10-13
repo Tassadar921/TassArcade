@@ -31,27 +31,25 @@
                             <Theme />
                         </div>
                         <div class="flex flex-col gap-5 mt-3">
-                            {#each mainMenu.both as item (item.title)}
-                                <SidebarMenuItem>
-                                    <Link href={item.href} class="flex justify-start items-center gap-3">
-                                        <item.icon class="size-6" />
-                                        <p class="text-2xl">{item.title}</p>
-                                    </Link>
-                                </SidebarMenuItem>
-                            {/each}
                             {#if $profile}
                                 {#if $profile.role === 'admin' && page.data.isAdmin}
                                     {#each adminMenu as item (item.title)}
-                                        {#if !item.href.startsWith('/admin') || $profile.role === 'admin'}
-                                            <SidebarMenuItem>
-                                                <Link href={item.href} class="flex justify-start items-center gap-3">
-                                                    <item.icon class="size-6" />
-                                                    <p class="text-2xl">{item.title}</p>
-                                                </Link>
-                                            </SidebarMenuItem>
-                                        {/if}
+                                        <SidebarMenuItem>
+                                            <Link href={item.href} class="flex justify-start items-center gap-3">
+                                                <item.icon class="size-6" />
+                                                <p class="text-2xl">{item.title}</p>
+                                            </Link>
+                                        </SidebarMenuItem>
                                     {/each}
                                 {:else}
+                                    {#each mainMenu.both as item (item.title)}
+                                        <SidebarMenuItem>
+                                            <Link href={item.href} class="flex justify-start items-center gap-3">
+                                                <item.icon class="size-6" />
+                                                <p class="text-2xl">{item.title}</p>
+                                            </Link>
+                                        </SidebarMenuItem>
+                                    {/each}
                                     {#each mainMenu.connected as item (item.title)}
                                         {#if !item.href.startsWith('/admin') || $profile.role === 'admin'}
                                             <SidebarMenuItem>
@@ -64,6 +62,14 @@
                                     {/each}
                                 {/if}
                             {:else}
+                                {#each mainMenu.both as item (item.title)}
+                                    <SidebarMenuItem>
+                                        <Link href={item.href} class="flex justify-start items-center gap-3">
+                                            <item.icon class="size-6" />
+                                            <p class="text-2xl">{item.title}</p>
+                                        </Link>
+                                    </SidebarMenuItem>
+                                {/each}
                                 {#each mainMenu.notConnected as item (item.title)}
                                     <SidebarMenuItem>
                                         <Link href={item.href} class="flex justify-start items-center gap-3">
