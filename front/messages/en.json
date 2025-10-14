@@ -153,10 +153,9 @@
     "register-company": {
         "title": "Register a company",
         "country": {
-            "label": "Country",
             "placeholder": "Select a country",
             "no-item-found": "No country found",
-            "search-placeholder": "Search country ..."
+            "search-placeholder": "Search a country ..."
         }
     },
     "logout": {

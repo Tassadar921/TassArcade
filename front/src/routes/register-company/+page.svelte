@@ -47,7 +47,12 @@
 
 <Title title={m['register-company.title']()} />
 
-<ComboBox items={countries} label={m['register-company.country.label']()} placeholder={m['register-company.country.placeholder']()} noItemFound={m['register-company.country.no-item-found']()} />
+<ComboBox
+    items={countries}
+    placeholder={m['register-company.country.placeholder']()}
+    searchPlaceholder={m['register-company.country.search-placeholder']()}
+    noItemFound={m['register-company.country.no-item-found']()}
+/>
 
 <Form isValid={canSubmit}>
     <!--    <Input type="email" name="email" placeholder={m['common.email.placeholder']()} label={m['common.email.label']()} bind:value={email} required />-->

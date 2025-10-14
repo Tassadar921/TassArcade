@@ -14,12 +14,12 @@
 
     export type Props = {
         items: SelectItem[];
-        label?: string;
         placeholder?: string;
+        searchPlaceholder?: string;
         noItemFound?: string;
     };
 
-    let { items = $bindable([]), label, placeholder, noItemFound }: Props = $props();
+    let { items = $bindable([]), placeholder, searchPlaceholder, noItemFound }: Props = $props();
 
     let open: boolean = $state(false);
     let value: string = $state('');
@@ -41,14 +41,14 @@
     <PopoverTrigger bind:ref={triggerRef}>
         {#snippet child({ props })}
             <Button variant="outline" class="w-[200px] justify-between" {...props} role="combobox" aria-expanded={open}>
-                {selectedValue || label}
+                {selectedValue || placeholder}
                 <ChevronsUpDownIcon class="ml-2 size-4 shrink-0 opacity-50" />
             </Button>
         {/snippet}
     </PopoverTrigger>
     <PopoverContent class="w-[200px] p-0">
         <Command>
-            <CommandInput placeholder={placeholder || m['common.combo-box.search-placeholder']()} />
+            <CommandInput placeholder={searchPlaceholder || m['common.combo-box.search-placeholder']()} />
             <CommandList>
                 <CommandEmpty>{noItemFound || m['common.combo-box.no-item-found']()}</CommandEmpty>
                 <CommandGroup>
