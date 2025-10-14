@@ -1,7 +1,7 @@
 import { BaseCommand } from '@adonisjs/core/ace';
 import type { CommandOptions } from '@adonisjs/core/types/ace';
 import { CompanyFactory } from '#database/factories/company';
-import { AddressFactory, FranceAddressFactory } from '#database/factories/address';
+import { AddressFactory } from '#database/factories/address';
 import { UserFactory } from '#database/factories/user';
 import { CompanyAdministratorFactory } from '#database/factories/company_administrator';
 import Address from '#models/address';
@@ -12,7 +12,7 @@ import EquipmentType from '#models/equipment_type';
 import EquipmentTypeRepository from '#repositories/equipment_type_repository';
 import { CompanyEquipmentTypeFactory } from '#database/factories/company_equipment_type';
 
-export default class ExecTest extends BaseCommand {
+export default class DbFactoryCompany extends BaseCommand {
     public readonly equipmentTypeRepository: EquipmentTypeRepository = new EquipmentTypeRepository();
     public companiesAmount: number = 1000;
 
@@ -25,13 +25,24 @@ export default class ExecTest extends BaseCommand {
 
     public async run(): Promise<void> {
         this.logger.info('1/7 Creating addresses...');
-        let addresses: Address[] = [...(await AddressFactory.createMany(this.companiesAmount / 2)), ...(await FranceAddressFactory.createMany(this.companiesAmount / 2))];
+        let addresses: Address[] = [
+            ...(await AddressFactory.createMany(this.companiesAmount / 2)),
+            ...(await AddressFactory.merge({
+                country: 'France',
+                latitude: +(41.3 + Math.random() * (51.1 - 41.3)).toFixed(4),
+                longitude: +(-5.1 + Math.random() * (9.6 - -5.1)).toFixed(4),
+            }).createMany(this.companiesAmount / 2)),
+        ];
+
         this.logger.info('2/7 Creating CEOs...');
         const ceos: User[] = await UserFactory.createMany(this.companiesAmount);
+
         this.logger.info('3/7 Creating administrators...');
         const administrators: User[] = await UserFactory.createMany(this.companiesAmount);
+
         this.logger.info('4/7 Creating companies...');
         const companies: Company[] = await CompanyFactory.merge(addresses.map((address: Address): { addressId: string } => ({ addressId: address.id }))).createMany(this.companiesAmount);
+
         this.logger.info('5/7 Creating company administrators...');
         await CompanyAdministratorFactory.merge(
             ceos.map((ceo: User, index: number): { userId: string; role: CompanyAdministratorRoleEnum; companyId: string } => ({
@@ -40,6 +51,7 @@ export default class ExecTest extends BaseCommand {
                 companyId: companies[index].id,
             }))
         ).createMany(this.companiesAmount);
+
         this.logger.info('6/7 Creating company administrators...');
         await CompanyAdministratorFactory.merge(
             administrators.map((administrator: User, index: number): { userId: string; companyId: string } => ({
@@ -48,8 +60,8 @@ export default class ExecTest extends BaseCommand {
             }))
         ).createMany(this.companiesAmount);
 
-        const equipmentTypes: EquipmentType[] = await this.equipmentTypeRepository.all();
         this.logger.info('7/7 Creating company equipment types...');
+        const equipmentTypes: EquipmentType[] = await this.equipmentTypeRepository.all();
         await Promise.all(
             companies.map(async (company: Company): Promise<void> => {
                 for (let i = 0; i < Math.round(Math.random() * 10); i++) {

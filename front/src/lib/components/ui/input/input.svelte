@@ -84,7 +84,7 @@
     {:else}
         <label
             for={name}
-            class="absolute pointer-events-none z-10 transition-all duration-800 ease-in-out font-medium {isFocused || value
+            class="absolute pointer-events-none z-10 transition-all duration-800 ease-in-out font-medium {isFocused || (value !== undefined && value !== null && value !== '')
                 ? 'bottom-9 left-1'
                 : 'text-gray-600 dark:text-gray-400 bottom-1.5 left-3'}"
         >

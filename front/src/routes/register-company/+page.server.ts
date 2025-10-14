@@ -5,5 +5,5 @@ export const load = async ({ fetch }: Parameters<PageServerLoad>[0]) => {
 
     const { isSuccess, data } = await response.json();
 
-    return isSuccess && response.ok ? { isSuccess, data } : { isSuccess: false };
+    return isSuccess && response.ok ? { isSuccess, data } : { isSuccess: false, message: data.message };
 };

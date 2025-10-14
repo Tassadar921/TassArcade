@@ -12,26 +12,37 @@
         label: string;
     };
 
-    export type Props = {
+    type Props = {
         items: SelectItem[];
         placeholder?: string;
         searchPlaceholder?: string;
         noItemFound?: string;
+        value?: string;
     };
 
-    let { items = $bindable([]), placeholder, searchPlaceholder, noItemFound }: Props = $props();
+    let { items = $bindable([]), placeholder, searchPlaceholder, noItemFound, value = $bindable('') }: Props = $props();
 
     let open: boolean = $state(false);
-    let value: string = $state('');
     let triggerRef: HTMLButtonElement = $state<HTMLButtonElement>(null!);
 
-    const selectedValue: string | undefined = $derived(items.find((item: SelectItem) => item.value === value)?.label);
+    const selectedValue: string | undefined = $derived(items.find((item) => item.value === value)?.label);
 
     const closeAndFocusTrigger = (): void => {
         open = false;
         tick().then(() => {
             triggerRef.focus();
         });
+    };
+
+    const customFilter = (val: string, search: string, keywords?: string[]): number => {
+        const cleanedSearch = search.toLowerCase().trim();
+        if (cleanedSearch === '') {
+            return 1;
+        }
+
+        const all = [val, ...(keywords ?? [])].map((v) => v.toLowerCase()).join(' ');
+
+        return all.includes(cleanedSearch) ? 1 : 0;
     };
 </script>
 
@@ -47,14 +58,15 @@
         {/snippet}
     </PopoverTrigger>
     <PopoverContent class="w-[200px] p-0">
-        <Command>
+        <Command filter={customFilter}>
             <CommandInput placeholder={searchPlaceholder || m['common.combo-box.search-placeholder']()} />
             <CommandList>
                 <CommandEmpty>{noItemFound || m['common.combo-box.no-item-found']()}</CommandEmpty>
                 <CommandGroup>
-                    {#each items as item}
+                    {#each items as item (item.value)}
                         <CommandItem
                             value={item.value}
+                            keywords={[item.label]}
                             onSelect={() => {
                                 value = item.value;
                                 closeAndFocusTrigger();

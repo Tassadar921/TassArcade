@@ -152,10 +152,43 @@
     },
     "register-company": {
         "title": "Register a company",
+        "siret": {
+            "placeholder": "732 829 320 00074",
+            "label": "SIRET",
+            "comment": "14 digits number"
+        },
+        "name": {
+            "placeholder": "Ashford & Co",
+            "label": "Name"
+        },
+        "address": {
+            "placeholder": "221B Baker Street",
+            "label": "Address"
+        },
+        "postal-code": {
+            "placeholder": "NW1 6XE",
+            "label": "Postal code"
+        },
+        "city": {
+            "placeholder": "London",
+            "label": "City"
+        },
+        "complement": {
+            "placeholder": "Flat 2, 2nd Floor",
+            "label": "Flat / Apt"
+        },
         "country": {
             "placeholder": "Select a country",
             "no-item-found": "No country found",
             "search-placeholder": "Search a country ..."
+        },
+        "email": {
+            "placeholder": "ceo@ashfordandco.com",
+            "label": "Email"
+        },
+        "phone-number": {
+            "placeholder": "",
+            "label": "Phone number"
         }
     },
     "logout": {
