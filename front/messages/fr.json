@@ -70,6 +70,10 @@
                     }
                 }
             ]
+        },
+        "combo-box": {
+            "no-item-found": "Aucun item trouvé",
+            "search-placeholder": "Rechercher ..."
         }
     },
     "open-graph": {
@@ -87,21 +91,6 @@
     "footer": {
         "navigation": "Navigation",
         "about": "À propos"
-    },
-    "profile": {
-        "title": "Profil",
-        "description": "Mettez à jour votre profil",
-        "meta": {
-            "title": "Modifier le profil – TassArcade",
-            "description": "Mettez à jour votre nom d’utilisateur et votre photo de profil facilement sur TassArcade. Gérez vos informations personnelles en toute sécurité.",
-            "keywords": "modifier profil, changer nom d’utilisateur, changer photo de profil, paramètres utilisateur, TassArcade"
-        },
-        "reset-password": "Réinitialiser le mot de passe",
-        "profile-picture": {
-            "title": "Photo de profil",
-            "description": "Uploadez ici une photo de profil"
-        },
-        "register-company": "Enregistrer une entreprise"
     },
     "reset-password": {
         "title": "Réinitialiser le mot de passe",
@@ -144,6 +133,30 @@
             "title": "Créer votre compte – TassArcade",
             "description": "Inscrivez-vous sur TassArcade en créant un compte avec nom d'utilisateur, email et mot de passe. Ou connectez-vous rapidement via Google, Discord ou GitHub.",
             "keywords": "créer un compte, inscription, nom d'utilisateur, email, mot de passe, OAuth, connexion Google, connexion Discord, connexion GitHub, TassArcade"
+        }
+    },
+    "profile": {
+        "title": "Profil",
+        "description": "Mettez à jour votre profil",
+        "meta": {
+            "title": "Modifier le profil – TassArcade",
+            "description": "Mettez à jour votre nom d’utilisateur et votre photo de profil facilement sur TassArcade. Gérez vos informations personnelles en toute sécurité.",
+            "keywords": "modifier profil, changer nom d’utilisateur, changer photo de profil, paramètres utilisateur, TassArcade"
+        },
+        "reset-password": "Réinitialiser le mot de passe",
+        "profile-picture": {
+            "title": "Photo de profil",
+            "description": "Uploadez ici une photo de profil"
+        },
+        "register-company": "Enregistrer une entreprise"
+    },
+    "register-company": {
+        "title": "Enregistrer une entreprise",
+        "country": {
+            "label": "Pays",
+            "placeholder": "Sélectionner un pays",
+            "no-item-found": "Pas de pays trouvé",
+            "search-placeholder": "Rechercher un pays ..."
         }
     },
     "logout": {

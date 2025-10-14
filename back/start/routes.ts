@@ -18,6 +18,7 @@ const FileController = () => import('#controllers/file_controller');
 const OauthController = () => import('#controllers/oauth_controller');
 const EquipmentController = () => import('#controllers/equipment_controller');
 const ClusterController = () => import('#controllers/cluster_controller');
+const CountryController = () => import('#controllers/country_controller');
 
 router.get('healthcheck', [HealthCheckController]);
 
@@ -119,6 +120,7 @@ router
             .use([middleware.auth()]);
 
         router.get('/equipments', [EquipmentController, 'getAll']);
+        router.get('/countries', [CountryController, 'getAll']);
         router.post('/clusters', [ClusterController, 'get']);
 
         router

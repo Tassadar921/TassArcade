@@ -70,6 +70,10 @@
                     }
                 }
             ]
+        },
+        "combo-box": {
+            "no-item-found": "No item found",
+            "search-placeholder": "Search ..."
         }
     },
     "open-graph": {
@@ -87,21 +91,6 @@
     "footer": {
         "navigation": "Navigation",
         "about": "About"
-    },
-    "profile": {
-        "title": "Profile",
-        "description": "Update your profile",
-        "meta": {
-            "title": "Edit Profile – TassArcade",
-            "description": "Update your username and profile picture easily on TassArcade. Manage your personal information securely.",
-            "keywords": "edit profile, update username, change profile picture, user settings, TassArcade"
-        },
-        "reset-password": "Reset password",
-        "profile-picture": {
-            "title": "Profile picture",
-            "description": "Upload here a profile picture"
-        },
-        "register-company": "Register company"
     },
     "reset-password": {
         "title": "Reset password",
@@ -144,6 +133,30 @@
             "title": "Create Your Account – TassArcade",
             "description": "Sign up for TassArcade by creating your account with username, email, and password. Or quickly register using Google, Discord, or GitHub.",
             "keywords": "create account, sign up, register, username, email, password, OAuth, Google login, Discord login, GitHub login, TassArcade"
+        }
+    },
+    "profile": {
+        "title": "Profile",
+        "description": "Update your profile",
+        "meta": {
+            "title": "Edit Profile – TassArcade",
+            "description": "Update your username and profile picture easily on TassArcade. Manage your personal information securely.",
+            "keywords": "edit profile, update username, change profile picture, user settings, TassArcade"
+        },
+        "reset-password": "Reset password",
+        "profile-picture": {
+            "title": "Profile picture",
+            "description": "Upload here a profile picture"
+        },
+        "register-company": "Register a company"
+    },
+    "register-company": {
+        "title": "Register a company",
+        "country": {
+            "label": "Country",
+            "placeholder": "Select a country",
+            "no-item-found": "No country found",
+            "search-placeholder": "Search country ..."
         }
     },
     "logout": {
