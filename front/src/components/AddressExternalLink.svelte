@@ -20,8 +20,8 @@
     const googleMapsLink: string = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
     const appleMapsLink: string = `https://maps.apple.com/?q=${encodeURIComponent(address)}&ll=${latitude},${longitude}`;
 
-    let finalLink: string = googleMapsLink;
-    let showMacChoice: boolean = false;
+    let finalLink: string = $state(googleMapsLink);
+    let showMacChoice: boolean = $state(false);
 
     if (isIOS) {
         finalLink = appleMapsLink;

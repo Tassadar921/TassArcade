@@ -1,7 +1,7 @@
 export type SerializedAddress = {
     id: string;
     address: string;
-    zipCode: string;
+    postalCode: string;
     city: string;
     complement: string;
     country: string;

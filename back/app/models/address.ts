@@ -13,7 +13,7 @@ export default class Address extends BaseModel {
     declare address: string;
 
     @column()
-    declare zipCode: string;
+    declare postalCode: string;
 
     @column()
     declare city: string;
@@ -47,7 +47,7 @@ export default class Address extends BaseModel {
     declare updatedAt: DateTime;
 
     get fullAddress(): string {
-        return `${this.address}, ${this.zipCode} ${this.city}, ${this.complement}, ${this.country}`;
+        return `${this.address}, ${this.postalCode} ${this.city}, ${this.complement}, ${this.country}`;
     }
 
     get encodedAddress(): string {
@@ -58,7 +58,7 @@ export default class Address extends BaseModel {
         return {
             id: this.id,
             address: this.address,
-            zipCode: this.zipCode,
+            postalCode: this.postalCode,
             city: this.city,
             country: this.country,
             complement: this.complement,

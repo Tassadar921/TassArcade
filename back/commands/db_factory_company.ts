@@ -1,7 +1,7 @@
 import { BaseCommand } from '@adonisjs/core/ace';
 import type { CommandOptions } from '@adonisjs/core/types/ace';
 import { CompanyFactory } from '#database/factories/company';
-import { AddressFactory } from '#database/factories/address';
+import { FranceAddressFactory } from '#database/factories/address';
 import { UserFactory } from '#database/factories/user';
 import { CompanyAdministratorFactory } from '#database/factories/company_administrator';
 import Address from '#models/address';
@@ -14,7 +14,7 @@ import { CompanyEquipmentTypeFactory } from '#database/factories/company_equipme
 
 export default class DbFactoryCompany extends BaseCommand {
     public readonly equipmentTypeRepository: EquipmentTypeRepository = new EquipmentTypeRepository();
-    public companiesAmount: number = 1000;
+    public companiesAmount: number = 50;
 
     public static commandName: string = 'db:factory:company';
     public static description: string = 'This command creates companies';
@@ -25,14 +25,7 @@ export default class DbFactoryCompany extends BaseCommand {
 
     public async run(): Promise<void> {
         this.logger.info('1/7 Creating addresses...');
-        let addresses: Address[] = [
-            ...(await AddressFactory.createMany(this.companiesAmount / 2)),
-            ...(await AddressFactory.merge({
-                country: 'France',
-                latitude: +(41.3 + Math.random() * (51.1 - 41.3)).toFixed(4),
-                longitude: +(-5.1 + Math.random() * (9.6 - -5.1)).toFixed(4),
-            }).createMany(this.companiesAmount / 2)),
-        ];
+        let addresses: Address[] = await FranceAddressFactory.createMany(this.companiesAmount);
 
         this.logger.info('2/7 Creating CEOs...');
         const ceos: User[] = await UserFactory.createMany(this.companiesAmount);

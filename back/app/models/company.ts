@@ -15,7 +15,7 @@ export default class Company extends BaseModel {
     declare id: string;
 
     @column()
-    declare siret: number;
+    declare siret: string;
 
     @column()
     declare name: string;
