@@ -30,7 +30,7 @@
 
 ```html
     <script>
-        import { m } from '$lib/paraglide/messages';
+        import { m } from '#lib/paraglide/messages';
     </script>
 
     <h1>{m['login.title']()}</h1>

@@ -1,8 +1,8 @@
-import { loadFlash, redirect } from 'sveltekit-flash-message/server';
+import { redirect } from 'sveltekit-flash-message/server';
 import type { PageServerLoad } from './$types';
 import { m } from '#lib/paraglide/messages';
 
-export const load: PageServerLoad = loadFlash(async (event): Promise<never> => {
+export const load: PageServerLoad = async (event): Promise<never> => {
     const { url, cookies, locals } = event;
     const token: string | null = url.searchParams.get('token');
 
@@ -51,4 +51,4 @@ export const load: PageServerLoad = loadFlash(async (event): Promise<never> => {
             event
         );
     }
-});
+};

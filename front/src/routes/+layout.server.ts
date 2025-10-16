@@ -66,19 +66,16 @@ export const load: LayoutServerLoad = loadFlash(async (event): Promise<{ user?: 
         }
     }
 
+    let formErrorParsed: FormError | undefined;
     if (formError) {
         cookies.delete('formError', { path: '/' });
-        return {
-            user,
-            language,
-            location,
-            formError: JSON.parse(formError),
-        };
+        formErrorParsed = JSON.parse(formError);
     }
 
     return {
         user,
         language,
         location,
+        formError: formErrorParsed,
     };
 });
