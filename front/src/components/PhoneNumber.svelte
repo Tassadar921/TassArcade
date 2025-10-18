@@ -16,9 +16,10 @@
         label: string;
         value: string;
         country?: Country | null;
+        error?: string;
     }
 
-    let { name = 'phoneNumber', placeholder, label, value = $bindable(), country = null }: Props = $props();
+    let { name = 'phoneNumber', placeholder, label, value = $bindable(), country = null, error }: Props = $props();
 
     const hasCountry = $derived(!!country);
     const dialCode = $derived(hasCountry ? country?.data.dial_code : '');
@@ -31,8 +32,10 @@
             <span>{dialCode}</span>
         </div>
 
-        <Input class="rounded-l-none flex-1" type="text" {name} {placeholder} {label} bind:value />
+        <Input class="rounded-l-none flex-1" type="text" {name} {placeholder} {label} bind:value {error} />
     {:else}
-        <Input type="text" {name} {placeholder} {label} bind:value readonly disabled class="opacity-50 cursor-not-allowed" />
+        <div class="flex flex-col w-full">
+            <Input type="text" {name} {placeholder} {label} bind:value readonly disabled class="flex-1 opacity-50 cursor-not-allowed" {error} />
+        </div>
     {/if}
 </div>

@@ -156,29 +156,43 @@
             "siret": {
                 "placeholder": "732 829 320 00074",
                 "label": "SIRET",
-                "comment": "14 digits number",
                 "popover": {
                     "content": "By clicking this button, this will fill the form from public official company data"
                 },
                 "error": {
-                    "invalid": "The SIRET must be 14 characters long and contain only numbers"
+                    "length": "The SIRET must be exactly 14 digits.",
+                    "numeric": "The SIRET must contain only digits."
                 }
             },
             "name": {
                 "placeholder": "Ashford & Co",
-                "label": "Name"
+                "label": "Name",
+                "error": {
+                    "min": "The name must have at least 3 characters.",
+                    "max": "The name must not exceed 100 characters."
+                }
             },
             "address": {
                 "placeholder": "221B Baker Street",
-                "label": "Address"
+                "label": "Address",
+                "error": {
+                    "min": "The address must have at least 5 characters.",
+                    "max": "The address must not exceed 100 characters."
+                }
             },
             "postal-code": {
                 "placeholder": "NW1 6XE",
-                "label": "Postal code"
+                "label": "Postal code",
+                "error": {
+                    "length": "The postal code must be exactly 5 characters."
+                }
             },
             "city": {
                 "placeholder": "London",
-                "label": "City"
+                "label": "City",
+                "error": {
+                    "max": "The city must not exceed 100 characters."
+                }
             },
             "complement": {
                 "placeholder": "Flat 2, 2nd Floor",
@@ -187,15 +201,29 @@
             "country": {
                 "placeholder": "Select a country",
                 "no-item-found": "No country found",
-                "search-placeholder": "Search a country ..."
+                "search-placeholder": "Search a country ...",
+                "error": {
+                    "min": "The country code must have at least 2 letters.",
+                    "max": "The country code must not exceed 2 letters.",
+                    "uppercase": "The country code must be uppercase."
+                }
             },
             "email": {
                 "placeholder": "ceo@ashfordandco.com",
-                "label": "Email"
+                "label": "Email",
+                "error": {
+                    "invalid": "The email is not valid.",
+                    "max": "The email must not exceed 100 characters."
+                }
             },
             "phone-number": {
                 "placeholder": "",
-                "label": "Phone number"
+                "label": "Phone number",
+                "error": {
+                    "numeric": "The phone number must contain only digits.",
+                    "min": "The phone number is too short.",
+                    "max": "The phone number is too long."
+                }
             }
         }
     },

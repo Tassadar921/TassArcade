@@ -2,7 +2,6 @@
     import { m } from '#lib/paraglide/messages';
     import { Title } from '#lib/components/ui/title';
     import Form from '#components/Form.svelte';
-    import * as zod from 'zod';
     import { onMount } from 'svelte';
     import { page } from '$app/state';
     import { ComboBox, type SelectItem } from '#lib/components/ui/combo-box';
@@ -15,6 +14,8 @@
     import { Popover, PopoverContent } from '#lib/components/ui/popover';
     import { PopoverTrigger } from '#lib/components/ui/popover/index.js';
     import { formatForCompany } from '#lib/services/stringService';
+    import { newCompanyValidator } from '#lib/validators/new-company';
+    import * as zod from 'zod';
 
     interface Country {
         data: {
@@ -25,21 +26,6 @@
         };
     }
 
-    const schema = zod.object({
-        siret: zod
-            .string()
-            .length(14)
-            .regex(/^[0-9]+$/),
-        name: zod.string().min(3).max(100),
-        address: zod.string().min(5).max(100),
-        postalCode: zod.string().min(5).max(5),
-        city: zod.string().min(3).max(100),
-        complement: zod.string().optional(),
-        countryCode: zod.string().min(2).max(2).uppercase(),
-        email: zod.email().max(100).optional(),
-        phoneNumber: zod.string().max(20).optional(),
-    });
-
     let siret: string = $state('10000000000000');
     let name: string = $state('');
     let address: string = $state('');
@@ -47,14 +33,15 @@
     let city: string = $state('');
     let complement: string = $state('');
     let countryCode: string | undefined = $state('');
-    let email: string = $state('');
-    let phoneNumber: string = $state('');
+    let email: string | undefined = $state(undefined);
+    let phoneNumber: string | undefined = $state(undefined);
 
-    let isSirenInvalid: boolean = $derived(siret.length !== 14 || !Number(siret));
+    let phoneValue = $derived(phoneNumber ?? '');
+
     let showSiretPopover: boolean = $state(false);
 
-    const canSubmit = $derived(
-        schema.safeParse({
+    const validation = $derived(
+        newCompanyValidator.safeParse({
             siret,
             name,
             address,
@@ -64,8 +51,12 @@
             countryCode,
             email,
             phoneNumber,
-        }).success
+        })
     );
+
+    const canSubmit = $derived(validation.success);
+
+    let errors: any = $state({ formErrors: [], properties: {} });
 
     let countriesOptions: SelectItem[] = $state([]);
     let selectedCountry: Country | undefined = $derived(page.data.data.find((country: Country) => country.data.code === countryCode));
@@ -84,8 +75,8 @@
     });
 
     const fillFromSiret = async (): Promise<void> => {
-        if (isSirenInvalid) {
-            showToast(m['company.new.siret.error.invalid'](), 'error');
+        if (errors.properties?.siret?.errors?.[0]) {
+            showToast(errors.properties?.siret?.errors?.[0], 'error');
             return;
         }
 
@@ -106,43 +97,84 @@
     };
 
     $effect(() => {
-        console.log(phoneNumber);
+        if (validation.success) {
+            errors = { formErrors: [], properties: {} };
+        } else {
+            errors = zod.treeifyError(validation.error);
+        }
     });
 </script>
 
 <Title title={m['company.new.title']()} />
 
 <Form isValid={canSubmit}>
-    <div>
-        <div class="flex gap-3">
-            <Input name="siret" placeholder={m['company.new.siret.placeholder']()} label={m['company.new.siret.label']()} bind:value={siret} max={14} pattern="[0-9]*" required />
-            <Popover open={showSiretPopover}>
-                <Button
-                    disabled={isSirenInvalid}
-                    variant="outline"
-                    onmouseenter={() => (showSiretPopover = true)}
-                    onfocus={() => (showSiretPopover = true)}
-                    onmouseleave={() => (showSiretPopover = false)}
-                    onblur={() => (showSiretPopover = false)}
-                    onclick={fillFromSiret}
-                >
-                    <div class="relative">
-                        <RefreshCcw />
-                        <PopoverTrigger class="absolute top-8 size-0" />
-                    </div>
-                </Button>
-                <PopoverContent>{m['company.new.siret.popover.content']()}</PopoverContent>
-            </Popover>
-        </div>
-        <p class="text-sm text-gray-700 dark:text-gray-300">{m['company.new.siret.comment']()}</p>
+    <div class="flex gap-3">
+        <Input
+            name="siret"
+            placeholder={m['company.new.siret.placeholder']()}
+            label={m['company.new.siret.label']()}
+            bind:value={siret}
+            max={14}
+            pattern="[0-9]*"
+            error={errors.properties?.siret?.errors?.[0]}
+            required
+        />
+        <Popover open={showSiretPopover}>
+            <Button
+                disabled={errors.properties?.siret?.errors?.[0]}
+                variant="outline"
+                onmouseenter={() => (showSiretPopover = true)}
+                onfocus={() => (showSiretPopover = true)}
+                onmouseleave={() => (showSiretPopover = false)}
+                onblur={() => (showSiretPopover = false)}
+                onclick={fillFromSiret}
+            >
+                <div class="relative">
+                    <RefreshCcw />
+                    <PopoverTrigger class="absolute top-8 size-0" />
+                </div>
+            </Button>
+            <PopoverContent>{m['company.new.siret.popover.content']()}</PopoverContent>
+        </Popover>
     </div>
-    <Input type="text" name="name" placeholder={m['company.new.name.placeholder']()} label={m['company.new.name.label']()} bind:value={name} required />
-    <Input type="text" name="address" placeholder={m['company.new.address.placeholder']()} label={m['company.new.address.label']()} bind:value={address} required />
+    <Input type="text" name="name" placeholder={m['company.new.name.placeholder']()} label={m['company.new.name.label']()} bind:value={name} error={errors.properties?.name?.errors?.[0]} required />
+    <Input
+        type="text"
+        name="address"
+        placeholder={m['company.new.address.placeholder']()}
+        label={m['company.new.address.label']()}
+        bind:value={address}
+        error={errors.properties?.address?.errors?.[0]}
+        required
+    />
     <div class="flex gap-5">
-        <Input type="text" name="postalCode" placeholder={m['company.new.postal-code.placeholder']()} label={m['company.new.postal-code.label']()} bind:value={postalCode} required />
-        <Input type="text" name="city" placeholder={m['company.new.city.placeholder']()} label={m['company.new.city.label']()} bind:value={city} required />
+        <Input
+            type="text"
+            name="postalCode"
+            placeholder={m['company.new.postal-code.placeholder']()}
+            label={m['company.new.postal-code.label']()}
+            bind:value={postalCode}
+            error={errors.properties?.postalCode?.errors?.[0]}
+            required
+        />
+        <Input
+            type="text"
+            name="city"
+            placeholder={m['company.new.city.placeholder']()}
+            label={m['company.new.city.label']()}
+            bind:value={city}
+            error={errors.properties?.city?.errors?.[0]}
+            required
+        />
     </div>
-    <Input type="text" name="complement" placeholder={m['company.new.complement.placeholder']()} label={m['company.new.complement.label']()} bind:value={complement} />
+    <Input
+        type="text"
+        name="complement"
+        placeholder={m['company.new.complement.placeholder']()}
+        label={m['company.new.complement.label']()}
+        bind:value={complement}
+        error={errors.properties?.complement?.errors?.[0]}
+    />
     <ComboBox
         items={countriesOptions}
         placeholder={m['company.new.country.placeholder']()}
@@ -151,7 +183,14 @@
         bind:value={countryCode}
     />
     <div class="flex gap-5">
-        <Input type="email" name="email" placeholder={m['company.new.email.placeholder']()} label={m['company.new.email.label']()} bind:value={email} />
-        <PhoneNumber country={selectedCountry} name="phoneNumber" placeholder={m['company.new.phone-number.placeholder']()} label={m['company.new.phone-number.label']()} bind:value={phoneNumber} />
+        <Input type="email" name="email" placeholder={m['company.new.email.placeholder']()} label={m['company.new.email.label']()} bind:value={email} error={errors.properties?.email?.errors?.[0]} />
+        <PhoneNumber
+            country={selectedCountry}
+            name="phoneNumber"
+            placeholder={m['company.new.phone-number.placeholder']()}
+            label={m['company.new.phone-number.label']()}
+            bind:value={phoneValue}
+            error={errors.properties?.phoneNumber?.errors?.[0]}
+        />
     </div>
 </Form>

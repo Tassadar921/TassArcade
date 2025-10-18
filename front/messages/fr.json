@@ -156,29 +156,43 @@
             "siret": {
                 "placeholder": "732 829 320 00074",
                 "label": "SIRET",
-                "comment": "Nombre de 14 chiffres",
                 "popover": {
                     "content": "En cliquant sur ce bouton, cela remplira le formulaire à partir des données publiques officielles de l'entreprise"
                 },
                 "error": {
-                    "invalid": "Le SIRET doit être long de 14 caractères et ne doit contenir que des chiffres"
+                    "length": "Le SIRET doit contenir exactement 14 chiffres.",
+                    "numeric": "Le SIRET ne doit contenir que des chiffres."
                 }
             },
             "name": {
                 "placeholder": "Maison Delcourt",
-                "label": "Nom"
+                "label": "Nom",
+                "error": {
+                    "min": "Le nom doit contenir au moins 3 caractères.",
+                    "max": "Le nom ne doit pas dépasser 100 caractères."
+                }
             },
             "address": {
                 "placeholder": "10 rue de la République",
-                "label": "Adresse"
+                "label": "Adresse",
+                "error": {
+                    "min": "L’adresse doit contenir au moins 5 caractères.",
+                    "max": "L’adresse ne doit pas dépasser 100 caractères."
+                }
             },
             "postal-code": {
                 "placeholder": "75001",
-                "label": "Code postal"
+                "label": "Code postal",
+                "error": {
+                    "length": "Le code postal doit contenir exactement 5 caractères."
+                }
             },
             "city": {
                 "placeholder": "Paris",
-                "label": "Ville"
+                "label": "Ville",
+                "error": {
+                    "max": "La ville ne doit pas dépasser 100 caractères."
+                }
             },
             "complement": {
                 "placeholder": "Bâtiment A, Appartement 12",
@@ -187,15 +201,29 @@
             "country": {
                 "placeholder": "Sélectionner un pays",
                 "no-item-found": "Pas de pays trouvé",
-                "search-placeholder": "Rechercher un pays ..."
+                "search-placeholder": "Rechercher un pays ...",
+                "error": {
+                    "min": "Le code pays doit contenir au moins 2 lettres.",
+                    "max": "Le code pays ne doit pas dépasser 2 lettres.",
+                    "uppercase": "Le code pays doit être en majuscules."
+                }
             },
             "email": {
                 "placeholder": "direction@maison-delcourt.com",
-                "label": "Email"
+                "label": "Email",
+                "error": {
+                    "invalid": "L’email n’est pas valide.",
+                    "max": "L’email ne doit pas dépasser 100 caractères."
+                }
             },
             "phone-number": {
                 "placeholder": "3",
-                "label": "Numéro de téléphone"
+                "label": "Numéro de téléphone",
+                "error": {
+                    "numeric": "Le numéro de téléphone ne doit contenir que des chiffres.",
+                    "min": "Le numéro de téléphone est trop court.",
+                    "max": "Le numéro de téléphone est trop long."
+                }
             }
         }
     },
