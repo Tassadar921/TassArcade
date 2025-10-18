@@ -26,7 +26,10 @@
     }
 
     const schema = zod.object({
-        siret: zod.string().length(14),
+        siret: zod
+            .string()
+            .length(14)
+            .regex(/^[0-9]+$/),
         name: zod.string().min(3).max(100),
         address: zod.string().min(5).max(100),
         postalCode: zod.string().min(5).max(5),
@@ -87,7 +90,6 @@
         }
 
         await wrappedFetch(`/company/new/siret/${siret}`, { method: 'GET' }, ({ data }): void => {
-            console.log(data);
             name = formatForCompany(data.periodesEtablissement[0]?.denominationUsuelleEtablissement);
             address = formatForCompany(
                 `${data.adresseEtablissement.numeroVoieEtablissement} ${data.adresseEtablissement.typeVoieEtablissement} ${data.adresseEtablissement.libelleVoieEtablissement}`,
@@ -96,6 +98,10 @@
             postalCode = data.adresseEtablissement.codePostalEtablissement;
             city = formatForCompany(data.adresseEtablissement.libelleCommuneEtablissement);
             complement = formatForCompany(data.adresseEtablissement.complementAdresseEtablissement);
+            const filteredCountry: SelectItem | undefined = countriesOptions.find((country: SelectItem) => country.label.includes('France'));
+            if (filteredCountry) {
+                countryCode = filteredCountry.value;
+            }
         });
     };
 
@@ -109,7 +115,7 @@
 <Form isValid={canSubmit}>
     <div>
         <div class="flex gap-3">
-            <Input name="siret" placeholder={m['company.new.siret.placeholder']()} label={m['company.new.siret.label']()} bind:value={siret} max={14} required />
+            <Input name="siret" placeholder={m['company.new.siret.placeholder']()} label={m['company.new.siret.label']()} bind:value={siret} max={14} pattern="[0-9]*" required />
             <Popover open={showSiretPopover}>
                 <Button
                     disabled={isSirenInvalid}
