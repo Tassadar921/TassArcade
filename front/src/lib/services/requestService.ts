@@ -37,10 +37,6 @@ export const wrappedFetch = async (
     }
 
     try {
-        if (!response.ok) {
-            throw response;
-        }
-
         const data: any = await response.json();
 
         if (data.message) {

@@ -148,47 +148,55 @@
             "title": "Profile picture",
             "description": "Upload here a profile picture"
         },
-        "register-company": "Register a company"
+        "new-company": "Register a company"
     },
-    "register-company": {
-        "title": "Register a company",
-        "siret": {
-            "placeholder": "732 829 320 00074",
-            "label": "SIRET",
-            "comment": "14 digits number"
-        },
-        "name": {
-            "placeholder": "Ashford & Co",
-            "label": "Name"
-        },
-        "address": {
-            "placeholder": "221B Baker Street",
-            "label": "Address"
-        },
-        "postal-code": {
-            "placeholder": "NW1 6XE",
-            "label": "Postal code"
-        },
-        "city": {
-            "placeholder": "London",
-            "label": "City"
-        },
-        "complement": {
-            "placeholder": "Flat 2, 2nd Floor",
-            "label": "Flat / Apt"
-        },
-        "country": {
-            "placeholder": "Select a country",
-            "no-item-found": "No country found",
-            "search-placeholder": "Search a country ..."
-        },
-        "email": {
-            "placeholder": "ceo@ashfordandco.com",
-            "label": "Email"
-        },
-        "phone-number": {
-            "placeholder": "",
-            "label": "Phone number"
+    "company": {
+        "new": {
+            "title": "Register a company",
+            "siret": {
+                "placeholder": "732 829 320 00074",
+                "label": "SIRET",
+                "comment": "14 digits number",
+                "popover": {
+                    "content": "By clicking this button, this will fill the form from public official company data"
+                },
+                "error": {
+                    "invalid": "The SIRET must be 14 characters long and contain only numbers"
+                }
+            },
+            "name": {
+                "placeholder": "Ashford & Co",
+                "label": "Name"
+            },
+            "address": {
+                "placeholder": "221B Baker Street",
+                "label": "Address"
+            },
+            "postal-code": {
+                "placeholder": "NW1 6XE",
+                "label": "Postal code"
+            },
+            "city": {
+                "placeholder": "London",
+                "label": "City"
+            },
+            "complement": {
+                "placeholder": "Flat 2, 2nd Floor",
+                "label": "Flat / Apt"
+            },
+            "country": {
+                "placeholder": "Select a country",
+                "no-item-found": "No country found",
+                "search-placeholder": "Search a country ..."
+            },
+            "email": {
+                "placeholder": "ceo@ashfordandco.com",
+                "label": "Email"
+            },
+            "phone-number": {
+                "placeholder": "",
+                "label": "Phone number"
+            }
         }
     },
     "logout": {

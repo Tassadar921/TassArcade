@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { HTMLInputAttributes, HTMLInputTypeAttribute } from 'svelte/elements';
+    import type { FormEventHandler, HTMLInputAttributes, HTMLInputTypeAttribute } from 'svelte/elements';
     import { cn, type WithElementRef } from '#lib/utils';
     import { Button } from '#lib/components/ui/button/index';
     import { Eye, EyeOff } from '@lucide/svelte';
@@ -30,6 +30,7 @@
         label,
         readonly = false,
         max,
+        pattern,
         ...restProps
     }: Props = $props();
 
@@ -53,6 +54,27 @@
         isFocused = false;
         const inputEvent = event as FocusEvent & { currentTarget: EventTarget & HTMLInputElement };
         onblur?.(inputEvent);
+    };
+
+    const handleInput: FormEventHandler<HTMLInputElement> = (event) => {
+        if (!pattern) return;
+
+        const input = event.currentTarget as HTMLInputElement;
+
+        try {
+            const regex = new RegExp(`^${pattern}$`);
+
+            if (!regex.test(input.value)) {
+                input.value = input.value
+                    .split('')
+                    .filter((char) => regex.test(char) || new RegExp(pattern).test(char))
+                    .join('');
+            }
+
+            value = input.value;
+        } catch (err) {
+            console.warn('Invalid pattern regex:', pattern, err);
+        }
     };
 
     $effect(() => {
@@ -100,6 +122,7 @@
             placeholder={isFocused ? placeholder : ''}
             onfocus={handleFocus}
             onblur={handleBlur}
+            oninput={handleInput}
             class={cn(
                 'border-input bg-background selection:bg-primary dark:bg-input/30 selection:text-primary-foreground ring-offset-background placeholder:text-muted-foreground shadow-xs flex h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base outline-none transition-[color,box-shadow]',
                 'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
@@ -111,6 +134,7 @@
             {name}
             bind:value
             {readonly}
+            {pattern}
             {...restProps}
         />
 

@@ -68,10 +68,12 @@ export default await Env.create(new URL('../', import.meta.url), {
     GOOGLE_CLIENT_ID: Env.schema.string(),
     GOOGLE_CLIENT_SECRET: Env.schema.string(),
 
+    INSEE_API_KEY: Env.schema.string(),
+    BREVO_API_KEY: Env.schema.string(),
+
     FRONT_PORT: Env.schema.number(),
     GITHUB_REPOSITORY: Env.schema.string(),
     ACCOUNT_SENDER_EMAIL: Env.schema.string(),
-    BREVO_API_KEY: Env.schema.string(),
     ADMIN_EMAIL: Env.schema.string(),
     ADDITIONAL_EMAILS: Env.schema.string(),
 

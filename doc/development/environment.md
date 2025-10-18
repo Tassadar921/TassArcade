@@ -36,10 +36,12 @@ GITHUB_CLIENT_SECRET=
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 
+INSEE_API_KEY=
+BREVO_API_KEY=
+
 FRONT_PORT=5173
 GITHUB_REPOSITORY=https://github.com/Tassadar921/TassArcade
 ACCOUNT_SENDER_EMAIL=account@tassarcade.com
-BREVO_API_KEY=
 ADMIN_EMAIL=
 ADDITIONAL_EMAILS=[]
 
@@ -72,10 +74,11 @@ API_URI=""
 | `GITHUB_CLIENT_SECRET`  | **`A valid GitHub client secret`**                                          |
 | `GOOGLE_CLIENT_ID`      | **`A valid Google client ID`**                                              |
 | `GOOGLE_CLIENT_SECRET`  | **`A valid Google client secret`**                                          |
+| `INSEE_API_KEY`         | **`A valid INSEE API key`**                                                 |
+| `BREVO_API_KEY`         | **`A valid Brevo API key`**                                                 |
 | `FRONT_PORT`            | 5173                                                                        |
 | `GITHUB_REPOSITORY`     | https://github.com/Tassadar921/TassArcade                                   |
 | `ACCOUNT_SENDER_EMAIL`  | account@tassarcade.com                                                      |
-| `BREVO_API_KEY`         | **`A valid Brevo API key`**                                                 |
 | `ADMIN_EMAIL`           | **`Put your email here`**                                                   |
 | `ADDITIONAL_EMAILS`     | [] **Feel free to add other emails to create other users or test emailing** |
 | `FRONT_URI`             | "" **`Injected from Docker`**                                               |

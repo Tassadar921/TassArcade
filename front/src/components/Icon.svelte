@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { SvelteComponent } from 'svelte';
-    import { toCamelCase } from '#lib/services/stringService';
+    import { toPascalCase } from '#lib/services/stringService';
 
     const iconNames = ['Discord', 'EnglishFlag', 'FrenchFlag', 'Github', 'Google'] as const;
 
@@ -19,7 +19,7 @@
     let IconComponent: typeof SvelteComponent | undefined = $state();
 
     const setIcon = async (name: string): Promise<void> => {
-        const camelCaseName = toCamelCase(name);
+        const camelCaseName = toPascalCase(name);
         const module = await import(`#icons/${camelCaseName}.svelte`);
         IconComponent = module.default;
     };

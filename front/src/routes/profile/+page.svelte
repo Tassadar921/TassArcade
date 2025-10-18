@@ -56,9 +56,9 @@
         id={profileData.id}
         bind:file={profilePicture}
     />
-    <Link href="/register-company">
+    <Link href="/company/new">
         <Button>
-            {m['profile.register-company']()}
+            {m['profile.new-company']()}
         </Button>
     </Link>
 </Form>

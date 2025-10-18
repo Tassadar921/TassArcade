@@ -148,47 +148,55 @@
             "title": "Photo de profil",
             "description": "Uploadez ici une photo de profil"
         },
-        "register-company": "Enregistrer une entreprise"
+        "new-company": "Enregistrer une entreprise"
     },
-    "register-company": {
-        "title": "Enregistrer une entreprise",
-        "siret": {
-            "placeholder": "732 829 320 00074",
-            "label": "SIRET",
-            "comment": "Nombre de 14 chiffres"
-        },
-        "name": {
-            "placeholder": "Maison Delcourt",
-            "label": "Nom"
-        },
-        "address": {
-            "placeholder": "10 rue de la République",
-            "label": "Adresse"
-        },
-        "postal-code": {
-            "placeholder": "75001",
-            "label": "Code postal"
-        },
-        "city": {
-            "placeholder": "Paris",
-            "label": "Ville"
-        },
-        "complement": {
-            "placeholder": "Bâtiment A, Appartement 12",
-            "label": "Complément d’adresse"
-        },
-        "country": {
-            "placeholder": "Sélectionner un pays",
-            "no-item-found": "Pas de pays trouvé",
-            "search-placeholder": "Rechercher un pays ..."
-        },
-        "email": {
-            "placeholder": "direction@maison-delcourt.com",
-            "label": "Email"
-        },
-        "phone-number": {
-            "placeholder": "3",
-            "label": "Numéro de téléphone"
+    "company": {
+        "new": {
+            "title": "Enregistrer une entreprise",
+            "siret": {
+                "placeholder": "732 829 320 00074",
+                "label": "SIRET",
+                "comment": "Nombre de 14 chiffres",
+                "popover": {
+                    "content": "En cliquant sur ce bouton, cela remplira le formulaire à partir des données publiques officielles de l'entreprise"
+                },
+                "error": {
+                    "invalid": "Le SIRET doit être long de 14 caractères et ne doit contenir que des chiffres"
+                }
+            },
+            "name": {
+                "placeholder": "Maison Delcourt",
+                "label": "Nom"
+            },
+            "address": {
+                "placeholder": "10 rue de la République",
+                "label": "Adresse"
+            },
+            "postal-code": {
+                "placeholder": "75001",
+                "label": "Code postal"
+            },
+            "city": {
+                "placeholder": "Paris",
+                "label": "Ville"
+            },
+            "complement": {
+                "placeholder": "Bâtiment A, Appartement 12",
+                "label": "Complément d’adresse"
+            },
+            "country": {
+                "placeholder": "Sélectionner un pays",
+                "no-item-found": "Pas de pays trouvé",
+                "search-placeholder": "Rechercher un pays ..."
+            },
+            "email": {
+                "placeholder": "direction@maison-delcourt.com",
+                "label": "Email"
+            },
+            "phone-number": {
+                "placeholder": "3",
+                "label": "Numéro de téléphone"
+            }
         }
     },
     "logout": {
