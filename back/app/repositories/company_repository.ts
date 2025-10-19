@@ -42,10 +42,9 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
         const result = await db.rawQuery(query, bindings);
 
         const clusters: Cluster[] = [];
-        console.log(result.rows.length);
 
         for (const row of result.rows) {
-            const companies: Company[] = await Company.query().preload('address').whereIn('address_id', row.address_ids).preload('equipments');
+            const companies: Company[] = await Company.query().whereIn('address_id', row.address_ids);
 
             clusters.push({
                 id: row.cluster,

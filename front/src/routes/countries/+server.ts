@@ -5,7 +5,7 @@ export const GET: RequestHandler = async ({ locals }): Promise<Response> => {
     try {
         const response = await locals.client.get('/api/countries');
 
-        if (response.status !== 200) {
+        if (response.status < 200 || response.status >= 300) {
             throw response;
         }
 

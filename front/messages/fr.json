@@ -183,43 +183,46 @@
                 "placeholder": "Maison Delcourt",
                 "label": "Nom",
                 "error": {
-                    "min": "Le nom doit contenir au moins 3 caractères.",
-                    "max": "Le nom ne doit pas dépasser 100 caractères."
+                    "min": "Le nom doit contenir au moins {min} caractères.",
+                    "max": "Le nom ne doit pas dépasser {max} caractères."
                 }
             },
             "address": {
                 "placeholder": "10 rue de la République",
                 "label": "Adresse",
                 "error": {
-                    "min": "L’adresse doit contenir au moins 5 caractères.",
-                    "max": "L’adresse ne doit pas dépasser 100 caractères."
+                    "min": "L’adresse doit contenir au moins {min} caractères.",
+                    "max": "L’adresse ne doit pas dépasser {max} caractères."
                 }
             },
             "postal-code": {
                 "placeholder": "75001",
                 "label": "Code postal",
                 "error": {
-                    "length": "Le code postal doit contenir exactement 5 caractères."
+                    "min": "Le code postal doit contenir au moins {min} caractères.",
+                    "max": "Le code postal ne doit pas dépasser {max} caractères."
                 }
             },
             "city": {
                 "placeholder": "Paris",
                 "label": "Ville",
                 "error": {
-                    "max": "La ville ne doit pas dépasser 100 caractères."
+                    "max": "La ville ne doit pas dépasser {max} caractères."
                 }
             },
             "complement": {
                 "placeholder": "Bâtiment A, Appartement 12",
-                "label": "Complément d’adresse"
+                "label": "Complément d’adresse",
+                "error": {
+                    "max": "Complément d’adresse ne doit pas dépasser {max} caractères."
+                }
             },
             "country": {
                 "placeholder": "Sélectionner un pays",
                 "no-item-found": "Pas de pays trouvé",
                 "search-placeholder": "Rechercher un pays ...",
                 "error": {
-                    "min": "Le code pays doit contenir au moins 2 lettres.",
-                    "max": "Le code pays ne doit pas dépasser 2 lettres.",
+                    "length": "Le code pays doit contenir exactement 2 lettres.",
                     "uppercase": "Le code pays doit être en majuscules."
                 }
             },

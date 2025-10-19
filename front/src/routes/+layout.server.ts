@@ -56,7 +56,7 @@ export const load: LayoutServerLoad = loadFlash(async (event): Promise<{ user?: 
     if (userCookie && cookies.get('token')) {
         try {
             const response = await locals.client.get('/api');
-            if (response.status !== 200) {
+            if (response.status < 200 || response.status >= 300) {
                 throw response;
             }
         } catch {

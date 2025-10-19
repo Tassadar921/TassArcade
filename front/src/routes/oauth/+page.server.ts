@@ -11,8 +11,13 @@ export const load: PageServerLoad = async (event): Promise<never> => {
     let isSuccess: boolean = true;
 
     try {
-        const { data: returnedData } = await locals.client.post(`api/auth/confirm/${provider}/${token}`);
-        data = returnedData;
+        const response = await locals.client.post(`api/auth/confirm/${provider}/${token}`);
+
+        if (response.status < 200 || response.status >= 300) {
+            throw response;
+        }
+
+        data = response.data;
     } catch (error: any) {
         isSuccess = false;
         data = error?.response?.data;

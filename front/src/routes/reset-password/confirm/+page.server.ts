@@ -22,12 +22,17 @@ export const actions: Actions = {
             formData.append('confirmPassword', confirmPassword);
             formData.delete('confirm-password');
 
-            const { data: returnedData } = await locals.client.post(`api/reset-password/confirm/${token}`, formData, {
+            const response = await locals.client.post(`api/reset-password/confirm/${token}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            data = returnedData;
+
+            if (response.status < 200 || response.status >= 300) {
+                throw response;
+            }
+
+            data = response.data;
         } catch (error: any) {
             isSuccess = false;
             data = error?.response?.data;

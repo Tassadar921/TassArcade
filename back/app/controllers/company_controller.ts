@@ -1,16 +1,21 @@
 import { HttpContext } from '@adonisjs/core/http';
 import { inject } from '@adonisjs/core';
 import CompanyRepository from '#repositories/company_repository';
-import { getFromSiretValidator } from '#validators/company';
+import { createCompanyValidator, getCompanyFromSiretValidator } from '#validators/company';
 import axios from 'axios';
 import env from '#start/env';
+import Company from '#models/company';
+import Address from '#models/address';
+import CountryList, { Country } from 'country-list-with-dial-code-and-flag';
+import CompanyAdministrator from '#models/company_administrator';
+import CompanyAdministratorRoleEnum from '#types/enum/company_administrator_role_enum';
 
 @inject()
 export default class CompanyController {
     constructor(private readonly companyRepository: CompanyRepository) {}
 
     public async getFromSiret({ request, response, i18n }: HttpContext): Promise<void> {
-        const { siret } = await getFromSiretValidator.validate(request.params());
+        const { siret } = await getCompanyFromSiretValidator.validate(request.params());
 
         try {
             const axiosResponse = await axios.get(`https://api.insee.fr/api-sirene/3.11/siret/${siret}`, {
@@ -35,5 +40,52 @@ export default class CompanyController {
                 error: i18n.t('messages.company.siret.error.default'),
             });
         }
+    }
+
+    public async create({ request, response, user, language, i18n }: HttpContext): Promise<void> {
+        const { siret, name, address: inputAddress, postalCode, city, complement, countryCode, email, phoneNumber } = await request.validateUsing(createCompanyValidator);
+
+        let company: Company | null = await this.companyRepository.findOneBy({ siret });
+        if (company) {
+            return response.conflict({
+                error: i18n.t('messages.company.create.error.already-exists', { siret }),
+            });
+        }
+
+        const country: Country | undefined = CountryList.default.findOneByCountryCode(countryCode);
+        if (!country) {
+            return response.badRequest({
+                error: i18n.t('messages.company.create.error.invalid-country-code', { countryCode }),
+            });
+        }
+
+        const address: Address = await Address.create({
+            address: inputAddress,
+            postalCode,
+            city,
+            complement,
+            country: country.name,
+        });
+        await address.refresh();
+
+        company = await Company.create({
+            siret,
+            name,
+            email,
+            phoneNumber,
+            addressId: address.id,
+        });
+        await company.refresh();
+
+        await CompanyAdministrator.create({
+            role: CompanyAdministratorRoleEnum.CEO,
+            companyId: company.id,
+            userId: user.id,
+        });
+
+        return response.created({
+            message: i18n.t('messages.company.create.success', { companyName: company.name }),
+            company: company.apiSerialize(language),
+        });
     }
 }

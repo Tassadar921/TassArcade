@@ -183,43 +183,46 @@
                 "placeholder": "Ashford & Co",
                 "label": "Name",
                 "error": {
-                    "min": "The name must have at least 3 characters.",
-                    "max": "The name must not exceed 100 characters."
+                    "min": "The name must have at least {min} characters.",
+                    "max": "The name must not exceed {max} characters."
                 }
             },
             "address": {
                 "placeholder": "221B Baker Street",
                 "label": "Address",
                 "error": {
-                    "min": "The address must have at least 5 characters.",
-                    "max": "The address must not exceed 100 characters."
+                    "min": "The address must have at least {min} characters.",
+                    "max": "The address must not exceed {max} characters."
                 }
             },
             "postal-code": {
                 "placeholder": "NW1 6XE",
                 "label": "Postal code",
                 "error": {
-                    "length": "The postal code must be exactly 5 characters."
+                    "min": "The postal code must have at least {min} characters.",
+                    "max": "The postal code must not exceed {max} characters."
                 }
             },
             "city": {
                 "placeholder": "London",
                 "label": "City",
                 "error": {
-                    "max": "The city must not exceed 100 characters."
+                    "max": "The city must not exceed {max} characters."
                 }
             },
             "complement": {
                 "placeholder": "Flat 2, 2nd Floor",
-                "label": "Flat / Apt"
+                "label": "Flat / Apt",
+                "error": {
+                    "max": "The address complement must not exceed {max} characters."
+                }
             },
             "country": {
                 "placeholder": "Select a country",
                 "no-item-found": "No country found",
                 "search-placeholder": "Search a country ...",
                 "error": {
-                    "min": "The country code must have at least 2 letters.",
-                    "max": "The country code must not exceed 2 letters.",
+                    "length": "The country code must be exactly {length} letters.",
                     "uppercase": "The country code must be uppercase."
                 }
             },

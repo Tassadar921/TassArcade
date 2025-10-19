@@ -30,12 +30,17 @@ export const actions: Actions = {
             formData.append('phoneNumber', phoneNumber);
             formData.delete('phone-number');
 
-            const { data: returnedData } = await locals.client.post('/api/company/new', formData, {
+            const response = await locals.client.post('/api/company/new', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            data = returnedData;
+
+            if (response.status < 200 || response.status >= 300) {
+                throw response;
+            }
+
+            data = response.data;
         } catch (error: any) {
             isSuccess = false;
             data = error?.response?.data;

@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm';
+import { BaseModel, beforeFetch, beforeFind, belongsTo, column, hasMany } from '@adonisjs/lucid/orm';
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations';
 import Address from '#models/address';
 import CompanyAdministrator from '#models/company_administrator';
@@ -43,6 +43,12 @@ export default class Company extends BaseModel {
 
     @column.dateTime({ autoCreate: true, autoUpdate: true })
     declare updatedAt: DateTime;
+
+    @beforeFind()
+    @beforeFetch()
+    public static preloadDefaults(userQuery: any): void {
+        userQuery.preload('address').preload('equipments');
+    }
 
     public apiSerialize(language: Language): SerializedCompany {
         return {

@@ -9,7 +9,7 @@ export const GET: RequestHandler = async ({ params, url, locals }): Promise<Resp
             responseType: 'arraybuffer',
         });
 
-        if (response.status !== 200) {
+        if (response.status < 200 || response.status >= 300) {
             throw response;
         }
 

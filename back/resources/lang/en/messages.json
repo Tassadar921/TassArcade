@@ -124,6 +124,13 @@
                 "not-found": "The SIRET does not seem to be valid. Please check it again.",
                 "default": "An unknown error occurred while retrieving public data. Please fill in the form manually or try again later."
             }
+        },
+        "create": {
+            "success": "{companyName} successfully created",
+            "error": {
+                "already-exists": "A company with SIRET {siret} already exists",
+                "invalid-country-code": "Invalid country code {countryCode}"
+            }
         }
     }
 }
