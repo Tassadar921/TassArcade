@@ -7,7 +7,6 @@ const SubscribeController = () => import('@adonisjs/transmit/controllers/subscri
 const UnsubscribeController = () => import('@adonisjs/transmit/controllers/unsubscribe_controller');
 
 // Admin controllers
-const AdminLanguageController = () => import('#controllers/admin/language_controller');
 const AdminUserController = () => import('#controllers/admin/user_controller');
 
 // App controllers
@@ -80,16 +79,6 @@ router
                 // Admin routes
                 router
                     .group((): void => {
-                        router
-                            .group((): void => {
-                                router.get('/', [AdminLanguageController, 'getAll']);
-                                router.post('/delete', [AdminLanguageController, 'delete']);
-                                router.post('/create', [AdminLanguageController, 'create']);
-                                router.post('/update', [AdminLanguageController, 'update']);
-                                router.get('/:languageCode', [AdminLanguageController, 'get']);
-                            })
-                            .prefix('language');
-
                         router
                             .group((): void => {
                                 router.get('/', [AdminUserController, 'getAll']);

@@ -8,7 +8,6 @@
     import Search from '#components/Search.svelte';
     import { m } from '#lib/paraglide/messages';
     import Pagination from '#components/Pagination.svelte';
-    import type { SerializedLanguage } from 'backend/types';
     import { wrappedFetch } from '#lib/services/requestService';
     import { location } from '#lib/stores/locationStore';
     import {
@@ -103,7 +102,7 @@
                 return status.isSuccess;
             });
 
-            table.getFilteredSelectedRowModel().rows.forEach((row: Row<SerializedLanguage>): void => {
+            table.getFilteredSelectedRowModel().rows.forEach((row: Row<any>): void => {
                 row.toggleSelected(false);
             });
 
@@ -114,7 +113,7 @@
     };
 
     $effect((): void => {
-        selectedRows = table.getFilteredSelectedRowModel().rows.map((row: Row<SerializedLanguage>): string => row.original.id);
+        selectedRows = table.getFilteredSelectedRowModel().rows.map((row: Row<any>): string => row.original.id);
     });
 </script>
 

@@ -6,21 +6,8 @@
     import OauthProviders from '#lib/partials/login/OauthProviders.svelte';
     import Meta from '#components/Meta.svelte';
     import { Switch } from '#lib/components/ui/switch';
-    import { page } from '$app/state';
+    import { createAccountValidator } from '#lib/validators/create-account';
     import * as zod from 'zod';
-
-    const schema = zod
-        .object({
-            username: zod.string().min(3).max(50),
-            email: zod.email().max(100),
-            password: zod.string().min(8).max(100),
-            confirmPassword: zod.string().min(8).max(100),
-            consent: zod.literal(true),
-        })
-        .refine((data) => data.password === data.confirmPassword, {
-            message: m['common.password.match'](),
-            path: ['confirmPassword'],
-        });
 
     let username: string = $state('');
     let email: string = $state('');
@@ -28,16 +15,25 @@
     let confirmPassword: string = $state('');
     let consent: boolean = $state(false);
 
-    const canSubmit: boolean = $derived(schema.safeParse({ username, email, password, confirmPassword, consent }).success);
+    const validation = $derived(
+        createAccountValidator.safeParse({
+            username,
+            email,
+            password,
+            confirmPassword,
+            consent,
+        })
+    );
 
-    $effect((): void => {
-        const errorData = page.data.formError?.data;
-        if (errorData) {
-            username = errorData.username ?? '';
-            email = errorData.email ?? '';
-            password = errorData.password ?? '';
-            confirmPassword = errorData.confirmPassword ?? '';
-            consent = errorData.consent ?? false;
+    const canSubmit = $derived(validation.success);
+    let errors: any = $state({ formErrors: [], properties: {} });
+    let confirmPasswordError: string | undefined = $derived(password === confirmPassword ? undefined : m['common.password.error.match']());
+
+    $effect(() => {
+        if (validation.success) {
+            errors = { formErrors: [], properties: {} };
+        } else {
+            errors = zod.treeifyError(validation.error);
         }
     });
 </script>
@@ -47,10 +43,26 @@
 <Title title={m['create-account.title']()} hasBackground />
 
 <Form isValid={canSubmit}>
-    <Input name="username" placeholder={m['common.username.placeholder']()} label={m['common.username.label']()} bind:value={username} required />
-    <Input type="email" name="email" placeholder={m['common.email.placeholder']()} label={m['common.email.label']()} bind:value={email} required />
-    <Input type="password" name="password" placeholder={m['common.password.placeholder']()} label={m['common.password.label']()} bind:value={password} required />
-    <Input type="password" name="confirm-password" placeholder={m['common.confirm-password.placeholder']()} label={m['common.confirm-password.label']()} bind:value={confirmPassword} required />
+    <Input name="username" placeholder={m['common.username.placeholder']()} label={m['common.username.label']()} bind:value={username} error={errors.properties?.username?.errors?.[0]} required />
+    <Input type="email" name="email" placeholder={m['common.email.placeholder']()} label={m['common.email.label']()} bind:value={email} error={errors.properties?.email?.errors?.[0]} required />
+    <Input
+        type="password"
+        name="password"
+        placeholder={m['common.password.placeholder']()}
+        label={m['common.password.label']()}
+        bind:value={password}
+        error={errors.properties?.password?.errors?.[0]}
+        required
+    />
+    <Input
+        type="password"
+        name="confirm-password"
+        placeholder={m['common.confirm-password.placeholder']()}
+        label={m['common.confirm-password.label']()}
+        bind:value={confirmPassword}
+        error={confirmPasswordError}
+        required
+    />
     <Switch name="consent" label={m['common.consent']()} bind:checked={consent} required />
     {#snippet footer()}
         <OauthProviders />

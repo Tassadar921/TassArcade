@@ -6,19 +6,33 @@
     import { profile } from '#lib/stores/profileStore';
     import Meta from '#components/Meta.svelte';
     import * as zod from 'zod';
-
-    const schema = zod.object({
-        email: zod.email().max(100),
-    });
+    import { onMount } from 'svelte';
+    import { resetPasswordValidator } from '#lib/validators/reset-password';
 
     let email: string = $state('');
-    let readonly: boolean = $state(false);
-    const canSubmit: boolean = $derived(schema.safeParse({ email }).success);
 
-    $effect((): void => {
-        if ($profile && $profile.email) {
+    const validation = $derived(
+        resetPasswordValidator.safeParse({
+            email,
+        })
+    );
+
+    let readonly: boolean = $state(false);
+    const canSubmit = $derived(validation.success);
+    let errors: any = $state({ formErrors: [], properties: {} });
+
+    onMount((): void => {
+        if ($profile) {
             email = $profile.email;
             readonly = true;
+        }
+    });
+
+    $effect(() => {
+        if (validation.success) {
+            errors = { formErrors: [], properties: {} };
+        } else {
+            errors = zod.treeifyError(validation.error);
         }
     });
 </script>
@@ -28,5 +42,14 @@
 <Title title={m['reset-password.title']()} hasBackground />
 
 <Form isValid={canSubmit}>
-    <Input label={m['common.email.label']()} placeholder={m['common.email.placeholder']()} type="email" name="email" bind:value={email} required {readonly} />
+    <Input
+        label={m['common.email.label']()}
+        placeholder={m['common.email.placeholder']()}
+        type="email"
+        name="email"
+        bind:value={email}
+        error={errors.properties?.email?.errors?.[0]}
+        {readonly}
+        required
+    />
 </Form>

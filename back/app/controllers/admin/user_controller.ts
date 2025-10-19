@@ -50,8 +50,7 @@ export default class AdminUserController {
             messages: await Promise.all(
                 statuses.map(async (status: { isDeleted: boolean; isCurrentUser?: boolean; username?: string; id: string }): Promise<{ id: string; message: string; isSuccess: boolean }> => {
                     if (status.isDeleted) {
-                        // TODO: Delete related friends, pending friends, blocked users & delete more granularly cache
-                        await cache.deleteByTag({ tags: ['admin-users', `admin-user:${status.id}`, 'not-friends', 'blocked-users', 'friends', 'pending-friends'] });
+                        await cache.deleteByTag({ tags: ['admin-users', `admin-user:${status.id}`] });
                         return { id: status.id, message: i18n.t(`messages.admin.user.delete.success`, { username: status.username }), isSuccess: true };
                     } else {
                         if (status.isCurrentUser) {
@@ -87,7 +86,7 @@ export default class AdminUserController {
 
         await user.refresh();
 
-        const promises: any[] = [cache.deleteByTag({ tags: ['not-friends', 'admin-users'] })];
+        const promises: any[] = [cache.deleteByTag({ tags: ['admin-users'] })];
 
         if (profilePicture) {
             promises.push(user.load('profilePicture'));
@@ -120,7 +119,7 @@ export default class AdminUserController {
             await user.profilePicture.delete();
         }
 
-        await Promise.all([user.load('profilePicture'), cache.deleteByTag({ tags: ['not-friends', 'blocked-users', 'friends', 'pending-friends', 'admin-users', `admin-user:${user.id}`] })]);
+        await Promise.all([user.load('profilePicture'), cache.deleteByTag({ tags: ['admin-users', `admin-user:${user.id}`] })]);
 
         return response.ok({ user: user.apiSerialize(), message: i18n.t('messages.admin.user.update.success', { username }) });
     }

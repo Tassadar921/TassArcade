@@ -152,7 +152,7 @@ export default class OauthController {
             role: UserRoleEnum.USER,
         });
         await createdUser.refresh();
-        await cache.deleteByTag({ tags: ['not-friends', `admin-users`] });
+        await cache.deleteByTag({ tags: [`admin-users`] });
 
         await UserToken.create({
             userId: createdUser.id,

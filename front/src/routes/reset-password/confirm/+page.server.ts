@@ -14,8 +14,14 @@ export const actions: Actions = {
         let isSuccess: boolean = true;
 
         try {
-            formData.append('confirmPassword', <string>formData.get('confirm-password'));
+            const confirmPassword: FormDataEntryValue | null = formData.get('confirm-password');
+            if (!confirmPassword) {
+                throw 'Missing variable';
+            }
+
+            formData.append('confirmPassword', confirmPassword);
             formData.delete('confirm-password');
+
             const { data: returnedData } = await locals.client.post(`api/reset-password/confirm/${token}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',

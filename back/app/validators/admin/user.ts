@@ -18,7 +18,7 @@ export const deleteUsersValidator = vine.compile(
 
 export const createUserValidator = vine.compile(
     vine.object({
-        username: vine.string().trim().minLength(3).maxLength(50).alphaNumeric(),
+        username: vine.string().trim().minLength(3).maxLength(50),
         email: vine.string().trim().maxLength(100).email(),
         profilePicture: vine
             .file({
@@ -37,7 +37,7 @@ export const getAdminUserValidator = vine.compile(
 
 export const updateUserValidator = vine.compile(
     vine.object({
-        username: vine.string().trim().minLength(3).maxLength(50).alphaNumeric(),
+        username: vine.string().trim().minLength(3).maxLength(50),
         email: vine.string().trim().maxLength(100).email(),
         profilePicture: vine
             .file({

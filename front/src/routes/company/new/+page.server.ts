@@ -22,6 +22,14 @@ export const actions: Actions = {
         let isSuccess: boolean = true;
 
         try {
+            const phoneNumber: FormDataEntryValue | null = formData.get('phone-number');
+            if (!phoneNumber) {
+                throw 'Missing variable';
+            }
+
+            formData.append('phoneNumber', phoneNumber);
+            formData.delete('phone-number');
+
             const { data: returnedData } = await locals.client.post('/api/company/new', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',

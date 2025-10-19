@@ -55,7 +55,6 @@
     );
 
     const canSubmit = $derived(validation.success);
-
     let errors: any = $state({ formErrors: [], properties: {} });
 
     let countriesOptions: SelectItem[] = $state([]);
@@ -150,7 +149,7 @@
     <div class="flex gap-5">
         <Input
             type="text"
-            name="postalCode"
+            name="postal-code"
             placeholder={m['company.new.postal-code.placeholder']()}
             label={m['company.new.postal-code.label']()}
             bind:value={postalCode}
@@ -183,12 +182,12 @@
         bind:value={countryCode}
     />
     <div class="flex gap-5">
-        <Input type="email" name="email" placeholder={m['company.new.email.placeholder']()} label={m['company.new.email.label']()} bind:value={email} error={errors.properties?.email?.errors?.[0]} />
+        <Input type="email" name="email" placeholder={m['common.email.placeholder']()} label={m['common.email.label']()} bind:value={email} error={errors.properties?.email?.errors?.[0]} />
         <PhoneNumber
             country={selectedCountry}
-            name="phoneNumber"
-            placeholder={m['company.new.phone-number.placeholder']()}
-            label={m['company.new.phone-number.label']()}
+            name="phone-number"
+            placeholder={m['common.phone-number.placeholder']()}
+            label={m['common.phone-number.label']()}
             bind:value={phoneValue}
             error={errors.properties?.phoneNumber?.errors?.[0]}
         />

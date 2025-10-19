@@ -29,27 +29,47 @@
         },
         "username": {
             "label": "Username",
-            "placeholder": "John123"
+            "placeholder": "John123",
+            "error": {
+                "min": "Username must be at least 3 characters long",
+                "max": "Username must not exceed 50 characters."
+            }
         },
         "email": {
             "label": "Email",
-            "placeholder": "john.smith@gmail.com"
+            "placeholder": "john.smith@gmail.com",
+            "error": {
+                "invalid": "The email is not valid.",
+                "max": "The email must not exceed 100 characters."
+            }
         },
         "password": {
             "label": "Password",
             "placeholder": "xxx",
-            "match": "Passwords do not match",
-            "length": "Password must be at least 8 characters long",
-            "lowercase": "Password must contain at least one lowercase letter",
-            "uppercase": "Password must contain at least one uppercase letter",
-            "number": "Password must contain at least one number",
-            "special-character": "Password must contain at least one special character"
+            "error": {
+                "match": "Passwords do not match",
+                "min": "Password must be at least 8 characters long",
+                "max": "Password must not exceed 100 characters.",
+                "lowercase": "Password must contain at least one lowercase letter",
+                "uppercase": "Password must contain at least one uppercase letter",
+                "number": "Password must contain at least one number",
+                "special": "Password must contain at least one special character"
+            }
         },
         "confirm-password": {
             "label": "Confirm password",
             "placeholder": "xxx"
         },
         "reset-password": "Reset password",
+        "phone-number": {
+            "placeholder": "",
+            "label": "Phone number",
+            "error": {
+                "numeric": "The phone number must contain only digits.",
+                "min": "The phone number is too short.",
+                "max": "The phone number is too long."
+            }
+        },
         "submit": "Submit",
         "file": {
             "title": "Select a file",
@@ -74,11 +94,6 @@
         "combo-box": {
             "no-item-found": "No item found",
             "search-placeholder": "Search ..."
-        }
-    },
-    "open-graph": {
-        "profile-picture": {
-            "alt": "Profile picture of"
         }
     },
     "toast": {
@@ -210,20 +225,7 @@
             },
             "email": {
                 "placeholder": "ceo@ashfordandco.com",
-                "label": "Email",
-                "error": {
-                    "invalid": "The email is not valid.",
-                    "max": "The email must not exceed 100 characters."
-                }
-            },
-            "phone-number": {
-                "placeholder": "",
-                "label": "Phone number",
-                "error": {
-                    "numeric": "The phone number must contain only digits.",
-                    "min": "The phone number is too short.",
-                    "max": "The phone number is too long."
-                }
+                "label": "Email"
             }
         }
     },
@@ -329,36 +331,6 @@
                 "profile-picture": {
                     "title": "Profile picture",
                     "description": "User profile picture (square image recommended)"
-                }
-            }
-        },
-        "language": {
-            "title": "Languages",
-            "fields": {
-                "flag": "Flag",
-                "code": "Code",
-                "name": "Name",
-                "fallback": "Fallback"
-            },
-            "delete": {
-                "title": "Delete {languages}",
-                "text": [
-                    {
-                        "declarations": ["input languages", "input count", "local countPlural = count: plural"],
-                        "selectors": ["countPlural"],
-                        "match": {
-                            "countPlural=zero": "Are you sure you want to delete {languages} ? This action cannot be undone and will permanently remove the languages and all related data.",
-                            "countPlural=one": "Are you sure you want to delete {languages} ? This action cannot be undone and will permanently remove the language and all related data.",
-                            "countPlural=other": "Are you sure you want to delete {languages} ? This action cannot be undone and will permanently remove the languages and all related data."
-                        }
-                    }
-                ]
-            },
-            "new": {
-                "title": "New language",
-                "flag": {
-                    "title": "Flag",
-                    "description": "Language flag (SVG format width=\"24\" height=\"24\" viewBox=\"0 0 36 36\" recommended)"
                 }
             }
         }
