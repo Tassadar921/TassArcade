@@ -10,16 +10,10 @@ export default class Address extends BaseModel {
     declare id: string;
 
     @column()
-    declare streetNumber: string;
+    declare address: string;
 
     @column()
-    declare isBis: boolean;
-
-    @column()
-    declare street: string;
-
-    @column()
-    declare zipCode: string;
+    declare postalCode: string;
 
     @column()
     declare city: string;
@@ -53,7 +47,8 @@ export default class Address extends BaseModel {
     declare updatedAt: DateTime;
 
     get fullAddress(): string {
-        return `${this.streetNumber} ${this.isBis ? 'Bis' : ''} ${this.street}, ${this.zipCode} ${this.city}, ${this.complement}, ${this.country}`;
+        const complementPart: string = this.complement ? `, ${this.complement}` : '';
+        return `${this.address}, ${this.postalCode} ${this.city}${complementPart}, ${this.country}`;
     }
 
     get encodedAddress(): string {
@@ -63,10 +58,8 @@ export default class Address extends BaseModel {
     public apiSerialize(): SerializedAddress {
         return {
             id: this.id,
-            streetNumber: this.streetNumber,
-            isBis: this.isBis,
-            street: this.street,
-            zipCode: this.zipCode,
+            address: this.address,
+            postalCode: this.postalCode,
             city: this.city,
             country: this.country,
             complement: this.complement,

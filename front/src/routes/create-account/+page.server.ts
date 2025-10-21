@@ -13,14 +13,25 @@ export const actions: Actions = {
         let isSuccess: boolean = true;
 
         try {
-            formData.append('confirmPassword', <string>formData.get('confirm-password'));
+            const confirmPassword: FormDataEntryValue | null = formData.get('confirm-password');
+            if (!confirmPassword) {
+                throw 'Missing variable';
+            }
+
+            formData.append('confirmPassword', confirmPassword);
             formData.delete('confirm-password');
-            const { data: returnedData } = await locals.client.post('api/account-creation/send-mail', formData, {
+
+            const response = await locals.client.post('/api/account-creation/send-mail', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            data = returnedData;
+
+            if (response.status < 200 || response.status >= 300) {
+                throw response;
+            }
+
+            data = response.data;
         } catch (error: any) {
             isSuccess = false;
             data = error?.response?.data;

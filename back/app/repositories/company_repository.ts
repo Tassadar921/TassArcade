@@ -11,6 +11,7 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
     }
 
     public async getClusters(minLat: number, maxLat: number, minLng: number, maxLng: number, precision: number, language: Language, equipmentIds: string[]): Promise<Cluster[]> {
+        console.log(minLat, maxLat, minLng, maxLng, precision, language, equipmentIds);
         let query = `
             SELECT
                 LEFT(address.geohash, ?) AS cluster,
@@ -43,7 +44,7 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
         const clusters: Cluster[] = [];
 
         for (const row of result.rows) {
-            const companies: Company[] = await Company.query().preload('address').whereIn('address_id', row.address_ids).preload('equipments');
+            const companies: Company[] = await Company.query().whereIn('address_id', row.address_ids);
 
             clusters.push({
                 id: row.cluster,

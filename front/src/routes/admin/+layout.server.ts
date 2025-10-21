@@ -1,9 +1,9 @@
-import { loadFlash, redirect } from 'sveltekit-flash-message/server';
+import { redirect } from 'sveltekit-flash-message/server';
 import type { LayoutServerLoad } from './$types';
 import { UserRoleEnum } from 'backend/types';
 import { m } from '#lib/paraglide/messages';
 
-export const load: LayoutServerLoad = loadFlash(async (event): Promise<void> => {
+export const load: LayoutServerLoad = async (event): Promise<void> => {
     const { cookies } = event;
 
     const user: string | undefined = cookies.get('user');
@@ -18,4 +18,4 @@ export const load: LayoutServerLoad = loadFlash(async (event): Promise<void> => 
             event
         );
     }
-});
+};

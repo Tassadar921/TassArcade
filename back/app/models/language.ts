@@ -1,6 +1,5 @@
 import { DateTime } from 'luxon';
-import { BaseModel, beforeFetch, beforeFind, belongsTo, column } from '@adonisjs/lucid/orm';
-import SerializedLanguage from '#types/serialized/serialized_language';
+import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm';
 import File from '#models/file';
 import type { BelongsTo } from '@adonisjs/lucid/types/relations';
 
@@ -49,21 +48,4 @@ export default class Language extends BaseModel {
 
     @column.dateTime({ autoCreate: true, autoUpdate: true })
     declare updatedAt: DateTime;
-
-    @beforeFind()
-    @beforeFetch()
-    public static preloadDefaults(langageQuery: any): void {
-        langageQuery.preload('flag');
-    }
-
-    public apiSerialize(): SerializedLanguage {
-        return {
-            name: this.name,
-            code: this.code,
-            isFallback: this.isFallback,
-            flag: this.flag.apiSerialize(),
-            createdAt: this.createdAt?.toString(),
-            updatedAt: this.updatedAt?.toString(),
-        };
-    }
 }

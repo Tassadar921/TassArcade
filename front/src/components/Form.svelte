@@ -1,6 +1,5 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
-    import Icon from '#components/Icon.svelte';
     import { m } from '#lib/paraglide/messages';
     import FormBackground from '#components/background/FormBackground.svelte';
     import { Button } from '#lib/components/ui/button';
@@ -11,6 +10,7 @@
     import { showToast } from '#lib/services/toastService';
     import { cn } from '#lib/utils';
     import type { Snippet } from 'svelte';
+    import { Spinner } from '#lib/components/ui/spinner';
 
     type Props = {
         children: Snippet;
@@ -67,7 +67,7 @@
                 <CardFooter class="flex justify-center pt-2">
                     <Button type="submit" disabled={isSendButtonDisabled} size="lg" class="w-full">
                         {#if isLoading}
-                            <Icon name="spinner" size={40} />
+                            <Spinner />
                         {:else if submitContent}
                             {@render submitContent?.()}
                         {:else}

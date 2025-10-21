@@ -10,16 +10,16 @@ import FileTypeEnum from '#types/enum/file_type_enum';
 import FileRepository from '#repositories/file_repository';
 
 export default class extends BaseSeeder {
-    public async run(): Promise<void> {
-        const fileService: FileService = new FileService();
-        const languageRepository: LanguageRepository = new LanguageRepository(fileService);
-        const fileRepository: FileRepository = new FileRepository();
+    private readonly fileService: FileService = new FileService();
+    private readonly languageRepository: LanguageRepository = new LanguageRepository();
+    private readonly fileRepository: FileRepository = new FileRepository();
 
+    public async run(): Promise<void> {
         for (const language of [Language.LANGUAGE_ENGLISH, Language.LANGUAGE_FRENCH]) {
-            let flag: File | null = await fileRepository.findOneBy({ name: `${language.code}.svg`, type: FileTypeEnum.LANGUAGE_FLAG });
+            let flag: File | null = await this.fileRepository.findOneBy({ name: `${language.code}.svg`, type: FileTypeEnum.LANGUAGE_FLAG });
             if (!flag) {
                 const path: string = await this.moveLanguageFlag(language.code);
-                const { size, mimeType, extension, name } = await fileService.getFileInfo(app.makePath(`${path}/${language.code}.svg`));
+                const { size, mimeType, extension, name } = await this.fileService.getFileInfo(app.makePath(`${path}/${language.code}.svg`));
                 flag = await File.create({
                     name,
                     path: `${path}/${language.code}.svg`,
@@ -31,7 +31,7 @@ export default class extends BaseSeeder {
                 await flag.refresh();
             }
 
-            if (!(await languageRepository.findOneBy({ code: language.code }))) {
+            if (!(await this.languageRepository.findOneBy({ code: language.code }))) {
                 await Language.create({
                     name: language.name,
                     code: language.code,

@@ -29,27 +29,47 @@
         },
         "username": {
             "label": "Nom d'utilisateur",
-            "placeholder": "Jean123"
+            "placeholder": "Jean123",
+            "error": {
+                "min": "Le nom d'utilisateur doit contenir au moins 3 caractères",
+                "max": "Le nom d'utilisateur ne doit pas dépasser 50 caractères"
+            }
         },
         "email": {
             "label": "Email",
-            "placeholder": "jean.dupont@gmail.com"
+            "placeholder": "jean.dupont@gmail.com",
+            "error": {
+                "invalid": "L’email n’est pas valide.",
+                "max": "L’email ne doit pas dépasser 100 caractères."
+            }
         },
         "password": {
             "label": "Mot de passe",
             "placeholder": "xxx",
-            "match": "Les mots de passe ne correspondent pas",
-            "length": "Le mot de passe doit contenir au moins 8 caractères",
-            "lowercase": "Le mot de passe doit contenir au moins une lettre minuscule",
-            "uppercase": "Le mot de passe doit contenir au moins une lettre majuscule",
-            "number": "Le mot de passe doit contenir au moins un chiffre",
-            "special-character": "Le mot de passe doit contenir au moins un caractère spécial"
+            "error": {
+                "match": "Les mots de passe ne correspondent pas",
+                "min": "Le mot de passe doit contenir au moins 8 caractères",
+                "max": "Le mot de passe ne doit pas dépasser 100 caractères",
+                "lowercase": "Le mot de passe doit contenir au moins une lettre minuscule",
+                "uppercase": "Le mot de passe doit contenir au moins une lettre majuscule",
+                "number": "Le mot de passe doit contenir au moins un chiffre",
+                "special": "Le mot de passe doit contenir au moins un caractère spécial"
+            }
         },
         "confirm-password": {
             "label": "Confirmer le mot de passe",
             "placeholder": "xxx"
         },
         "reset-password": "Réinitialiser le mot de passe",
+        "phone-number": {
+            "placeholder": "3",
+            "label": "Numéro de téléphone",
+            "error": {
+                "numeric": "Le numéro de téléphone ne doit contenir que des chiffres.",
+                "min": "Le numéro de téléphone est trop court.",
+                "max": "Le numéro de téléphone est trop long."
+            }
+        },
         "submit": "Envoyer",
         "file": {
             "title": "Sélectionnez un fichier",
@@ -70,11 +90,10 @@
                     }
                 }
             ]
-        }
-    },
-    "open-graph": {
-        "profile-picture": {
-            "alt": "Photo de profil de"
+        },
+        "combo-box": {
+            "no-item-found": "Aucun item trouvé",
+            "search-placeholder": "Rechercher ..."
         }
     },
     "toast": {
@@ -87,21 +106,6 @@
     "footer": {
         "navigation": "Navigation",
         "about": "À propos"
-    },
-    "profile": {
-        "title": "Profil",
-        "description": "Mettez à jour votre profil",
-        "meta": {
-            "title": "Modifier le profil – TassArcade",
-            "description": "Mettez à jour votre nom d’utilisateur et votre photo de profil facilement sur TassArcade. Gérez vos informations personnelles en toute sécurité.",
-            "keywords": "modifier profil, changer nom d’utilisateur, changer photo de profil, paramètres utilisateur, TassArcade"
-        },
-        "reset-password": "Réinitialiser le mot de passe",
-        "profile-picture": {
-            "title": "Photo de profil",
-            "description": "Uploadez ici une photo de profil"
-        },
-        "register-company": "Enregistrer une entreprise"
     },
     "reset-password": {
         "title": "Réinitialiser le mot de passe",
@@ -144,6 +148,88 @@
             "title": "Créer votre compte – TassArcade",
             "description": "Inscrivez-vous sur TassArcade en créant un compte avec nom d'utilisateur, email et mot de passe. Ou connectez-vous rapidement via Google, Discord ou GitHub.",
             "keywords": "créer un compte, inscription, nom d'utilisateur, email, mot de passe, OAuth, connexion Google, connexion Discord, connexion GitHub, TassArcade"
+        }
+    },
+    "profile": {
+        "title": "Profil",
+        "description": "Mettez à jour votre profil",
+        "meta": {
+            "title": "Modifier le profil – TassArcade",
+            "description": "Mettez à jour votre nom d’utilisateur et votre photo de profil facilement sur TassArcade. Gérez vos informations personnelles en toute sécurité.",
+            "keywords": "modifier profil, changer nom d’utilisateur, changer photo de profil, paramètres utilisateur, TassArcade"
+        },
+        "reset-password": "Réinitialiser le mot de passe",
+        "profile-picture": {
+            "title": "Photo de profil",
+            "description": "Uploadez ici une photo de profil"
+        },
+        "new-company": "Enregistrer une entreprise"
+    },
+    "company": {
+        "new": {
+            "title": "Enregistrer une entreprise",
+            "siret": {
+                "placeholder": "732 829 320 00074",
+                "label": "SIRET",
+                "popover": {
+                    "content": "En cliquant sur ce bouton, cela remplira le formulaire à partir des données publiques officielles de l'entreprise"
+                },
+                "error": {
+                    "length": "Le SIRET doit contenir exactement 14 chiffres.",
+                    "numeric": "Le SIRET ne doit contenir que des chiffres."
+                }
+            },
+            "name": {
+                "placeholder": "Maison Delcourt",
+                "label": "Nom",
+                "error": {
+                    "min": "Le nom doit contenir au moins {min} caractères.",
+                    "max": "Le nom ne doit pas dépasser {max} caractères."
+                }
+            },
+            "address": {
+                "placeholder": "10 rue de la République",
+                "label": "Adresse",
+                "error": {
+                    "min": "L’adresse doit contenir au moins {min} caractères.",
+                    "max": "L’adresse ne doit pas dépasser {max} caractères."
+                }
+            },
+            "postal-code": {
+                "placeholder": "75001",
+                "label": "Code postal",
+                "error": {
+                    "min": "Le code postal doit contenir au moins {min} caractères.",
+                    "max": "Le code postal ne doit pas dépasser {max} caractères."
+                }
+            },
+            "city": {
+                "placeholder": "Paris",
+                "label": "Ville",
+                "error": {
+                    "max": "La ville ne doit pas dépasser {max} caractères."
+                }
+            },
+            "complement": {
+                "placeholder": "Bâtiment A, Appartement 12",
+                "label": "Complément d’adresse",
+                "error": {
+                    "max": "Complément d’adresse ne doit pas dépasser {max} caractères."
+                }
+            },
+            "country": {
+                "placeholder": "Sélectionner un pays",
+                "no-item-found": "Pas de pays trouvé",
+                "search-placeholder": "Rechercher un pays ...",
+                "error": {
+                    "length": "Le code pays doit contenir exactement 2 lettres.",
+                    "uppercase": "Le code pays doit être en majuscules."
+                }
+            },
+            "email": {
+                "placeholder": "direction@maison-delcourt.com",
+                "label": "Email"
+            }
         }
     },
     "logout": {
@@ -248,36 +334,6 @@
                 "profile-picture": {
                     "title": "Image de profil",
                     "description": "Image de profil de l'utilisateur (format carré recommandé)"
-                }
-            }
-        },
-        "language": {
-            "title": "Langues",
-            "fields": {
-                "flag": "Drapeau",
-                "code": "Code",
-                "name": "Nom",
-                "fallback": "Valeur par défaut"
-            },
-            "delete": {
-                "title": "Supprimer {languages}",
-                "text": [
-                    {
-                        "declarations": ["input languages", "input count", "local countPlural = count: plural"],
-                        "selectors": ["countPlural"],
-                        "match": {
-                            "countPlural=zero": "Êtes-vous sûr de vouloir supprimer {languages} ? Cette action est irréversible et supprimera définitivement les langues ainsi que toutes les données associées.",
-                            "countPlural=one": "Êtes-vous sûr de vouloir supprimer {languages} ? Cette action est irréversible et supprimera définitivement la langue ainsi que toutes les données associées.",
-                            "countPlural=other": "Êtes-vous sûr de vouloir supprimer {languages} ? Cette action est irréversible et supprimera définitivement les langues ainsi que toutes les données associées."
-                        }
-                    }
-                ]
-            },
-            "new": {
-                "title": "Nouvelle langue",
-                "flag": {
-                    "title": "Drapeau",
-                    "description": "Drapeau de la langue (format SVG width=\"24\" height=\"24\" viewBox=\"0 0 36 36\" recommandé)"
                 }
             }
         }

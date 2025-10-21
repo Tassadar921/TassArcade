@@ -67,16 +67,6 @@
             }
         }
     },
-    "blocked-user": {
-        "block": {
-            "success": "{username} blocked",
-            "error": "{username} already blocked"
-        },
-        "cancel": {
-            "success": "{username} unblocked",
-            "error": "{username} is not blocked"
-        }
-    },
     "file": {
         "serve-profile-picture": {
             "error": {
@@ -97,19 +87,6 @@
             }
         }
     },
-    "friend": {
-        "accept": {
-            "success": "{username} added to friends",
-            "error": "Already friend with {username}"
-        },
-        "refuse": {
-            "success": "Friend request refused"
-        },
-        "remove": {
-            "success": "{username} removed from friends",
-            "error": "You are not friend with {username}"
-        }
-    },
     "oauth": {
         "callback": {
             "error": {
@@ -126,16 +103,6 @@
             }
         }
     },
-    "pending-friend": {
-        "add": {
-            "success": "Friend request sent to {username}",
-            "error": "Already friend with {username}"
-        },
-        "cancel": {
-            "success": "Friend request cancelled",
-            "error": "You are not related to this request"
-        }
-    },
     "profile": {
         "send-reset-password-email": {
             "subject": "Reset your password",
@@ -149,6 +116,22 @@
         },
         "update-profile": {
             "success": "Profile successfully updated"
+        }
+    },
+    "company": {
+        "siret": {
+            "error": {
+                "not-found": "The SIRET does not seem to be valid. Please check it again.",
+                "default": "An unknown error occurred while retrieving public data. Please fill in the form manually or try again later."
+            }
+        },
+        "create": {
+            "success": "{companyName} successfully created",
+            "error": {
+                "already-exists": "A company with SIRET {siret} already exists",
+                "invalid-country-code": "Invalid country code {countryCode}",
+                "invalid-address": "Invalid address ({address})"
+            }
         }
     }
 }

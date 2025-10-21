@@ -7,7 +7,6 @@ const SubscribeController = () => import('@adonisjs/transmit/controllers/subscri
 const UnsubscribeController = () => import('@adonisjs/transmit/controllers/unsubscribe_controller');
 
 // Admin controllers
-const AdminLanguageController = () => import('#controllers/admin/language_controller');
 const AdminUserController = () => import('#controllers/admin/user_controller');
 
 // App controllers
@@ -18,6 +17,8 @@ const FileController = () => import('#controllers/file_controller');
 const OauthController = () => import('#controllers/oauth_controller');
 const EquipmentController = () => import('#controllers/equipment_controller');
 const ClusterController = () => import('#controllers/cluster_controller');
+const CountryController = () => import('#controllers/country_controller');
+const CompanyController = () => import('#controllers/company_controller');
 
 router.get('healthcheck', [HealthCheckController]);
 
@@ -80,16 +81,6 @@ router
                     .group((): void => {
                         router
                             .group((): void => {
-                                router.get('/', [AdminLanguageController, 'getAll']);
-                                router.post('/delete', [AdminLanguageController, 'delete']);
-                                router.post('/create', [AdminLanguageController, 'create']);
-                                router.post('/update', [AdminLanguageController, 'update']);
-                                router.get('/:languageCode', [AdminLanguageController, 'get']);
-                            })
-                            .prefix('language');
-
-                        router
-                            .group((): void => {
                                 router.get('/', [AdminUserController, 'getAll']);
                                 router.post('/delete', [AdminUserController, 'delete']);
                                 router.post('/create', [AdminUserController, 'create']);
@@ -112,6 +103,13 @@ router
 
                 router
                     .group((): void => {
+                        router.get('/siret/:siret', [CompanyController, 'getFromSiret']);
+                        router.post('/new', [CompanyController, 'create']);
+                    })
+                    .prefix('company');
+
+                router
+                    .group((): void => {
                         router.get('/profile-picture/:userId', [FileController, 'serveStaticProfilePictureFile']);
                     })
                     .prefix('static');
@@ -119,6 +117,7 @@ router
             .use([middleware.auth()]);
 
         router.get('/equipments', [EquipmentController, 'getAll']);
+        router.get('/countries', [CountryController, 'getAll']);
         router.post('/clusters', [ClusterController, 'get']);
 
         router

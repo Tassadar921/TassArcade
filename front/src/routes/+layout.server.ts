@@ -56,7 +56,7 @@ export const load: LayoutServerLoad = loadFlash(async (event): Promise<{ user?: 
     if (userCookie && cookies.get('token')) {
         try {
             const response = await locals.client.get('/api');
-            if (response.status !== 200) {
+            if (response.status < 200 || response.status >= 300) {
                 throw response;
             }
         } catch {
@@ -66,19 +66,16 @@ export const load: LayoutServerLoad = loadFlash(async (event): Promise<{ user?: 
         }
     }
 
+    let formErrorParsed: FormError | undefined;
     if (formError) {
         cookies.delete('formError', { path: '/' });
-        return {
-            user,
-            language,
-            location,
-            formError: JSON.parse(formError),
-        };
+        formErrorParsed = JSON.parse(formError);
     }
 
     return {
         user,
         language,
         location,
+        formError: formErrorParsed,
     };
 });

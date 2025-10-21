@@ -9,7 +9,7 @@ export const POST: RequestHandler = async ({ request, locals }): Promise<Respons
             users: body.data,
         });
 
-        if (response.status !== 200) {
+        if (response.status < 200 || response.status >= 300) {
             throw response;
         }
 

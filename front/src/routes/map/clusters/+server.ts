@@ -11,7 +11,7 @@ export const POST: RequestHandler = async ({ request, url, locals }): Promise<Re
             body
         );
 
-        if (response.status !== 200) {
+        if (response.status < 200 || response.status >= 300) {
             throw response;
         }
 

@@ -8,15 +8,12 @@ import LogUserRepository from '#repositories/log_user_repository';
 import LogRepository from '#repositories/log_repository';
 
 export default class extends BaseSeeder {
-    public async run(): Promise<void> {
-        const fileService: FileService = new FileService();
-        const logRepository: LogRepository = new LogRepository();
-        const logUserRepository: LogUserRepository = new LogUserRepository(logRepository);
-        const userRepository: UserRepository = new UserRepository(fileService, logUserRepository);
+    private readonly userRepository: UserRepository = new UserRepository(new FileService(), new LogUserRepository(new LogRepository()));
 
+    public async run(): Promise<void> {
         const emails: string[] = JSON.parse(env.get('ADDITIONAL_EMAILS'));
         for (const email of [...emails, env.get('ADMIN_EMAIL')]) {
-            if (!(await userRepository.findOneBy({ email }))) {
+            if (!(await this.userRepository.findOneBy({ email }))) {
                 await User.create({
                     username: email.split('@')[0].replaceAll('.', ''),
                     email,

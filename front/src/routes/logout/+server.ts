@@ -9,7 +9,7 @@ export const POST: RequestHandler = async ({ cookies, locals }): Promise<Respons
     try {
         const response = await locals.client.delete('/api/logout');
 
-        if (response.status !== 200) {
+        if (response.status < 200 || response.status >= 300) {
             throw response;
         }
 

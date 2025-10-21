@@ -10,28 +10,36 @@
     import Meta from '#components/Meta.svelte';
     import * as zod from 'zod';
     import { Button } from '#lib/components/ui/button';
+    import { profileValidator } from '#lib/validators/profile';
 
-    const schema = zod.object({
-        username: zod.string().min(3).max(50),
-        email: zod.email().max(100),
-        profilePicture: zod.file().mime(['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml']).optional(),
-    });
-
-    let formValues: { username: string; email: string } = $state({
-        username: $profile?.username || '',
-        email: $profile?.email || '',
-    });
+    let username: string = $state($profile?.username || '');
+    let email: string = $state($profile?.email || '');
     let profilePicture: File | undefined = $state();
-    const canSubmit: boolean = $derived(schema.safeParse({ username: formValues.username, email: formValues.email, profilePicture }).success);
 
     let profileData: SerializedUser = $profile!;
 
     const handleError = (): void => {
-        formValues = {
-            username: $profile!.username,
-            email: $profile!.email,
-        };
+        username = profileData.username;
+        email = profileData.email;
     };
+
+    const validation = $derived(
+        profileValidator.safeParse({
+            username,
+            email,
+        })
+    );
+
+    const canSubmit = $derived(validation.success);
+    let errors: any = $state({ formErrors: [], properties: {} });
+
+    $effect(() => {
+        if (validation.success) {
+            errors = { formErrors: [], properties: {} };
+        } else {
+            errors = zod.treeifyError(validation.error);
+        }
+    });
 </script>
 
 <Meta title={m['profile.meta.title']()} description={m['profile.meta.description']()} keywords={m['profile.meta.keywords']().split(', ')} pathname="/profile" />
@@ -39,9 +47,18 @@
 <Title title={m['profile.title']()} hasBackground />
 
 <Form isValid={canSubmit} onError={handleError}>
-    <Input name="username" placeholder={m['common.username.label']()} label={m['common.username.label']()} min={3} max={50} bind:value={formValues.username} required />
+    <Input
+        name="username"
+        placeholder={m['common.username.label']()}
+        label={m['common.username.label']()}
+        min={3}
+        max={50}
+        bind:value={username}
+        error={errors.properties?.username?.errors?.[0]}
+        required
+    />
     <div>
-        <Input name="email" placeholder={m['common.email.label']()} label={m['common.email.label']()} max={100} bind:value={formValues.email} readonly required />
+        <Input name="email" placeholder={m['common.email.label']()} label={m['common.email.label']()} max={100} bind:value={email} error={errors.properties?.email?.errors?.[0]} readonly required />
         <Link href="/reset-password" class="px-0">
             {m['profile.reset-password']()}
         </Link>
@@ -56,9 +73,9 @@
         id={profileData.id}
         bind:file={profilePicture}
     />
-    <Link href="/register-company">
+    <Link href="/company/new">
         <Button>
-            {m['profile.register-company']()}
+            {m['profile.new-company']()}
         </Button>
     </Link>
 </Form>

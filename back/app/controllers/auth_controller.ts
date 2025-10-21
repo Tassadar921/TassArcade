@@ -117,7 +117,7 @@ export default class AuthController {
 
         const accessToken: AccessToken = await User.accessTokens.create(user);
 
-        return response.ok({
+        return response.created({
             message: i18n.t('messages.auth.confirm-account-creation.success'),
             token: accessToken,
             user: user.apiSerialize(),

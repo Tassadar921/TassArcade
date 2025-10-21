@@ -4,9 +4,8 @@
     import { onMount } from 'svelte';
     import Meta from '#components/Meta.svelte';
     import { m } from '#lib/paraglide/messages';
-    import { initFlash } from 'sveltekit-flash-message/client';
+    import { getFlash } from 'sveltekit-flash-message/client';
     import { page } from '$app/state';
-    import { readable } from 'svelte/store';
     import { showToast } from '#lib/services/toastService';
     import { Footer } from '#lib/components/ui/footer';
     import { Transmit } from '@adonisjs/transmit-client';
@@ -14,17 +13,15 @@
     import { PUBLIC_API_REAL_URI } from '$env/static/public';
     import type { Snippet } from 'svelte';
 
-    const currentPage = readable(page);
-
     interface Props {
         children: Snippet;
     }
 
     let { children }: Props = $props();
 
-    const flash = initFlash(currentPage);
+    const flash = getFlash(page);
 
-    $effect((): void => {
+    onMount((): void => {
         transmit.set(new Transmit({ baseUrl: PUBLIC_API_REAL_URI }));
         if ($flash) {
             showToast($flash.message, $flash.type);

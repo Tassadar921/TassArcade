@@ -4,9 +4,7 @@ import Address from '#models/address';
 
 export const AddressFactory = Factory.define(Address, ({ faker }: FactoryContextContract) => {
     return {
-        streetNumber: faker.location.buildingNumber(),
-        isBis: faker.datatype.boolean({ probability: 0.1 }),
-        street: faker.location.street(),
+        address: faker.location.streetAddress(),
         zipCode: faker.location.zipCode(),
         city: faker.location.city(),
         complement: faker.location.secondaryAddress(),
@@ -18,10 +16,8 @@ export const AddressFactory = Factory.define(Address, ({ faker }: FactoryContext
 
 export const FranceAddressFactory = Factory.define(Address, ({ faker }: FactoryContextContract) => {
     return {
-        streetNumber: faker.location.buildingNumber(),
-        isBis: faker.datatype.boolean({ probability: 0.1 }),
-        street: faker.location.street(),
-        zipCode: faker.location.zipCode(),
+        address: faker.location.streetAddress(),
+        postalCode: faker.location.zipCode(),
         city: faker.location.city(),
         complement: faker.location.secondaryAddress(),
         country: 'France',

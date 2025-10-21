@@ -1,7 +1,6 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { m } from '#lib/paraglide/messages';
-import type { SerializedLanguage } from 'backend/types';
 
 export const GET: RequestHandler = async ({ url, locals }): Promise<Response> => {
     try {
@@ -14,7 +13,7 @@ export const GET: RequestHandler = async ({ url, locals }): Promise<Response> =>
             params: { page, limit, query, sortBy },
         });
 
-        if (response.status !== 200) {
+        if (response.status < 200 || response.status >= 300) {
             throw response;
         }
 

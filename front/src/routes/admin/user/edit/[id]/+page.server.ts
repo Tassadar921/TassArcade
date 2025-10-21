@@ -10,7 +10,7 @@ export const load: PageServerLoad = async (event) => {
     try {
         const response = await locals.client.get(`/api/admin/user/${params.id}`);
 
-        if (response.status !== 200) {
+        if (response.status < 200 || response.status >= 300) {
             throw response;
         }
 
@@ -35,18 +35,22 @@ export const actions: Actions = {
         const { request, cookies, locals } = event;
 
         const formData: FormData = await request.formData();
-        console.log(formData);
 
         let data: any;
         let isSuccess: boolean = true;
 
         try {
-            const { data: returnedData } = await locals.client.post('api/admin/user/update', formData, {
+            const response = await locals.client.post('api/admin/user/update', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            data = returnedData;
+
+            if (response.status < 200 || response.status >= 300) {
+                throw response;
+            }
+
+            data = response.data;
         } catch (error: any) {
             isSuccess = false;
             data = error?.response?.data;

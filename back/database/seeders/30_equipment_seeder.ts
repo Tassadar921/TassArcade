@@ -27,11 +27,11 @@ interface LocalEquipment {
 }
 
 export default class extends BaseSeeder {
-    public async run(): Promise<void> {
-        const fileService: FileService = new FileService();
-        const equipmentRepository: EquipmentRepository = new EquipmentRepository();
-        const fileRepository: FileRepository = new FileRepository();
+    private readonly fileService: FileService = new FileService();
+    private readonly equipmentRepository: EquipmentRepository = new EquipmentRepository();
+    private readonly fileRepository: FileRepository = new FileRepository();
 
+    public async run(): Promise<void> {
         const equipments: LocalEquipment[] = [
             {
                 category: 'dart',
@@ -147,10 +147,10 @@ export default class extends BaseSeeder {
         ];
 
         for (const equipmentData of equipments) {
-            let thumbnail: File | null = await fileRepository.findOneBy({ name: `${equipmentData.category}.svg`, type: FileTypeEnum.EQUIPMENT_THUMBNAIL });
+            let thumbnail: File | null = await this.fileRepository.findOneBy({ name: `${equipmentData.category}.svg`, type: FileTypeEnum.EQUIPMENT_THUMBNAIL });
             if (!thumbnail) {
                 const path: string = await this.moveEquipmentPicture(equipmentData.category);
-                const { size, mimeType, extension, name } = await fileService.getFileInfo(app.makePath(`${path}/${equipmentData.category}.svg`));
+                const { size, mimeType, extension, name } = await this.fileService.getFileInfo(app.makePath(`${path}/${equipmentData.category}.svg`));
                 thumbnail = await File.create({
                     name,
                     path: `${path}/${equipmentData.category}.svg`,
@@ -163,7 +163,7 @@ export default class extends BaseSeeder {
             }
 
             // Assume that if it exists, all of its types & related translations also exist
-            if (!(await equipmentRepository.findOneBy({ category: equipmentData.category }))) {
+            if (!(await this.equipmentRepository.findOneBy({ category: equipmentData.category }))) {
                 const equipment: Equipment = await Equipment.create({
                     name: Translation.from({ ...equipmentData.translations }),
                     category: equipmentData.category,

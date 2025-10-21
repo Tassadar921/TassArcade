@@ -29,27 +29,47 @@
         },
         "username": {
             "label": "Username",
-            "placeholder": "John123"
+            "placeholder": "John123",
+            "error": {
+                "min": "Username must be at least 3 characters long",
+                "max": "Username must not exceed 50 characters."
+            }
         },
         "email": {
             "label": "Email",
-            "placeholder": "john.smith@gmail.com"
+            "placeholder": "john.smith@gmail.com",
+            "error": {
+                "invalid": "The email is not valid.",
+                "max": "The email must not exceed 100 characters."
+            }
         },
         "password": {
             "label": "Password",
             "placeholder": "xxx",
-            "match": "Passwords do not match",
-            "length": "Password must be at least 8 characters long",
-            "lowercase": "Password must contain at least one lowercase letter",
-            "uppercase": "Password must contain at least one uppercase letter",
-            "number": "Password must contain at least one number",
-            "special-character": "Password must contain at least one special character"
+            "error": {
+                "match": "Passwords do not match",
+                "min": "Password must be at least 8 characters long",
+                "max": "Password must not exceed 100 characters.",
+                "lowercase": "Password must contain at least one lowercase letter",
+                "uppercase": "Password must contain at least one uppercase letter",
+                "number": "Password must contain at least one number",
+                "special": "Password must contain at least one special character"
+            }
         },
         "confirm-password": {
             "label": "Confirm password",
             "placeholder": "xxx"
         },
         "reset-password": "Reset password",
+        "phone-number": {
+            "placeholder": "",
+            "label": "Phone number",
+            "error": {
+                "numeric": "The phone number must contain only digits.",
+                "min": "The phone number is too short.",
+                "max": "The phone number is too long."
+            }
+        },
         "submit": "Submit",
         "file": {
             "title": "Select a file",
@@ -70,11 +90,10 @@
                     }
                 }
             ]
-        }
-    },
-    "open-graph": {
-        "profile-picture": {
-            "alt": "Profile picture of"
+        },
+        "combo-box": {
+            "no-item-found": "No item found",
+            "search-placeholder": "Search ..."
         }
     },
     "toast": {
@@ -87,21 +106,6 @@
     "footer": {
         "navigation": "Navigation",
         "about": "About"
-    },
-    "profile": {
-        "title": "Profile",
-        "description": "Update your profile",
-        "meta": {
-            "title": "Edit Profile – TassArcade",
-            "description": "Update your username and profile picture easily on TassArcade. Manage your personal information securely.",
-            "keywords": "edit profile, update username, change profile picture, user settings, TassArcade"
-        },
-        "reset-password": "Reset password",
-        "profile-picture": {
-            "title": "Profile picture",
-            "description": "Upload here a profile picture"
-        },
-        "register-company": "Register company"
     },
     "reset-password": {
         "title": "Reset password",
@@ -144,6 +148,88 @@
             "title": "Create Your Account – TassArcade",
             "description": "Sign up for TassArcade by creating your account with username, email, and password. Or quickly register using Google, Discord, or GitHub.",
             "keywords": "create account, sign up, register, username, email, password, OAuth, Google login, Discord login, GitHub login, TassArcade"
+        }
+    },
+    "profile": {
+        "title": "Profile",
+        "description": "Update your profile",
+        "meta": {
+            "title": "Edit Profile – TassArcade",
+            "description": "Update your username and profile picture easily on TassArcade. Manage your personal information securely.",
+            "keywords": "edit profile, update username, change profile picture, user settings, TassArcade"
+        },
+        "reset-password": "Reset password",
+        "profile-picture": {
+            "title": "Profile picture",
+            "description": "Upload here a profile picture"
+        },
+        "new-company": "Register a company"
+    },
+    "company": {
+        "new": {
+            "title": "Register a company",
+            "siret": {
+                "placeholder": "732 829 320 00074",
+                "label": "SIRET",
+                "popover": {
+                    "content": "By clicking this button, this will fill the form from public official company data"
+                },
+                "error": {
+                    "length": "The SIRET must be exactly 14 digits.",
+                    "numeric": "The SIRET must contain only digits."
+                }
+            },
+            "name": {
+                "placeholder": "Ashford & Co",
+                "label": "Name",
+                "error": {
+                    "min": "The name must have at least {min} characters.",
+                    "max": "The name must not exceed {max} characters."
+                }
+            },
+            "address": {
+                "placeholder": "221B Baker Street",
+                "label": "Address",
+                "error": {
+                    "min": "The address must have at least {min} characters.",
+                    "max": "The address must not exceed {max} characters."
+                }
+            },
+            "postal-code": {
+                "placeholder": "NW1 6XE",
+                "label": "Postal code",
+                "error": {
+                    "min": "The postal code must have at least {min} characters.",
+                    "max": "The postal code must not exceed {max} characters."
+                }
+            },
+            "city": {
+                "placeholder": "London",
+                "label": "City",
+                "error": {
+                    "max": "The city must not exceed {max} characters."
+                }
+            },
+            "complement": {
+                "placeholder": "Flat 2, 2nd Floor",
+                "label": "Flat / Apt",
+                "error": {
+                    "max": "The address complement must not exceed {max} characters."
+                }
+            },
+            "country": {
+                "placeholder": "Select a country",
+                "no-item-found": "No country found",
+                "search-placeholder": "Search a country ...",
+                "error": {
+                    "length": "The country code must be exactly {length} letters.",
+                    "uppercase": "The country code must be uppercase."
+                }
+            },
+            "email": {
+                "placeholder": "ceo@ashfordandco.com",
+                "label": "Email"
+            }
         }
     },
     "logout": {
@@ -248,36 +334,6 @@
                 "profile-picture": {
                     "title": "Profile picture",
                     "description": "User profile picture (square image recommended)"
-                }
-            }
-        },
-        "language": {
-            "title": "Languages",
-            "fields": {
-                "flag": "Flag",
-                "code": "Code",
-                "name": "Name",
-                "fallback": "Fallback"
-            },
-            "delete": {
-                "title": "Delete {languages}",
-                "text": [
-                    {
-                        "declarations": ["input languages", "input count", "local countPlural = count: plural"],
-                        "selectors": ["countPlural"],
-                        "match": {
-                            "countPlural=zero": "Are you sure you want to delete {languages} ? This action cannot be undone and will permanently remove the languages and all related data.",
-                            "countPlural=one": "Are you sure you want to delete {languages} ? This action cannot be undone and will permanently remove the language and all related data.",
-                            "countPlural=other": "Are you sure you want to delete {languages} ? This action cannot be undone and will permanently remove the languages and all related data."
-                        }
-                    }
-                ]
-            },
-            "new": {
-                "title": "New language",
-                "flag": {
-                    "title": "Flag",
-                    "description": "Language flag (SVG format width=\"24\" height=\"24\" viewBox=\"0 0 36 36\" recommended)"
                 }
             }
         }

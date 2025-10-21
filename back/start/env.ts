@@ -17,6 +17,7 @@ export default await Env.create(new URL('../', import.meta.url), {
     NODE_ENV: Env.schema.enum(['development', 'production', 'test'] as const),
     APP_KEY: Env.schema.string(),
     LOG_LEVEL: Env.schema.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']),
+    APP_VERSION: Env.schema.string(),
 
     DOMAIN: Env.schema.string(),
 
@@ -68,10 +69,12 @@ export default await Env.create(new URL('../', import.meta.url), {
     GOOGLE_CLIENT_ID: Env.schema.string(),
     GOOGLE_CLIENT_SECRET: Env.schema.string(),
 
+    INSEE_API_KEY: Env.schema.string(),
+    BREVO_API_KEY: Env.schema.string(),
+
     FRONT_PORT: Env.schema.number(),
     GITHUB_REPOSITORY: Env.schema.string(),
     ACCOUNT_SENDER_EMAIL: Env.schema.string(),
-    BREVO_API_KEY: Env.schema.string(),
     ADMIN_EMAIL: Env.schema.string(),
     ADDITIONAL_EMAILS: Env.schema.string(),
 

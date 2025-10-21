@@ -13,12 +13,17 @@ export const actions: Actions = {
         let isSuccess: boolean = true;
 
         try {
-            const { data: returnedData } = await locals.client.post('api/profile/update', formData, {
+            const response = await locals.client.post('api/profile/update', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            data = returnedData;
+
+            if (response.status < 200 || response.status >= 300) {
+                throw response;
+            }
+
+            data = response.data;
         } catch (error: any) {
             isSuccess = false;
             data = error?.response?.data;

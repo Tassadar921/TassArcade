@@ -61,6 +61,7 @@
         "@vinejs/vine": "^3.0.1",
         "axios": "^1.12.2",
         "chokidar": "^4.0.3",
+        "country-list-with-dial-code-and-flag": "^5.1.1",
         "file-type": "^21.0.0",
         "luxon": "^3.7.2",
         "mime-types": "^3.0.1",
