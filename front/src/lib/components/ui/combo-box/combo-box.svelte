@@ -18,9 +18,10 @@
         searchPlaceholder?: string;
         noItemFound?: string;
         value?: string;
+        name?: string;
     };
 
-    let { items = $bindable([]), placeholder, searchPlaceholder, noItemFound, value = $bindable('') }: Props = $props();
+    let { items = $bindable([]), placeholder, searchPlaceholder, noItemFound, value = $bindable(''), name }: Props = $props();
 
     let open: boolean = $state(false);
     let triggerRef: HTMLButtonElement = $state<HTMLButtonElement>(null!);
@@ -46,7 +47,7 @@
     };
 </script>
 
-<input type="hidden" bind:value />
+<input {name} type="hidden" bind:value />
 
 <Popover bind:open>
     <PopoverTrigger bind:ref={triggerRef}>

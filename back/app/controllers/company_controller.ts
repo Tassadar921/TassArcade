@@ -9,10 +9,14 @@ import Address from '#models/address';
 import CountryList, { Country } from 'country-list-with-dial-code-and-flag';
 import CompanyAdministrator from '#models/company_administrator';
 import CompanyAdministratorRoleEnum from '#types/enum/company_administrator_role_enum';
+import NominatimService from '#services/nominatim_service';
 
 @inject()
 export default class CompanyController {
-    constructor(private readonly companyRepository: CompanyRepository) {}
+    constructor(
+        private readonly companyRepository: CompanyRepository,
+        private readonly nominatimService: NominatimService
+    ) {}
 
     public async getFromSiret({ request, response, i18n }: HttpContext): Promise<void> {
         const { siret } = await getCompanyFromSiretValidator.validate(request.params());
@@ -59,12 +63,23 @@ export default class CompanyController {
             });
         }
 
+        const fullAddress: string = `${inputAddress}, ${postalCode} ${city}, ${country.name}`;
+        const data: { latitude: number; longitude: number } | null = await this.nominatimService.getFromAddress(fullAddress);
+
+        if (!data) {
+            return response.badRequest({
+                error: i18n.t('messages.company.create.error.invalid-address', { address: fullAddress }),
+            });
+        }
+
         const address: Address = await Address.create({
             address: inputAddress,
             postalCode,
             city,
             complement,
             country: country.name,
+            latitude: data.latitude,
+            longitude: data.longitude,
         });
         await address.refresh();
 
@@ -82,6 +97,8 @@ export default class CompanyController {
             companyId: company.id,
             userId: user.id,
         });
+
+        await Promise.all([company.load('address'), company.load('equipments')]);
 
         return response.created({
             message: i18n.t('messages.company.create.success', { companyName: company.name }),

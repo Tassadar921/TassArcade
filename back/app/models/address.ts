@@ -47,7 +47,8 @@ export default class Address extends BaseModel {
     declare updatedAt: DateTime;
 
     get fullAddress(): string {
-        return `${this.address}, ${this.postalCode} ${this.city}, ${this.complement}, ${this.country}`;
+        const complementPart: string = this.complement ? `, ${this.complement}` : '';
+        return `${this.address}, ${this.postalCode} ${this.city}${complementPart}, ${this.country}`;
     }
 
     get encodedAddress(): string {

@@ -14,16 +14,12 @@ export const actions: Actions = {
 
         try {
             const confirmPassword: FormDataEntryValue | null = formData.get('confirm-password');
-            const postalCode: FormDataEntryValue | null = formData.get('postal-code');
-            if (!confirmPassword || !postalCode) {
+            if (!confirmPassword) {
                 throw 'Missing variable';
             }
 
             formData.append('confirmPassword', confirmPassword);
             formData.delete('confirm-password');
-
-            formData.append('postalCode', postalCode);
-            formData.delete('postal-code');
 
             const response = await locals.client.post('/api/account-creation/send-mail', formData, {
                 headers: {

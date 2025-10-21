@@ -104,6 +104,7 @@ router
                 router
                     .group((): void => {
                         router.get('/siret/:siret', [CompanyController, 'getFromSiret']);
+                        router.post('/new', [CompanyController, 'create']);
                     })
                     .prefix('company');
 

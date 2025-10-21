@@ -12,6 +12,7 @@ HOST=0.0.0.0
 NODE_ENV=development
 APP_KEY=
 LOG_LEVEL=debug
+APP_VERSION=1.0.0
 
 DB_CONNECTION=pg
 
@@ -56,6 +57,7 @@ API_URI=""
 | `NODE_ENV`              | development                                                                 |
 | `APP_KEY`               | **Run `cd back && node ace generate:key` to generate this field**           |
 | `LOG_LEVEL`             | debug                                                                       |
+| `APP_VERSION`           | 1.0.0                                                                       |
 | `DB_CONNECTION`         | pg                                                                          |
 | `DB_HOST`               | db                                                                          |
 | `DB_PORT`               | 5432                                                                        |

@@ -15,7 +15,7 @@ export const createCompanyValidator = vine.compile(
         city: vine.string().trim().maxLength(100),
         complement: vine.string().trim().maxLength(255).optional(),
         countryCode: vine.string().trim().fixedLength(2),
-        email: vine.string().trim().email().maxLength(100),
-        phoneNumber: vine.string().trim().minLength(8).maxLength(20),
+        email: vine.string().trim().email().maxLength(100).optional(),
+        phoneNumber: vine.string().trim().minLength(8).maxLength(20).optional(),
     })
 );

@@ -22,13 +22,23 @@ export const actions: Actions = {
         let isSuccess: boolean = true;
 
         try {
-            const phoneNumber: FormDataEntryValue | null = formData.get('phone-number');
-            if (!phoneNumber) {
+            const postalCode: FormDataEntryValue | null = formData.get('postal-code');
+            const countryCode: FormDataEntryValue | null = formData.get('country-code');
+            if (!postalCode || !countryCode) {
                 throw 'Missing variable';
             }
 
-            formData.append('phoneNumber', phoneNumber);
-            formData.delete('phone-number');
+            formData.append('postalCode', postalCode);
+            formData.delete('postal-code');
+
+            formData.append('countryCode', countryCode);
+            formData.delete('country-code');
+
+            const phoneNumber: FormDataEntryValue | null = formData.get('phone-number');
+            if (phoneNumber) {
+                formData.append('phoneNumber', phoneNumber);
+                formData.delete('phone-number');
+            }
 
             const response = await locals.client.post('/api/company/new', formData, {
                 headers: {

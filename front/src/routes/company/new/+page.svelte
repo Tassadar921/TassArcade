@@ -60,7 +60,7 @@
     let countriesOptions: SelectItem[] = $state([]);
     let selectedCountry: Country | undefined = $derived(page.data.data.find((country: Country) => country.data.code === countryCode));
 
-    onMount(() => {
+    onMount((): void => {
         if (page.data.isSuccess) {
             countriesOptions = page.data.data.map(({ data: country }: Country): SelectItem => {
                 return {
@@ -95,7 +95,12 @@
         });
     };
 
-    $effect(() => {
+    const handleFormSubmitError = (): void => {
+        email = undefined;
+        phoneNumber = undefined;
+    };
+
+    $effect((): void => {
         if (validation.success) {
             errors = { formErrors: [], properties: {} };
         } else {
@@ -106,7 +111,7 @@
 
 <Title title={m['company.new.title']()} />
 
-<Form isValid={canSubmit}>
+<Form isValid={canSubmit} onError={handleFormSubmitError}>
     <div class="flex gap-3">
         <Input
             name="siret"
@@ -175,13 +180,14 @@
         error={errors.properties?.complement?.errors?.[0]}
     />
     <ComboBox
+        name="country-code"
         items={countriesOptions}
         placeholder={m['company.new.country.placeholder']()}
         searchPlaceholder={m['company.new.country.search-placeholder']()}
         noItemFound={m['company.new.country.no-item-found']()}
         bind:value={countryCode}
     />
-    <div class="flex gap-5">
+    <div class="flex gap-5 items-start">
         <Input type="email" name="email" placeholder={m['common.email.placeholder']()} label={m['common.email.label']()} bind:value={email} error={errors.properties?.email?.errors?.[0]} />
         <PhoneNumber
             country={selectedCountry}

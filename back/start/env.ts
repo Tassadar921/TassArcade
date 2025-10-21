@@ -17,6 +17,7 @@ export default await Env.create(new URL('../', import.meta.url), {
     NODE_ENV: Env.schema.enum(['development', 'production', 'test'] as const),
     APP_KEY: Env.schema.string(),
     LOG_LEVEL: Env.schema.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']),
+    APP_VERSION: Env.schema.string(),
 
     DOMAIN: Env.schema.string(),
 
