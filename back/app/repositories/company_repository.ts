@@ -11,7 +11,6 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
     }
 
     public async getClusters(minLat: number, maxLat: number, minLng: number, maxLng: number, precision: number, language: Language, equipmentIds: string[]): Promise<Cluster[]> {
-        console.log(minLat, maxLat, minLng, maxLng, precision, language, equipmentIds);
         let query = `
             SELECT
                 LEFT(address.geohash, ?) AS cluster,
