@@ -18,11 +18,13 @@
     }
 
     let { children }: Props = $props();
-
     const flash = getFlash(page);
 
     onMount((): void => {
         transmit.set(new Transmit({ baseUrl: PUBLIC_API_REAL_URI }));
+    });
+
+    $effect((): void => {
         if ($flash) {
             showToast($flash.message, $flash.type);
         }

@@ -45,7 +45,7 @@ export const load: PageServerLoad = async (event): Promise<never> => {
             `/${cookies.get('PARAGLIDE_LOCALE')}${previousPathName ? `/${previousPathName}` : ''}`,
             {
                 type: 'success',
-                message: data?.message,
+                message: data.message,
             },
             event
         );
