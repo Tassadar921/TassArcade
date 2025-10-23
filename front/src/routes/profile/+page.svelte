@@ -1,13 +1,11 @@
 <script lang="ts">
     import Form from '#components/Form.svelte';
     import { Input } from '#lib/components/ui/input';
-    import { Title } from '#lib/components/ui/title';
     import { Link } from '#lib/components/ui/link';
     import { profile } from '#lib/stores/profileStore';
     import { m } from '#lib/paraglide/messages';
     import FileUpload from '#components/FileUpload.svelte';
     import { type SerializedUser } from 'backend/types';
-    import Meta from '#components/Meta.svelte';
     import * as zod from 'zod';
     import { Button } from '#lib/components/ui/button';
     import { profileValidator } from '#lib/validators/profile';
@@ -41,10 +39,6 @@
         }
     });
 </script>
-
-<Meta title={m['profile.meta.title']()} description={m['profile.meta.description']()} keywords={m['profile.meta.keywords']().split(', ')} pathname="/profile" />
-
-<Title title={m['profile.title']()} hasBackground />
 
 <Form isValid={canSubmit} onError={handleError}>
     <Input
