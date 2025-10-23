@@ -163,7 +163,15 @@
             "title": "Profile picture",
             "description": "Upload here a profile picture"
         },
-        "new-company": "Register a company"
+        "new-company": "Register a company",
+        "companies": {
+            "title": "Companies",
+            "meta": {
+                "title": "Companies – TassArcade",
+                "description": "Manage your companies easily on TassArcade. Create, update, and delete companies with ease.",
+                "keywords": "companies, manage companies, create company, update company, delete company, TassArcade"
+            }
+        }
     },
     "company": {
         "new": {

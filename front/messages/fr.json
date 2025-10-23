@@ -163,7 +163,15 @@
             "title": "Photo de profil",
             "description": "Uploadez ici une photo de profil"
         },
-        "new-company": "Enregistrer une entreprise"
+        "new-company": "Enregistrer une entreprise",
+        "companies": {
+            "title": "Entreprises",
+            "meta": {
+                "title": "Entreprises – TassArcade",
+                "description": "Gérez facilement vos entreprises sur TassArcade. Créez, mettez à jour et supprimez vos entreprises en toute simplicité.",
+                "keywords": "entreprises, gérer entreprises, créer entreprise, mettre à jour entreprise, supprimer entreprise, TassArcade"
+            }
+        }
     },
     "company": {
         "new": {
