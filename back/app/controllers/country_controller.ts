@@ -6,7 +6,7 @@ import CountryList, { Country } from 'country-list-with-dial-code-and-flag';
 export default class CountryController {
     public async getAll({ response }: HttpContext): Promise<void> {
         const countriesList: Country[] = CountryList.default.getAll();
-        const seen = new Set<string>();
+        const seen: Set<string> = new Set<string>();
         const countriesListUnique: Country[] = [];
 
         for (const country of countriesList) {
