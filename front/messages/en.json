@@ -94,6 +94,25 @@
         "combo-box": {
             "no-item-found": "No item found",
             "search-placeholder": "Search ..."
+        },
+        "datatable": {
+            "actions": "Actions",
+            "no-result": "No result",
+            "select": {
+                "row": "Select row",
+                "all": "Select all"
+            },
+            "selected-rows": [
+                {
+                    "declarations": ["input count", "input total"],
+                    "match": {
+                        "count=0": "No rows selected",
+                        "count=1": "{count} of {total} row selected",
+                        "count=*": "{count} of {total} rows selected"
+                    }
+                }
+            ],
+            "columns": "Columns"
         }
     },
     "toast": {
@@ -238,6 +257,10 @@
                 "placeholder": "ceo@ashfordandco.com",
                 "label": "Email"
             }
+        },
+        "fields": {
+            "name": "Name",
+            "phone-number": "Phone number"
         }
     },
     "logout": {
@@ -296,25 +319,6 @@
     },
     "admin": {
         "title": "Dashboard",
-        "datatable": {
-            "actions": "Actions",
-            "no-result": "No result",
-            "select": {
-                "row": "Select row",
-                "all": "Select all"
-            },
-            "selected-rows": [
-                {
-                    "declarations": ["input count", "input total"],
-                    "match": {
-                        "count=0": "No rows selected",
-                        "count=1": "{count} of {total} row selected",
-                        "count=*": "{count} of {total} rows selected"
-                    }
-                }
-            ],
-            "columns": "Columns"
-        },
         "user": {
             "title": "Users",
             "fields": {

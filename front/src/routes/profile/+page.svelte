@@ -67,7 +67,7 @@
         id={profileData.id}
         bind:file={profilePicture}
     />
-    <Link href="/company/new">
+    <Link href="/profile/companies/new">
         <Button>
             {m['profile.new-company']()}
         </Button>
