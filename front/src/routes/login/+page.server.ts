@@ -51,7 +51,7 @@ export const actions: Actions = {
                 `/${cookies.get('PARAGLIDE_LOCALE')}${previousPathName ? `${previousPathName}` : ''}`,
                 {
                     type: 'success',
-                    message: data?.message,
+                    message: data.message,
                 },
                 event
             );

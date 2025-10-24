@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { BaseModel, beforeFetch, beforeFind, belongsTo, column, hasMany } from '@adonisjs/lucid/orm';
+import { BaseModel, beforeDelete, beforeFetch, beforeFind, belongsTo, column, hasMany } from '@adonisjs/lucid/orm';
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations';
 import Address from '#models/address';
 import CompanyAdministrator from '#models/company_administrator';
@@ -48,6 +48,11 @@ export default class Company extends BaseModel {
     @beforeFetch()
     public static preloadDefaults(userQuery: any): void {
         userQuery.preload('address').preload('equipments');
+    }
+
+    @beforeDelete()
+    public static async deleteNotCascadedRelations(company: Company): Promise<void> {
+        await company.address.delete();
     }
 
     public apiSerialize(language: Language): SerializedCompany {

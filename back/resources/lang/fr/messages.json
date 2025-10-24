@@ -116,6 +116,25 @@
         },
         "update-profile": {
             "success": "Profil mis à jour avec succès"
+        },
+        "company": {
+            "get": {
+                "error": {
+                    "not-found": "L'entreprise demandée est introuvable."
+                }
+            },
+            "delete": {
+                "success": "L'entreprise « {{name}} » a été supprimée avec succès.",
+                "error": {
+                    "default": "Une erreur est survenue lors de la suppression de l'entreprise avec l'identifiant {{id}}."
+                }
+            },
+            "update": {
+                "success": "L'entreprise « {{name}} » a été mise à jour avec succès.",
+                "error": {
+                    "invalid-country-code": "Le code pays « {{countryCode}} » est invalide."
+                }
+            }
         }
     },
     "company": {

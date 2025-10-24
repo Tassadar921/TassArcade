@@ -12,7 +12,7 @@
     import PhoneNumber from '#components/PhoneNumber.svelte';
     import { wrappedFetch } from '#lib/services/requestService';
     import { Popover, PopoverContent } from '#lib/components/ui/popover';
-    import { PopoverTrigger } from '#lib/components/ui/popover/index.js';
+    import { PopoverTrigger } from '#lib/components/ui/popover';
     import { formatForCompany } from '#lib/services/stringService';
     import { newCompanyValidator } from '#lib/validators/new-company';
     import * as zod from 'zod';
@@ -79,7 +79,7 @@
             return;
         }
 
-        await wrappedFetch(`/company/new/siret/${siret}`, { method: 'GET' }, ({ data }): void => {
+        await wrappedFetch(`/profile/companies/new/siret/${siret}`, { method: 'GET' }, ({ data }): void => {
             name = formatForCompany(data.periodesEtablissement[0]?.denominationUsuelleEtablissement);
             address = formatForCompany(
                 `${data.adresseEtablissement.numeroVoieEtablissement} ${data.adresseEtablissement.typeVoieEtablissement} ${data.adresseEtablissement.libelleVoieEtablissement}`,

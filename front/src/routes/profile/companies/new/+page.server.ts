@@ -1,7 +1,7 @@
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad } from '../../../../../.svelte-kit/types/src/routes';
 import { type Actions, fail, type RequestEvent } from '@sveltejs/kit';
 import { redirect } from 'sveltekit-flash-message/server';
-import type { FormError } from '../../../app';
+import type { FormError } from '../../../../app';
 import { extractFormData, extractFormErrors } from '#lib/services/requestService';
 
 export const load: PageServerLoad = async ({ fetch }) => {

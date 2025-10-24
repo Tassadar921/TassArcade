@@ -94,6 +94,25 @@
         "combo-box": {
             "no-item-found": "Aucun item trouvé",
             "search-placeholder": "Rechercher ..."
+        },
+        "datatable": {
+            "actions": "Actions",
+            "no-result": "Pas de résultat",
+            "select": {
+                "row": "Sélectionner la ligne",
+                "all": "Tout sélectionner"
+            },
+            "selected-rows": [
+                {
+                    "declarations": ["input count", "input total"],
+                    "match": {
+                        "count=0": "Aucune ligne sélectionnée",
+                        "count=1": "{count} sur {total} ligne sélectionnée",
+                        "count=*": "{count} sur {total} lignes sélectionnées"
+                    }
+                }
+            ],
+            "columns": "Colonnes"
         }
     },
     "toast": {
@@ -163,7 +182,15 @@
             "title": "Photo de profil",
             "description": "Uploadez ici une photo de profil"
         },
-        "new-company": "Enregistrer une entreprise"
+        "new-company": "Enregistrer une entreprise",
+        "companies": {
+            "title": "Entreprises",
+            "meta": {
+                "title": "Entreprises – TassArcade",
+                "description": "Gérez facilement vos entreprises sur TassArcade. Créez, mettez à jour et supprimez vos entreprises en toute simplicité.",
+                "keywords": "entreprises, gérer entreprises, créer entreprise, mettre à jour entreprise, supprimer entreprise, TassArcade"
+            }
+        }
     },
     "company": {
         "new": {
@@ -230,6 +257,10 @@
                 "placeholder": "direction@maison-delcourt.com",
                 "label": "Email"
             }
+        },
+        "fields": {
+            "name": "Nom",
+            "phone-number": "Numéro de téléphone"
         }
     },
     "logout": {
@@ -288,25 +319,6 @@
     },
     "admin": {
         "title": "Tableau de bord",
-        "datatable": {
-            "actions": "Actions",
-            "no-result": "Pas de résultat",
-            "select": {
-                "row": "Sélectionner la ligne",
-                "all": "Tout sélectionner"
-            },
-            "selected-rows": [
-                {
-                    "declarations": ["input count", "input total"],
-                    "match": {
-                        "count=0": "Aucune ligne sélectionnée",
-                        "count=1": "{count} sur {total} ligne sélectionnée",
-                        "count=*": "{count} sur {total} lignes sélectionnées"
-                    }
-                }
-            ],
-            "columns": "Colonnes"
-        },
         "user": {
             "title": "Utilisateurs",
             "fields": {
