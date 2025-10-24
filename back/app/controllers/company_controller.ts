@@ -87,7 +87,7 @@ export default class CompanyController {
             siret,
             name,
             email,
-            phoneNumber,
+            phoneNumber: phoneNumber ? `${country.dialCode} ${phoneNumber}` : undefined,
             addressId: address.id,
         });
         await company.refresh();

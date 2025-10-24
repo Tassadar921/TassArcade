@@ -6,7 +6,7 @@ import { Checkbox } from '#lib/components/ui/checkbox';
 import { SortableColumn, DataTableActions } from '#lib/components/ui/data-table';
 import DatatableProfilePicture from './datatable-profile-picture.svelte';
 
-export const getUserColumns = (onSort: (field: string, order: 'asc' | 'desc') => void, onDelete: (ids: string[] | number[]) => void): ColumnDef<SerializedUser>[] => [
+export const getUserColumns = (onSort: (field: string, order: 'asc' | 'desc') => void, onDelete: (ids: string[]) => void): ColumnDef<SerializedUser>[] => [
     {
         id: 'select',
         header: ({ table }) =>
@@ -14,12 +14,12 @@ export const getUserColumns = (onSort: (field: string, order: 'asc' | 'desc') =>
                 checked: table.getIsAllPageRowsSelected(),
                 indeterminate: table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected(),
                 onCheckedChange: (value: boolean): void => table.toggleAllPageRowsSelected(value),
-                'aria-label': m['admin.datatable.select.all'](),
+                'aria-label': m['common.datatable.select.all'](),
             }),
         cell: ({ row }) =>
             renderComponent(Checkbox, {
                 checked: row.getIsSelected(),
-                'aria-label': m['admin.datatable.select.row'](),
+                'aria-label': m['common.datatable.select.row'](),
             }),
         enableHiding: false,
     },
@@ -71,7 +71,7 @@ export const getUserColumns = (onSort: (field: string, order: 'asc' | 'desc') =>
             }),
     },
     {
-        header: m['admin.datatable.actions'](),
+        header: m['common.datatable.actions'](),
         enableHiding: false,
         cell: ({ row }) =>
             renderComponent(DataTableActions, {

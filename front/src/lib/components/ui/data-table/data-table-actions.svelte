@@ -32,6 +32,10 @@
 
     const handleDelete = async (): Promise<void> => {
         showDialog = false;
+        if (!deletable) {
+            return;
+        }
+
         await wrappedFetch(`${$location}/delete`, { method: 'POST', body: { data: [id] } }, (data) => {
             const isSuccess: boolean = data.messages.map((status: { isSuccess: boolean; message: string; code: string }) => {
                 showToast(status.message, status.isSuccess ? 'success' : 'error');
@@ -60,10 +64,12 @@
                 {m['common.edit']()}
             </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem disabled={!deletable} class="hover:underline underline-offset-4 flex gap-1 py-3" onclick={() => (showDialog = true)}>
-            <Trash class="size-4 text-red-500" />
-            {m['common.delete']()}
-        </DropdownMenuItem>
+        {#if deletable}
+            <DropdownMenuItem disabled={!deletable} class="hover:underline underline-offset-4 flex gap-1 py-3" onclick={() => (showDialog = true)}>
+                <Trash class="size-4 text-red-500" />
+                {m['common.delete']()}
+            </DropdownMenuItem>
+        {/if}
     </DropdownMenuContent>
 </DropdownMenu>
 

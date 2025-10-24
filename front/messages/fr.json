@@ -94,6 +94,25 @@
         "combo-box": {
             "no-item-found": "Aucun item trouvé",
             "search-placeholder": "Rechercher ..."
+        },
+        "datatable": {
+            "actions": "Actions",
+            "no-result": "Pas de résultat",
+            "select": {
+                "row": "Sélectionner la ligne",
+                "all": "Tout sélectionner"
+            },
+            "selected-rows": [
+                {
+                    "declarations": ["input count", "input total"],
+                    "match": {
+                        "count=0": "Aucune ligne sélectionnée",
+                        "count=1": "{count} sur {total} ligne sélectionnée",
+                        "count=*": "{count} sur {total} lignes sélectionnées"
+                    }
+                }
+            ],
+            "columns": "Colonnes"
         }
     },
     "toast": {
@@ -238,6 +257,10 @@
                 "placeholder": "direction@maison-delcourt.com",
                 "label": "Email"
             }
+        },
+        "fields": {
+            "name": "Nom",
+            "phone-number": "Numéro de téléphone"
         }
     },
     "logout": {
@@ -296,25 +319,6 @@
     },
     "admin": {
         "title": "Tableau de bord",
-        "datatable": {
-            "actions": "Actions",
-            "no-result": "Pas de résultat",
-            "select": {
-                "row": "Sélectionner la ligne",
-                "all": "Tout sélectionner"
-            },
-            "selected-rows": [
-                {
-                    "declarations": ["input count", "input total"],
-                    "match": {
-                        "count=0": "Aucune ligne sélectionnée",
-                        "count=1": "{count} sur {total} ligne sélectionnée",
-                        "count=*": "{count} sur {total} lignes sélectionnées"
-                    }
-                }
-            ],
-            "columns": "Colonnes"
-        },
         "user": {
             "title": "Utilisateurs",
             "fields": {

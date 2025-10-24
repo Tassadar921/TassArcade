@@ -123,7 +123,7 @@
         <DropdownMenu>
             <DropdownMenuTrigger>
                 {#snippet child({ props })}
-                    <Button {...props} variant="outline">{m['admin.datatable.columns']()}</Button>
+                    <Button {...props} variant="outline">{m['common.datatable.columns']()}</Button>
                 {/snippet}
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -168,7 +168,7 @@
                 {:else}
                     <TableRow>
                         <TableCell colspan={columns.length} class="h-24 text-center">
-                            {m['admin.datatable.no-result']()}
+                            {m['common.datatable.no-result']()}
                         </TableCell>
                     </TableRow>
                 {/each}
@@ -177,15 +177,17 @@
     </div>
 
     <div class="text-muted-foreground flex-1 text-sm">
-        {m['admin.datatable.selected-rows']({ count: table.getFilteredSelectedRowModel().rows.length, total: table.getFilteredRowModel().rows.length })}
+        {m['common.datatable.selected-rows']({ count: table.getFilteredSelectedRowModel().rows.length, total: table.getFilteredRowModel().rows.length })}
     </div>
 
     <Pagination {paginatedObject} onChange={(page: number, limit: number) => onPaginationChange(page, limit)} />
 
     <div class="w-full flex justify-end gap-5">
-        <Button variant="destructive" disabled={!deletable || ![...selectedRows].length} onclick={() => (showDialog = true)}>
-            {m['common.delete']()}
-        </Button>
+        {#if deletable}
+            <Button variant="destructive" disabled={!deletable || ![...selectedRows].length} onclick={() => (showDialog = true)}>
+                {m['common.delete']()}
+            </Button>
+        {/if}
         <Button variant="secondary">
             <Link href={`${$location}/new`} class="p-0 !no-underline">
                 {m['common.create']()}
