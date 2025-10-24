@@ -116,6 +116,25 @@
         },
         "update-profile": {
             "success": "Profile successfully updated"
+        },
+        "company": {
+            "get": {
+                "error": {
+                    "not-found": "The requested company could not be found."
+                }
+            },
+            "delete": {
+                "success": "The company “{{name}}” has been successfully deleted.",
+                "error": {
+                    "default": "An error occurred while deleting the company with ID {{id}}."
+                }
+            },
+            "update": {
+                "success": "The company “{{name}}” has been successfully updated.",
+                "error": {
+                    "invalid-country-code": "The country code “{{countryCode}}” is invalid."
+                }
+            }
         }
     },
     "company": {

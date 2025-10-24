@@ -69,12 +69,12 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
         limit: number,
         sortBy: { field: keyof User['$attributes']; order: 'asc' | 'desc' }
     ): Promise<PaginatedCompanies> {
-        const companies: ModelPaginatorContract<Company> = await Company.query()
+        const paginator: ModelPaginatorContract<Company> = await Company.query()
             .select('companies.*')
-            .innerJoin('company_administrators', 'company_administrators.company_id', 'company.id')
+            .innerJoin('company_administrators', 'company_administrators.company_id', 'companies.id')
             .where('company_administrators.user_id', user.id)
             .if(query, (queryBuilder: ModelQueryBuilderContract<typeof Company>): void => {
-                queryBuilder.where('companies.username', 'ILIKE', `%${query}%`).orWhere('email', 'ILIKE', `%${query}%`);
+                queryBuilder.where('companies.name', 'ILIKE', `%${query}%`);
             })
             .if(sortBy, (queryBuilder: ModelQueryBuilderContract<typeof Company>): void => {
                 queryBuilder.orderBy(sortBy.field as string, sortBy.order);
@@ -82,16 +82,16 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
             .preload('address')
             .preload('equipments')
             .preload('administrators')
-            .orderBy('company.name', 'asc')
+            .orderBy('companies.name', 'asc')
             .paginate(page, limit);
 
         return {
-            companies: companies.map((company: Company): SerializedCompany => company.apiSerialize(language)),
-            firstPage: companies.firstPage,
-            lastPage: companies.lastPage,
+            companies: paginator.all().map((company: Company): SerializedCompany => company.apiSerialize(language)),
+            firstPage: paginator.firstPage,
+            lastPage: paginator.lastPage,
             limit,
-            total: companies.total,
-            currentPage: page,
+            total: paginator.total,
+            currentPage: paginator.currentPage,
         };
     }
 
@@ -102,7 +102,7 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
                 try {
                     const company: Company = await this.Model.query()
                         .where('id', id)
-                        .innerJoin('company_administrators', 'company_administrators.company_id', 'company.id')
+                        .innerJoin('company_administrators', 'company_administrators.company_id', 'companies.id')
                         .where('company_administrators.user_id', user.id)
                         .andWhere('company_administrators.role', CompanyAdministratorRoleEnum.CEO)
                         .firstOrFail();
