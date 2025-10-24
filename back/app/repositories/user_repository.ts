@@ -4,15 +4,11 @@ import { ModelPaginatorContract, ModelQueryBuilderContract } from '@adonisjs/luc
 import PaginatedUsers from '#types/paginated/paginated_users';
 import SerializedUser from '#types/serialized/serialized_user';
 import { inject } from '@adonisjs/core';
-import FileService from '#services/file_service';
 import LogUserRepository from '#repositories/log_user_repository';
 
 @inject()
 export default class UserRepository extends BaseRepository<typeof User> {
-    constructor(
-        private readonly fileService: FileService,
-        private readonly logUserRepository: LogUserRepository
-    ) {
+    constructor(private readonly logUserRepository: LogUserRepository) {
         super(User);
     }
 
@@ -47,12 +43,6 @@ export default class UserRepository extends BaseRepository<typeof User> {
                     }
 
                     await user.delete();
-
-                    if (user.profilePicture) {
-                        this.fileService.delete(user.profilePicture);
-                        await user.profilePicture.delete();
-                    }
-
                     await this.logUserRepository.deleteByUser(user);
 
                     return { isDeleted: true, username: user.username, id };

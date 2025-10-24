@@ -5,6 +5,7 @@
     import { Title } from '#lib/components/ui/title';
     import { m } from '#lib/paraglide/messages';
     import { Link } from '#lib/components/ui/link/index.js';
+    import { page } from '$app/state';
 
     interface Props {
         children: Snippet;
@@ -12,7 +13,7 @@
 
     let { children }: Props = $props();
 
-    let activeTab: 'profile' | 'companies' = $state('profile');
+    let activeTab: 'profile' | 'companies' = $state(page.url.pathname.includes('/profile/companies') ? 'companies' : 'profile');
     const tabTranslationPrefix: 'profile' | 'profile.companies' = $derived(activeTab === 'profile' ? 'profile' : 'profile.companies');
 
     const handleSwitchTab = (tab: 'profile' | 'companies'): void => {
