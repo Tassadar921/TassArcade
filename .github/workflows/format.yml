@@ -19,7 +19,7 @@ jobs:
                   node-version: '24'
 
             - name: Install dependencies
-              run: npm install
+              run: npm install --legacy-peer-deps
 
             - name: Run Prettier check
               run: make format-check
