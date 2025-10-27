@@ -149,6 +149,7 @@
             "error": {
                 "already-exists": "Une entreprise avec le SIRET {siret} existe déjà",
                 "invalid-country-code": "Le code de pays {countryCode} n'est pas valide",
+                "invalid-phone-number": "Le numéro de téléphone {phoneNumber} n'est pas valide",
                 "invalid-address": "Adresse invalide ({address})"
             }
         }

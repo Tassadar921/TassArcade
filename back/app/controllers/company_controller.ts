@@ -10,6 +10,7 @@ import CountryList, { Country } from 'country-list-with-dial-code-and-flag';
 import CompanyAdministrator from '#models/company_administrator';
 import CompanyAdministratorRoleEnum from '#types/enum/company_administrator_role_enum';
 import NominatimService from '#services/nominatim_service';
+import { parsePhoneNumberFromString, PhoneNumber } from 'libphonenumber-js';
 
 @inject()
 export default class CompanyController {
@@ -47,7 +48,7 @@ export default class CompanyController {
     }
 
     public async create({ request, response, user, language, i18n }: HttpContext): Promise<void> {
-        const { siret, name, address: inputAddress, postalCode, city, complement, countryCode, email, phoneNumber } = await request.validateUsing(createCompanyValidator);
+        const { siret, name, address: inputAddress, postalCode, city, complement, countryCode, email, phoneNumber: inputPhoneNumber } = await request.validateUsing(createCompanyValidator);
 
         let company: Company | null = await this.companyRepository.findOneBy({ siret });
         if (company) {
@@ -61,6 +62,16 @@ export default class CompanyController {
             return response.badRequest({
                 error: i18n.t('messages.company.create.error.invalid-country-code', { countryCode }),
             });
+        }
+
+        let phoneNumber: PhoneNumber | undefined;
+        if (inputPhoneNumber) {
+            phoneNumber = parsePhoneNumberFromString(`${country.dialCode} ${inputPhoneNumber}`);
+            if (!phoneNumber) {
+                return response.badRequest({
+                    error: i18n.t('messages.company.create.error.invalid-phone-number', { phoneNumber: inputPhoneNumber }),
+                });
+            }
         }
 
         const fullAddress: string = `${inputAddress}, ${postalCode} ${city}, ${country.name}`;
@@ -87,7 +98,7 @@ export default class CompanyController {
             siret,
             name,
             email,
-            phoneNumber: phoneNumber ? `${country.dialCode} ${phoneNumber}` : undefined,
+            phoneNumber: phoneNumber?.format('E.164'),
             addressId: address.id,
         });
         await company.refresh();
