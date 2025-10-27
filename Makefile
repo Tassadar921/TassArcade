@@ -10,7 +10,7 @@ format-check:
 
 install:
 	rm -rf node_modules package-lock.json back/node_modules front/node_modules
-	npm install
+	npm install --legacy-peer-deps
 
 upgrade:
 	cd back && npx ncu -u
