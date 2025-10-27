@@ -74,9 +74,11 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
     @beforeDelete()
     public static async deleteNotCascadedRelations(user: User): Promise<void> {
-        const fileService: FileService = new FileService();
-        fileService.delete(user.profilePicture);
-        await user.profilePicture.delete();
+        if (user.profilePicture) {
+            const fileService: FileService = new FileService();
+            fileService.delete(user.profilePicture);
+            await user.profilePicture.delete();
+        }
     }
 
     static accessTokens: DbAccessTokensProvider<typeof User> = DbAccessTokensProvider.forModel(User, {
