@@ -1,0 +1,84 @@
+# -----------------------------
+
+# QODO MERGE CONFIGURATION
+
+# -----------------------------
+
+# 1. Language for PR comments
+
+# -----------------------------
+
+[comments]
+language = "fr"  # PR feedback comments in French
+
+# -----------------------------
+
+# 2. Include code snippets for each PR comment
+
+# -----------------------------
+
+[code_snippets]
+include_with_comment = true  # Include example code in each PR comment
+snippet_type = "line_or_block" # Can be 'line' or 'block'
+
+# -----------------------------
+
+# 3. Maximal typing (warnings only)
+
+# -----------------------------
+
+[typing]
+enforce = true      # Report all untyped variables/functions
+warning_only = true # Do not block the PR, just a warning
+
+# -----------------------------
+
+# 4. Front: arrow functions only
+
+# -----------------------------
+
+[front]
+arrow_functions_only = true # Recommend only arrow functions
+paths = ["front/"]         # Apply only in front code
+
+# -----------------------------
+
+# 5. Back/migrations: disallow await
+
+# -----------------------------
+
+[back.migrations]
+disallow_await = true       # Report any await usage
+paths = ["back/migrations/"]
+
+# -----------------------------
+
+# 6. Back/migrations: disallow table.enum()
+
+# -----------------------------
+
+[back.migrations.enum]
+disallow_table_enum = true  # Report table.enum() usage
+paths = ["back/migrations/"]
+
+# -----------------------------
+
+# 7. Back types organization
+
+# -----------------------------
+
+[back.types]
+paths = ["back/app/types"]           # Root folder for types
+subfolder_preference = true           # Place types in subfolders if available
+index_export_required = true          # Ensure export in index.ts
+
+# -----------------------------
+
+# 8. General Qodo settings
+
+# -----------------------------
+
+[general]
+review_title_prefix = "[QODO]"   # Prefix for generated PR comments
+max_comments_per_file = 20       # Limit number of PR comments per file
+auto_review = true               # Enable automatic review on each PR
