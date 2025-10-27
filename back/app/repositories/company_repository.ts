@@ -79,10 +79,12 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
             .if(sortBy, (queryBuilder: ModelQueryBuilderContract<typeof Company>): void => {
                 queryBuilder.orderBy(sortBy.field as string, sortBy.order);
             })
+            .if(!sortBy, (queryBuilder: ModelQueryBuilderContract<typeof Company>): void => {
+                queryBuilder.orderBy('companies.name', 'asc');
+            })
             .preload('address')
             .preload('equipments')
             .preload('administrators')
-            .orderBy('companies.name', 'asc')
             .paginate(page, limit);
 
         return {

@@ -1,11 +1,10 @@
 import type { ColumnDef } from '@tanstack/table-core';
 import { m } from '#lib/paraglide/messages';
-import type { SerializedUser } from 'backend/types';
+import type { SerializedCompany } from 'backend/types';
 import { renderComponent } from '#lib/components/ui/data-table/render-helpers';
-import { Checkbox } from '#lib/components/ui/checkbox';
 import { SortableColumn, DataTableActions } from '#lib/components/ui/data-table';
 
-export const getCompanyColumns = (onSort: (field: string, order: 'asc' | 'desc') => void): ColumnDef<SerializedUser>[] => [
+export const getCompanyColumns = (onSort: (field: string, order: 'asc' | 'desc') => void): ColumnDef<SerializedCompany>[] => [
     {
         id: 'name',
         accessorKey: 'name',
