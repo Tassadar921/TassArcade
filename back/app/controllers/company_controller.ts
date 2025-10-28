@@ -13,7 +13,6 @@ import NominatimService from '#services/nominatim_service';
 import { parsePhoneNumberFromString, PhoneNumber } from 'libphonenumber-js';
 import cache from '@adonisjs/cache/services/main';
 import PaginatedCompanies from '#types/paginated/paginated_companies';
-import User from '#models/user';
 import SerializedCompany from '#types/serialized/serialized_company';
 
 @inject()
@@ -131,7 +130,7 @@ export default class CompanyController {
                 ttl: '1h',
                 factory: async (): Promise<PaginatedCompanies> => {
                     const [field, order] = inputSortBy.split(':');
-                    const sortBy = { field: field as keyof User['$attributes'], order: order as 'asc' | 'desc' };
+                    const sortBy = { field: field as keyof Company['$attributes'], order: order as 'asc' | 'desc' };
 
                     return await this.companyRepository.getProfileCompanies(user, language, query, page, limit, sortBy);
                 },
