@@ -10,7 +10,7 @@ ARG PORT
 COPY back/package*.json ./
 
 # Install backend deps
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copy backend app code
 COPY back /app

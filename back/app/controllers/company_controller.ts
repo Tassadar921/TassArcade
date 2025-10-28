@@ -125,14 +125,14 @@ export default class CompanyController {
 
         return response.ok(
             await cache.getOrSet({
-                key: `companies:${user.id}:query:${query}:page:${page}:limit:${limit}:sortBy:${inputSortBy}`,
+                key: `companies:${user.id}:query:${query.toLowerCase()}:page:${page}:limit:${limit}:sortBy:${inputSortBy}`,
                 tags: ['companies'],
                 ttl: '1h',
                 factory: async (): Promise<PaginatedCompanies> => {
                     const [field, order] = inputSortBy.split(':');
                     const sortBy = { field: field as keyof Company['$attributes'], order: order as 'asc' | 'desc' };
 
-                    return await this.companyRepository.getProfileCompanies(user, language, query, page, limit, sortBy);
+                    return await this.companyRepository.getProfileCompanies(user, language, query.toLowerCase(), page, limit, sortBy);
                 },
             })
         );
