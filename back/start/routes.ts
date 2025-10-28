@@ -19,7 +19,6 @@ const EquipmentController = () => import('#controllers/equipment_controller');
 const ClusterController = () => import('#controllers/cluster_controller');
 const CountryController = () => import('#controllers/country_controller');
 const CompanyController = () => import('#controllers/company_controller');
-const ProfileCompanyController = () => import('#controllers/profile_company_controller');
 
 router.get('healthcheck', [HealthCheckController]);
 
@@ -101,10 +100,10 @@ router
                         router.post('/update', [ProfileController, 'updateProfile']);
                         router
                             .group((): void => {
-                                router.get('/', [ProfileCompanyController, 'getAll']);
-                                router.post('/delete', [ProfileCompanyController, 'delete']);
-                                router.post('/update', [ProfileCompanyController, 'update']);
-                                router.get('/:siret', [ProfileCompanyController, 'get']);
+                                router.get('/', [CompanyController, 'getAll']);
+                                router.post('/delete', [CompanyController, 'delete']);
+                                router.post('/update', [CompanyController, 'update']);
+                                router.get('/:siret', [CompanyController, 'get']);
                             })
                             .prefix('company');
                     })

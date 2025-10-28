@@ -114,27 +114,8 @@
         "reset": {
             "success": "Mot de passe réinitialisé avec succès"
         },
-        "update-profile": {
+        "update": {
             "success": "Profil mis à jour avec succès"
-        },
-        "company": {
-            "get": {
-                "error": {
-                    "not-found": "L'entreprise demandée est introuvable."
-                }
-            },
-            "delete": {
-                "success": "L'entreprise « {{name}} » a été supprimée avec succès.",
-                "error": {
-                    "default": "Une erreur est survenue lors de la suppression de l'entreprise avec l'identifiant {{id}}."
-                }
-            },
-            "update": {
-                "success": "L'entreprise « {{name}} » a été mise à jour avec succès.",
-                "error": {
-                    "invalid-country-code": "Le code pays « {{countryCode}} » est invalide."
-                }
-            }
         }
     },
     "company": {
@@ -149,6 +130,25 @@
             "error": {
                 "already-exists": "Une entreprise avec le SIRET {siret} existe déjà",
                 "invalid-country-code": "Le code de pays {countryCode} n'est pas valide",
+                "invalid-phone-number": "Le numéro de téléphone {phoneNumber} n'est pas valide",
+                "invalid-address": "Adresse invalide ({address})"
+            }
+        },
+        "get": {
+            "error": {
+                "not-found": "L'entreprise demandée est introuvable."
+            }
+        },
+        "delete": {
+            "success": "L'entreprise « {{name}} » a été supprimée avec succès.",
+            "error": {
+                "default": "Une erreur est survenue lors de la suppression de l'entreprise avec l'identifiant {{id}}."
+            }
+        },
+        "update": {
+            "success": "L'entreprise « {{name}} » a été mise à jour avec succès.",
+            "error": {
+                "invalid-country-code": "Le code pays « {{countryCode}} » est invalide.",
                 "invalid-phone-number": "Le numéro de téléphone {phoneNumber} n'est pas valide",
                 "invalid-address": "Adresse invalide ({address})"
             }

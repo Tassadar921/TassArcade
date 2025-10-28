@@ -4,7 +4,7 @@ import Company from '#models/company';
 
 const validSortFields: string[] = [...Company.$columnsDefinitions.keys()];
 
-const sortByProfileCompanyValidator = (value: unknown, _options: any, field: FieldContext): void => {
+const sortByCompanyValidator = (value: unknown, _options: any, field: FieldContext): void => {
     if (typeof value !== 'string') return;
 
     const [fieldName, direction] = value.split(':');
@@ -24,4 +24,4 @@ const sortByProfileCompanyValidator = (value: unknown, _options: any, field: Fie
     }
 };
 
-export const sortByProfileCompanyRule = vine.createRule(sortByProfileCompanyValidator);
+export const sortByCompanyRule = vine.createRule(sortByCompanyValidator);

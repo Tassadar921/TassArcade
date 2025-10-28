@@ -67,7 +67,7 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
         query: string,
         page: number,
         limit: number,
-        sortBy: { field: keyof User['$attributes']; order: 'asc' | 'desc' }
+        sortBy: { field: keyof Company['$attributes']; order: 'asc' | 'desc' }
     ): Promise<PaginatedCompanies> {
         const paginator: ModelPaginatorContract<Company> = await Company.query()
             .select('companies.*')
