@@ -109,8 +109,6 @@
     });
 </script>
 
-<Title title={m['company.new.title']()} />
-
 <Form isValid={canSubmit} onError={handleFormSubmitError}>
     <div class="flex gap-3">
         <Input

@@ -1,7 +1,34 @@
-import { type Actions, fail, type RequestEvent } from '@sveltejs/kit';
+import { m } from '#lib/paraglide/messages';
 import { redirect } from 'sveltekit-flash-message/server';
-import type { FormError } from '../../app';
+import type { PageServerLoad } from './$types';
+import { type Actions, fail, type RequestEvent } from '@sveltejs/kit';
+import type { FormError } from '../../../../../app';
 import { extractFormData, extractFormErrors } from '#lib/services/requestService';
+
+export const load: PageServerLoad = async (event) => {
+    const { locals, params, cookies } = event;
+    try {
+        const response = await locals.client.get(`/api/profile/company/${params.id}`);
+
+        if (response.status < 200 || response.status >= 300) {
+            throw response;
+        }
+
+        return {
+            isSuccess: true,
+            user: response.data,
+        };
+    } catch (error: any) {
+        redirect(
+            `/${cookies.get('PARAGLIDE_LOCALE')}/admin/user`,
+            {
+                type: 'error',
+                message: error?.response?.data?.error ?? m['common.error.default-message'](),
+            },
+            event
+        );
+    }
+};
 
 export const actions: Actions = {
     default: async (event: RequestEvent): Promise<void> => {
@@ -13,7 +40,7 @@ export const actions: Actions = {
         let isSuccess: boolean = true;
 
         try {
-            const response = await locals.client.post('/api/auth', formData, {
+            const response = await locals.client.post('/api/profile/company/update', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -30,28 +57,10 @@ export const actions: Actions = {
         }
 
         if (isSuccess) {
-            cookies.set('user', JSON.stringify(data.user), {
-                path: '/',
-                httpOnly: true,
-                sameSite: 'lax',
-                maxAge: 60 * 60 * 24 * 7,
-            });
-
-            cookies.set('token', data.token.token, {
-                path: '/',
-                httpOnly: true,
-                sameSite: 'lax',
-                maxAge: 60 * 60 * 24 * 7,
-            });
-
-            const previousPathName: string | undefined = cookies.get('previousPathName');
-            cookies.delete('previousPathName', { path: '/' });
             redirect(
-                303,
-                `/${cookies.get('PARAGLIDE_LOCALE')}${previousPathName ? `${previousPathName}` : ''}`,
                 {
                     type: 'success',
-                    message: data.message,
+                    message: data?.message,
                 },
                 event
             );

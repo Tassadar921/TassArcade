@@ -3,10 +3,10 @@ import { BaseModel, beforeDelete, beforeFetch, beforeFind, belongsTo, column, ha
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations';
 import Address from '#models/address';
 import CompanyAdministrator from '#models/company_administrator';
-import SerializedCompany from '#types/serialized/serialized_company';
 import CompanyEquipmentType from '#models/company_equipment_type';
 import Language from '#models/language';
-import { SerializedCompanyEquipmentType } from '../types/index.js';
+import { SerializedCompany, SerializedCompanyEquipmentType } from '../types/index.js';
+import SerializedCompanyLight from '#types/serialized/serialized_company_light';
 
 export default class Company extends BaseModel {
     public static table: string = 'companies';
@@ -55,11 +55,27 @@ export default class Company extends BaseModel {
         await company.address.delete();
     }
 
-    public apiSerialize(language: Language): SerializedCompany {
+    public apiSerializeLight(language: Language): SerializedCompanyLight {
         return {
             id: this.id,
             name: this.name,
             address: this.address.apiSerialize(),
+            equipments: this.equipments
+                .map((equipmentType: CompanyEquipmentType): SerializedCompanyEquipmentType => equipmentType.apiSerialize(language))
+                .sort((a: SerializedCompanyEquipmentType, b: SerializedCompanyEquipmentType): number => a.name.localeCompare(b.name)),
+            createdAt: this.createdAt.toString(),
+            updatedAt: this.updatedAt.toString(),
+        };
+    }
+
+    public apiSerialize(language: Language): SerializedCompany {
+        return {
+            id: this.id,
+            siret: this.siret,
+            name: this.name,
+            address: this.address.apiSerialize(),
+            phoneNumber: this.phoneNumber,
+            email: this.email,
             equipments: this.equipments
                 .map((equipmentType: CompanyEquipmentType): SerializedCompanyEquipmentType => equipmentType.apiSerialize(language))
                 .sort((a: SerializedCompanyEquipmentType, b: SerializedCompanyEquipmentType): number => a.name.localeCompare(b.name)),

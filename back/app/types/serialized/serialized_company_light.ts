@@ -1,16 +1,14 @@
 import SerializedAddress from '#types/serialized/serialized_address';
 import SerializedCompanyEquipmentType from '#types/serialized/serialized_company_equipment_type';
 
-export type SerializedCompany = {
+export type SerializedCompanyLight = {
     id: string;
-    siret: string;
     name: string;
     phoneNumber?: string;
-    email?: string;
     address: SerializedAddress;
     equipments: SerializedCompanyEquipmentType[];
     createdAt?: string;
     updatedAt?: string;
 };
 
-export default SerializedCompany;
+export default SerializedCompanyLight;

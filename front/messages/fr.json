@@ -195,6 +195,11 @@
     "company": {
         "new": {
             "title": "Enregistrer une entreprise",
+            "meta": {
+                "title": "Créer une entreprise – TassArcade",
+                "description": "Créez facilement une nouvelle entreprise sur TassArcade. Renseignez votre numéro SIRET pour remplir automatiquement les informations, puis personnalisez-les avant de les enregistrer.",
+                "keywords": "créer entreprise, nouvelle entreprise, SIRET automatique, gestion entreprise, TassArcade"
+            },
             "siret": {
                 "placeholder": "732 829 320 00074",
                 "label": "SIRET",
@@ -260,6 +265,8 @@
         },
         "fields": {
             "name": "Nom",
+            "email": "Email",
+            "siret": "SIRET",
             "phone-number": "Numéro de téléphone"
         }
     },

@@ -40,6 +40,7 @@
         selectedRows?: string[];
         batchDeleteTitle?: string;
         batchDeleteText?: string;
+        selectable?: boolean;
         onBatchDelete?: (ids: string[]) => void;
         onPaginationChange: (page: number, limit: number) => void;
     };
@@ -53,6 +54,7 @@
         selectedRows = $bindable([]),
         batchDeleteTitle,
         batchDeleteText,
+        selectable = true,
         onBatchDelete,
         onPaginationChange,
     }: Props = $props();
@@ -68,6 +70,7 @@
             return data;
         },
         onRowSelectionChange: (updater) => {
+            if (!selectable) return;
             if (typeof updater === 'function') {
                 rowSelection = updater(rowSelection);
             } else {
@@ -176,9 +179,11 @@
         </Table>
     </div>
 
-    <div class="text-muted-foreground flex-1 text-sm">
-        {m['common.datatable.selected-rows']({ count: table.getFilteredSelectedRowModel().rows.length, total: table.getFilteredRowModel().rows.length })}
-    </div>
+    {#if selectable}
+        <div class="text-muted-foreground flex-1 text-sm">
+            {m['common.datatable.selected-rows']({ count: table.getFilteredSelectedRowModel().rows.length, total: table.getFilteredRowModel().rows.length })}
+        </div>
+    {/if}
 
     <Pagination {paginatedObject} onChange={(page: number, limit: number) => onPaginationChange(page, limit)} />
 

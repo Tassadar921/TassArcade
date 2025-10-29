@@ -38,7 +38,7 @@ export const deleteCompaniesValidator = vine.compile(
 
 export const getCompanyValidator = vine.compile(
     vine.object({
-        siret: vine.string().fixedLength(14),
+        companyId: vine.string().uuid(),
     })
 );
 

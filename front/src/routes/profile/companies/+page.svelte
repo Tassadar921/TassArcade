@@ -7,7 +7,6 @@
     import { getCompanyColumns } from './columns';
 
     let paginatedCompanies: PaginatedCompanies | undefined = $state();
-    let selectedCompanies: string[] = $state([]);
     let query: string = $state('');
     let sortBy: string = $state('name:asc');
 
@@ -39,7 +38,7 @@
             columns={getCompanyColumns(handleSort)}
             onSearch={getCompanies}
             bind:query
-            bind:selectedRows={selectedCompanies}
+            selectable={false}
             onPaginationChange={async (page: number, limit: number) => await getCompanies(page, limit)}
         />
     </div>

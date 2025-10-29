@@ -8,7 +8,7 @@ export const getCompanyColumns = (onSort: (field: string, order: 'asc' | 'desc')
     {
         id: 'name',
         accessorKey: 'name',
-        header: ({ column }) =>
+        header: () =>
             renderComponent(SortableColumn, {
                 title: m['company.fields.name'](),
                 field: 'name',
@@ -17,12 +17,38 @@ export const getCompanyColumns = (onSort: (field: string, order: 'asc' | 'desc')
         enableHiding: false,
     },
     {
+        id: 'email',
+        accessorKey: 'email',
+        meta: {
+            headerName: m['company.fields.email'](),
+        },
+        header: () =>
+            renderComponent(SortableColumn, {
+                title: m['company.fields.email'](),
+                field: 'email',
+                onclick: onSort,
+            }),
+    },
+    {
+        id: 'siret',
+        accessorKey: 'siret',
+        meta: {
+            headerName: m['company.fields.siret'](),
+        },
+        header: () =>
+            renderComponent(SortableColumn, {
+                title: m['company.fields.siret'](),
+                field: 'siret',
+                onclick: onSort,
+            }),
+    },
+    {
         id: 'phoneNumber',
         accessorKey: 'phoneNumber',
         meta: {
             headerName: m['company.fields.phone-number'](),
         },
-        header: ({ column }) =>
+        header: () =>
             renderComponent(SortableColumn, {
                 title: m['company.fields.phone-number'](),
                 field: 'phoneNumber',

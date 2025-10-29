@@ -8,6 +8,7 @@ import User from '#models/user';
 import { ModelPaginatorContract, ModelQueryBuilderContract } from '@adonisjs/lucid/types/model';
 import PaginatedCompanies from '#types/paginated/paginated_companies';
 import CompanyAdministratorRoleEnum from '#types/enum/company_administrator_role_enum';
+import SerializedCompanyLight from '#types/serialized/serialized_company_light';
 
 export default class CompanyRepository extends BaseRepository<typeof Company> {
     constructor() {
@@ -54,7 +55,7 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
                 lat: row.lat,
                 lng: row.lng,
                 isCluster: row.isCluster,
-                companies: companies.map((company: Company): SerializedCompany => company.apiSerialize(language)),
+                companies: companies.map((company: Company): SerializedCompanyLight => company.apiSerializeLight(language)),
             });
         }
 
@@ -74,7 +75,13 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
             .innerJoin('company_administrators', 'company_administrators.company_id', 'companies.id')
             .where('company_administrators.user_id', user.id)
             .if(query, (queryBuilder: ModelQueryBuilderContract<typeof Company>): void => {
-                queryBuilder.where('companies.name', 'ILIKE', `%${query}%`);
+                queryBuilder.where((subQuery): void => {
+                    subQuery
+                        .where('companies.name', 'ILIKE', `%${query}%`)
+                        .orWhere('companies.siret', 'ILIKE', `%${query}%`)
+                        .orWhere('companies.email', 'ILIKE', `%${query}%`)
+                        .orWhere('companies.phone_number', 'ILIKE', `%${query}%`);
+                });
             })
             .if(sortBy, (queryBuilder: ModelQueryBuilderContract<typeof Company>): void => {
                 queryBuilder.orderBy(sortBy.field as string, sortBy.order);

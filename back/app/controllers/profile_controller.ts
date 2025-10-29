@@ -108,7 +108,6 @@ export default class ProfileController {
             if (user.profilePictureId) {
                 // Physically delete the file
                 this.fileService.delete(user.profilePicture);
-
                 await user.save();
             }
 

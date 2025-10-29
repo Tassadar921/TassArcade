@@ -13,7 +13,7 @@ export const actions: Actions = {
         let isSuccess: boolean = true;
 
         try {
-            const response = await locals.client.post('api/profile/update', formData, {
+            const response = await locals.client.post('/api/profile/update', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

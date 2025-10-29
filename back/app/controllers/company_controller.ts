@@ -13,7 +13,7 @@ import NominatimService from '#services/nominatim_service';
 import { parsePhoneNumberFromString, PhoneNumber } from 'libphonenumber-js';
 import cache from '@adonisjs/cache/services/main';
 import PaginatedCompanies from '#types/paginated/paginated_companies';
-import SerializedCompany from '#types/serialized/serialized_company';
+import SerializedCompanyLight from '#types/serialized/serialized_company_light';
 
 @inject()
 export default class CompanyController {
@@ -116,7 +116,7 @@ export default class CompanyController {
 
         return response.created({
             message: i18n.t('messages.company.create.success', { companyName: company.name }),
-            company: company.apiSerialize(language),
+            company: company.apiSerializeLight(language),
         });
     }
 
@@ -204,12 +204,12 @@ export default class CompanyController {
 
         await Promise.all([company.save(), company.address.save(), cache.deleteByTag({ tags: ['companies', `company:${company.id}`] })]);
 
-        return response.ok({ company: company.apiSerialize(language), message: i18n.t('messages.company.update.success', { name }) });
+        return response.ok({ company: company.apiSerializeLight(language), message: i18n.t('messages.company.update.success', { name }) });
     }
 
     public async get({ request, response, i18n, language }: HttpContext): Promise<void> {
-        const { siret } = await getCompanyValidator.validate(request.params());
-        const company: Company | null = await this.companyRepository.findOneBy({ siret }, ['address', 'administrators', 'equipments']);
+        const { companyId } = await getCompanyValidator.validate(request.params());
+        const company: Company | null = await this.companyRepository.findOneBy({ id: companyId }, ['administrators']);
         if (!company) {
             return response.notFound({ error: i18n.t('messages.company.get.error.not-found') });
         }
@@ -219,8 +219,8 @@ export default class CompanyController {
                 key: `company:${company.id}`,
                 tags: [`company:${company.id}`],
                 ttl: '1h',
-                factory: (): SerializedCompany => {
-                    return company.apiSerialize(language);
+                factory: (): SerializedCompanyLight => {
+                    return company.apiSerializeLight(language);
                 },
             })
         );
