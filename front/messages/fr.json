@@ -174,8 +174,7 @@
         "description": "Mettez à jour votre profil",
         "meta": {
             "title": "Modifier le profil – TassArcade",
-            "description": "Mettez à jour votre nom d’utilisateur et votre photo de profil facilement sur TassArcade. Gérez vos informations personnelles en toute sécurité.",
-            "keywords": "modifier profil, changer nom d’utilisateur, changer photo de profil, paramètres utilisateur, TassArcade"
+            "description": "Mettez à jour votre nom d’utilisateur et votre photo de profil facilement sur TassArcade. Gérez vos informations personnelles en toute sécurité."
         },
         "reset-password": "Réinitialiser le mot de passe",
         "profile-picture": {
@@ -187,8 +186,7 @@
             "title": "Entreprises",
             "meta": {
                 "title": "Entreprises – TassArcade",
-                "description": "Gérez facilement vos entreprises sur TassArcade. Créez, mettez à jour et supprimez vos entreprises en toute simplicité.",
-                "keywords": "entreprises, gérer entreprises, créer entreprise, mettre à jour entreprise, supprimer entreprise, TassArcade"
+                "description": "Gérez facilement vos entreprises sur TassArcade. Créez, mettez à jour et supprimez vos entreprises en toute simplicité."
             }
         }
     },
@@ -197,8 +195,7 @@
             "title": "Enregistrer une entreprise",
             "meta": {
                 "title": "Créer une entreprise – TassArcade",
-                "description": "Créez facilement une nouvelle entreprise sur TassArcade. Renseignez votre numéro SIRET pour remplir automatiquement les informations, puis personnalisez-les avant de les enregistrer.",
-                "keywords": "créer entreprise, nouvelle entreprise, SIRET automatique, gestion entreprise, TassArcade"
+                "description": "Créez facilement une nouvelle entreprise sur TassArcade. Renseignez votre numéro SIRET pour remplir automatiquement les informations, puis personnalisez-les avant de les enregistrer."
             },
             "siret": {
                 "placeholder": "732 829 320 00074",
@@ -262,6 +259,17 @@
                 "placeholder": "direction@maison-delcourt.com",
                 "label": "Email"
             }
+        },
+        "edit": {
+            "title": "Modification de {name}",
+            "meta": {
+                "title": "Édition de {name}",
+                "description": "Modifiez les informations de votre entreprise depuis votre profil. Chargement automatique par SIRET ou saisie manuelle."
+            }
+        },
+        "delete": {
+            "title": "Supprimer {name}",
+            "text": "Êtes-vous sûr de vouloir supprimer {name} ?"
         },
         "fields": {
             "name": "Nom",

@@ -13,13 +13,15 @@ import NominatimService from '#services/nominatim_service';
 import { parsePhoneNumberFromString, PhoneNumber } from 'libphonenumber-js';
 import cache from '@adonisjs/cache/services/main';
 import PaginatedCompanies from '#types/paginated/paginated_companies';
-import SerializedCompanyLight from '#types/serialized/serialized_company_light';
+import SerializedCompany from '#types/serialized/serialized_company';
+import CountryService from '#services/country_service';
 
 @inject()
 export default class CompanyController {
     constructor(
         private readonly companyRepository: CompanyRepository,
-        private readonly nominatimService: NominatimService
+        private readonly nominatimService: NominatimService,
+        private readonly countryService: CountryService
     ) {}
 
     public async getFromSiret({ request, response, i18n }: HttpContext): Promise<void> {
@@ -112,7 +114,7 @@ export default class CompanyController {
             userId: user.id,
         });
 
-        await Promise.all([company.load('address'), company.load('equipments')]);
+        await Promise.all([company.load('address'), company.load('equipments'), cache.deleteByTag({ tags: ['companies'] })]);
 
         return response.created({
             message: i18n.t('messages.company.create.success', { companyName: company.name }),
@@ -158,6 +160,7 @@ export default class CompanyController {
     }
 
     public async update({ request, response, i18n, language }: HttpContext) {
+        console.log('ici');
         const { siret, name, address: inputAddress, postalCode, city, complement, countryCode, email, phoneNumber: inputPhoneNumber } = await request.validateUsing(updateCompanyValidator);
 
         const country: Country | undefined = CountryList.default.findOneByCountryCode(countryCode);
@@ -214,15 +217,23 @@ export default class CompanyController {
             return response.notFound({ error: i18n.t('messages.company.get.error.not-found') });
         }
 
-        return response.ok(
-            await cache.getOrSet({
+        return response.ok({
+            company: await cache.getOrSet({
                 key: `company:${company.id}`,
                 tags: [`company:${company.id}`],
                 ttl: '1h',
-                factory: (): SerializedCompanyLight => {
-                    return company.apiSerializeLight(language);
+                factory: (): SerializedCompany => {
+                    return company.apiSerialize(language);
                 },
-            })
-        );
+            }),
+            countries: await cache.getOrSet({
+                key: 'countries',
+                tags: ['countries'],
+                ttl: '3h',
+                factory: async (): Promise<Country[]> => {
+                    return await this.countryService.getAll();
+                },
+            }),
+        });
     }
 }

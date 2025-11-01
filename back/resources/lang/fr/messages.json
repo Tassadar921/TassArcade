@@ -140,15 +140,15 @@
             }
         },
         "delete": {
-            "success": "L'entreprise « {{name}} » a été supprimée avec succès.",
+            "success": "L'entreprise « {name} » a été supprimée avec succès.",
             "error": {
-                "default": "Une erreur est survenue lors de la suppression de l'entreprise avec l'identifiant {{id}}."
+                "default": "Une erreur est survenue lors de la suppression de l'entreprise avec l'identifiant {id}."
             }
         },
         "update": {
-            "success": "L'entreprise « {{name}} » a été mise à jour avec succès.",
+            "success": "L'entreprise « {name} » a été mise à jour avec succès.",
             "error": {
-                "invalid-country-code": "Le code pays « {{countryCode}} » est invalide.",
+                "invalid-country-code": "Le code pays « {countryCode} » est invalide.",
                 "invalid-phone-number": "Le numéro de téléphone {phoneNumber} n'est pas valide",
                 "invalid-address": "Adresse invalide ({address})"
             }

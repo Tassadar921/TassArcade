@@ -1,23 +1,23 @@
 import { HttpContext } from '@adonisjs/core/http';
 import { inject } from '@adonisjs/core';
-import CountryList, { Country } from 'country-list-with-dial-code-and-flag';
+import CountryService from '#services/country_service';
+import cache from '@adonisjs/cache/services/main';
+import { Country } from 'country-list-with-dial-code-and-flag';
 
 @inject()
 export default class CountryController {
+    constructor(private readonly countryService: CountryService) {}
+
     public async getAll({ response }: HttpContext): Promise<void> {
-        const countriesList: Country[] = CountryList.default.getAll();
-        const seen: Set<string> = new Set<string>();
-        const countriesListUnique: Country[] = [];
-
-        for (const country of countriesList) {
-            if (seen.has(country.code)) {
-                continue;
-            }
-
-            seen.add(country.code);
-            countriesListUnique.push(country);
-        }
-
-        return response.ok(countriesListUnique);
+        return response.ok(
+            await cache.getOrSet({
+                key: 'countries',
+                tags: ['countries'],
+                ttl: '3h',
+                factory: async (): Promise<Country[]> => {
+                    return await this.countryService.getAll();
+                },
+            })
+        );
     }
 }

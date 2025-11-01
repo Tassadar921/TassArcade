@@ -140,15 +140,15 @@
             }
         },
         "delete": {
-            "success": "The company “{{name}}” has been successfully deleted.",
+            "success": "The company “{name}” has been successfully deleted.",
             "error": {
-                "default": "An error occurred while deleting the company with ID {{id}}."
+                "default": "An error occurred while deleting the company with ID {id}."
             }
         },
         "update": {
-            "success": "The company “{{name}}” has been successfully updated.",
+            "success": "The company “{name}” has been successfully updated.",
             "error": {
-                "invalid-country-code": "The country code “{{countryCode}}” is invalid.",
+                "invalid-country-code": "The country code “{countryCode}” is invalid.",
                 "invalid-phone-number": "Invalid phone number {phoneNumber}",
                 "invalid-address": "Invalid address ({address})"
             }

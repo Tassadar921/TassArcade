@@ -120,7 +120,7 @@
     });
 </script>
 
-<div class="flex flex-col gap-1">
+<div class="flex flex-col gap-1 mb-5">
     <div class="flex gap-5 items-center justify-between py-4">
         <Search bind:search={query} resultsArray={data} minChars={0} {onSearch} />
         <DropdownMenu>

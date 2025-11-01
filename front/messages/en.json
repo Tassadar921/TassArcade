@@ -174,8 +174,7 @@
         "description": "Update your profile",
         "meta": {
             "title": "Edit Profile – TassArcade",
-            "description": "Update your username and profile picture easily on TassArcade. Manage your personal information securely.",
-            "keywords": "edit profile, update username, change profile picture, user settings, TassArcade"
+            "description": "Update your username and profile picture easily on TassArcade. Manage your personal information securely."
         },
         "reset-password": "Reset password",
         "profile-picture": {
@@ -187,8 +186,7 @@
             "title": "Companies",
             "meta": {
                 "title": "Companies – TassArcade",
-                "description": "Manage your companies easily on TassArcade. Create, update, and delete companies with ease.",
-                "keywords": "companies, manage companies, create company, update company, delete company, TassArcade"
+                "description": "Manage your companies easily on TassArcade. Create, update, and delete companies with ease."
             }
         }
     },
@@ -197,8 +195,7 @@
             "title": "Register a company",
             "meta": {
                 "title": "Create Company – TassArcade",
-                "description": "Easily create a new company on TassArcade. Enter your SIRET number to automatically fill in company details, then customize and save your information.",
-                "keywords": "create company, new company, SIRET autofill, manage company, TassArcade"
+                "description": "Easily create a new company on TassArcade. Enter your SIRET number to automatically fill in company details, then customize and save your information."
             },
             "siret": {
                 "placeholder": "732 829 320 00074",
@@ -262,6 +259,17 @@
                 "placeholder": "ceo@ashfordandco.com",
                 "label": "Email"
             }
+        },
+        "edit": {
+            "title": "Editing {name}",
+            "meta": {
+                "title": "Edit {name}",
+                "description": "Edit your company information from your profile. Auto-load by SIRET or manual input."
+            }
+        },
+        "delete": {
+            "title": "Delete {name}",
+            "text": "Are you sure you want to delete {name} ?"
         },
         "fields": {
             "name": "Name",

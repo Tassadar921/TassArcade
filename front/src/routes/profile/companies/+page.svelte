@@ -1,7 +1,7 @@
 <script lang="ts">
     import { page } from '$app/state';
     import { onMount } from 'svelte';
-    import type { PaginatedCompanies, SerializedCompany } from 'backend/types';
+    import type { PaginatedCompanies } from 'backend/types';
     import { wrappedFetch } from '#lib/services/requestService';
     import { DataTable } from '#lib/components/ui/data-table';
     import { getCompanyColumns } from './columns';
@@ -12,7 +12,7 @@
 
     onMount(async (): Promise<void> => {
         if (page.data.isSuccess) {
-            paginatedCompanies = page.data.data;
+            paginatedCompanies = page.data.companies;
         } else {
             await getCompanies();
         }

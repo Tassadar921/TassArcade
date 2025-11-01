@@ -2,6 +2,22 @@ import { type Actions, fail, type RequestEvent } from '@sveltejs/kit';
 import { redirect } from 'sveltekit-flash-message/server';
 import type { FormError } from '../../app';
 import { extractFormData, extractFormErrors } from '#lib/services/requestService';
+import type { PageServerLoad } from './$types';
+import { m } from '#lib/paraglide/messages';
+
+export const load: PageServerLoad = async () => {
+    const headers = {
+        title: m['profile.title'](),
+        meta: {
+            title: m['profile.meta.title'](),
+            description: m['profile.meta.description'](),
+            pathname: '/profile',
+        },
+        breadcrumb: [{ title: m['profile.title']() }],
+    };
+
+    return { ...headers };
+};
 
 export const actions: Actions = {
     default: async (event: RequestEvent): Promise<void> => {

@@ -17,19 +17,6 @@ export const getCompanyColumns = (onSort: (field: string, order: 'asc' | 'desc')
         enableHiding: false,
     },
     {
-        id: 'email',
-        accessorKey: 'email',
-        meta: {
-            headerName: m['company.fields.email'](),
-        },
-        header: () =>
-            renderComponent(SortableColumn, {
-                title: m['company.fields.email'](),
-                field: 'email',
-                onclick: onSort,
-            }),
-    },
-    {
         id: 'siret',
         accessorKey: 'siret',
         meta: {
@@ -39,6 +26,19 @@ export const getCompanyColumns = (onSort: (field: string, order: 'asc' | 'desc')
             renderComponent(SortableColumn, {
                 title: m['company.fields.siret'](),
                 field: 'siret',
+                onclick: onSort,
+            }),
+    },
+    {
+        id: 'email',
+        accessorKey: 'email',
+        meta: {
+            headerName: m['company.fields.email'](),
+        },
+        header: () =>
+            renderComponent(SortableColumn, {
+                title: m['company.fields.email'](),
+                field: 'email',
                 onclick: onSort,
             }),
     },
