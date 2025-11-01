@@ -37,14 +37,14 @@
     };
 </script>
 
-<div class="my-2 flex gap-3 justify-center" class:hidden={paginatedObject.lastPage === 1}>
+<div class="my-2 flex gap-3 justify-center items-center" class:hidden={paginatedObject.lastPage === 1}>
     {#if paginatedObject.currentPage}
         <!-- First Page Footer -->
-        <Button disabled={!canGoBack} onclick={() => handleClick(paginatedObject.firstPage, paginatedObject.limit)}>
+        <Button variant="outline" disabled={!canGoBack} onclick={() => handleClick(paginatedObject.firstPage, paginatedObject.limit)}>
             <ChevronsLeft class="size-6" />
         </Button>
         <!-- Previous Page Footer -->
-        <Button disabled={!canGoBack} onclick={() => handleClick(paginatedObject.currentPage - 1, paginatedObject.limit)}>
+        <Button variant="outline" disabled={!canGoBack} onclick={() => handleClick(paginatedObject.currentPage - 1, paginatedObject.limit)}>
             <ChevronLeft class="size-6" />
         </Button>
         <!-- Page Indicator -->
@@ -52,11 +52,11 @@
             {paginatedObject.currentPage} / {paginatedObject.lastPage}
         </p>
         <!-- Next Page Footer -->
-        <Button disabled={!canGoForward} onclick={() => handleClick(paginatedObject.currentPage + 1, paginatedObject.limit)}>
+        <Button variant="outline" disabled={!canGoForward} onclick={() => handleClick(paginatedObject.currentPage + 1, paginatedObject.limit)}>
             <ChevronRight class="size-6" />
         </Button>
         <!-- Last Page Footer -->
-        <Button disabled={!canGoForward} onclick={() => handleClick(paginatedObject.lastPage, paginatedObject.limit)}>
+        <Button variant="outline" disabled={!canGoForward} onclick={() => handleClick(paginatedObject.lastPage, paginatedObject.limit)}>
             <ChevronsRight class="size-6" />
         </Button>
     {/if}

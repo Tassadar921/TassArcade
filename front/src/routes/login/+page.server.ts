@@ -13,7 +13,7 @@ export const actions: Actions = {
         let isSuccess: boolean = true;
 
         try {
-            const response = await locals.client.post('api/auth', formData, {
+            const response = await locals.client.post('/api/auth', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -51,7 +51,7 @@ export const actions: Actions = {
                 `/${cookies.get('PARAGLIDE_LOCALE')}${previousPathName ? `${previousPathName}` : ''}`,
                 {
                     type: 'success',
-                    message: data?.message,
+                    message: data.message,
                 },
                 event
             );

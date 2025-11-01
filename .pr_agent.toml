@@ -10,6 +10,7 @@
 
 [comments]
 language = "fr"  # PR feedback comments in French
+use_task_lists = true # Add a checkbox for each comment
 
 # -----------------------------
 

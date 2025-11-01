@@ -108,11 +108,7 @@ export default class ProfileController {
             if (user.profilePictureId) {
                 // Physically delete the file
                 this.fileService.delete(user.profilePicture);
-
-                // Database file clear
-                user.profilePictureId = null;
                 await user.save();
-                await user.profilePicture.delete();
             }
 
             profilePicture.clientName = `${cuid()}-${this.slugifyService.slugify(profilePicture.clientName)}`;

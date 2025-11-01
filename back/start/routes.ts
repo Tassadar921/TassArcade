@@ -98,6 +98,14 @@ router
                     .group((): void => {
                         router.get('/', [ProfileController, 'getProfile']);
                         router.post('/update', [ProfileController, 'updateProfile']);
+                        router
+                            .group((): void => {
+                                router.get('/', [CompanyController, 'getAll']);
+                                router.post('/delete', [CompanyController, 'delete']);
+                                router.post('/update', [CompanyController, 'update']);
+                                router.get('/:companyId', [CompanyController, 'get']);
+                            })
+                            .prefix('company');
                     })
                     .prefix('profile');
 

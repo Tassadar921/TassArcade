@@ -13,7 +13,7 @@ export const actions: Actions = {
         let isSuccess: boolean = true;
 
         try {
-            const response = await locals.client.post('api/reset-password/send-mail', formData, {
+            const response = await locals.client.post('/api/reset-password/send-mail', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

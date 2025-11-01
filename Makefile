@@ -10,7 +10,7 @@ format-check:
 
 install:
 	rm -rf node_modules package-lock.json back/node_modules front/node_modules
-	npm install
+	npm install --legacy-peer-deps
 
 upgrade:
 	cd back && npx ncu -u
@@ -69,7 +69,7 @@ build-prod:
 	[ -d back/build/static ] && cp -r back/build/static back/.persist/static || true
 
 	# Backend build
-	cd back && npm install && npm run build && cp .env build/.env && cd build && npm install --omit=dev
+	cd back && npm install --legacy-peer-deps && npm run build && cp .env build/.env && cd build && npm install --omit=dev --legacy-peer-deps
 
 	# Persisted directories restoration
 	[ -d back/.persist/public ] && cp -r back/.persist/public back/build/ || true
@@ -87,7 +87,7 @@ build-prod:
 	cp -r back/app/types/. front/back/app/types/
 
 	# Frontend build
-	cd front && npm install && npx paraglide-js compile && NODE_OPTIONS="--max-old-space-size=3000" npm run build && cd build && npm install --omit=dev
+	cd front && npm install --legacy-peer-deps && npx paraglide-js compile && NODE_OPTIONS="--max-old-space-size=3000" npm run build && cd build && npm install --omit=dev --legacy-peer-deps
 
 migrate-prod:
 	cd back/build && node ace migration:run && node ace migration:run --connection=logs

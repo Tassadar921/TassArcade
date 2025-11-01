@@ -26,12 +26,12 @@
     type Props = {
         title: string;
         description: string;
-        keywords: string[];
+        keywords?: string[];
         pathname?: string;
         additionalOpenGraphImages?: OpenGraphImage[];
     };
 
-    let { title, description, keywords, pathname = '', additionalOpenGraphImages = [] }: Props = $props();
+    let { title, description, keywords = [], pathname = '', additionalOpenGraphImages = [] }: Props = $props();
 
     let baseImage: OpenGraphImage = {
         url: `${PUBLIC_FRONT_URI}/assets/logo-1200x1200.webp`,

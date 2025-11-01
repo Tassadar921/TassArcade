@@ -28,14 +28,14 @@ export default class AdminUserController {
 
         return response.ok(
             await cache.getOrSet({
-                key: `admin-users:query:${query}:page:${page}:limit:${limit}:sortBy:${inputSortBy}`,
+                key: `admin-users:query:${query.toLowerCase()}:page:${page}:limit:${limit}:sortBy:${inputSortBy}`,
                 tags: [`admin-users`],
                 ttl: '1h',
                 factory: async (): Promise<PaginatedUsers> => {
                     const [field, order] = inputSortBy.split(':');
                     const sortBy = { field: field as keyof User['$attributes'], order: order as 'asc' | 'desc' };
 
-                    return await this.userRepository.getAdminUsers(query, page, limit, sortBy);
+                    return await this.userRepository.getAdminUsers(query.toLowerCase(), page, limit, sortBy);
                 },
             })
         );

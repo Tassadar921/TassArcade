@@ -1,7 +1,7 @@
 import * as zod from 'zod';
 import { m } from '#lib/paraglide/messages';
 
-export const newCompanyValidator = zod.object({
+export const companyValidator = zod.object({
     siret: zod
         .string()
         .length(14, { error: m['company.new.siret.error.length']() })

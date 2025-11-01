@@ -70,12 +70,12 @@
                     .join('');
             }
             value = input.value;
-        } catch (err) {
-            console.warn('Invalid pattern regex:', pattern, err);
+        } catch (error: any) {
+            console.warn('Invalid pattern regex:', pattern, error);
         }
     };
 
-    $effect(() => {
+    $effect((): void => {
         if (max && typeof value === 'string' && value.length > max) {
             value = value.slice(0, max);
         }

@@ -40,6 +40,7 @@
         selectedRows?: string[];
         batchDeleteTitle?: string;
         batchDeleteText?: string;
+        selectable?: boolean;
         onBatchDelete?: (ids: string[]) => void;
         onPaginationChange: (page: number, limit: number) => void;
     };
@@ -53,6 +54,7 @@
         selectedRows = $bindable([]),
         batchDeleteTitle,
         batchDeleteText,
+        selectable = true,
         onBatchDelete,
         onPaginationChange,
     }: Props = $props();
@@ -68,6 +70,7 @@
             return data;
         },
         onRowSelectionChange: (updater) => {
+            if (!selectable) return;
             if (typeof updater === 'function') {
                 rowSelection = updater(rowSelection);
             } else {
@@ -117,13 +120,13 @@
     });
 </script>
 
-<div class="flex flex-col gap-1">
+<div class="flex flex-col gap-1 mb-5">
     <div class="flex gap-5 items-center justify-between py-4">
         <Search bind:search={query} resultsArray={data} minChars={0} {onSearch} />
         <DropdownMenu>
             <DropdownMenuTrigger>
                 {#snippet child({ props })}
-                    <Button {...props} variant="outline">{m['admin.datatable.columns']()}</Button>
+                    <Button {...props} variant="outline">{m['common.datatable.columns']()}</Button>
                 {/snippet}
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -168,7 +171,7 @@
                 {:else}
                     <TableRow>
                         <TableCell colspan={columns.length} class="h-24 text-center">
-                            {m['admin.datatable.no-result']()}
+                            {m['common.datatable.no-result']()}
                         </TableCell>
                     </TableRow>
                 {/each}
@@ -176,16 +179,20 @@
         </Table>
     </div>
 
-    <div class="text-muted-foreground flex-1 text-sm">
-        {m['admin.datatable.selected-rows']({ count: table.getFilteredSelectedRowModel().rows.length, total: table.getFilteredRowModel().rows.length })}
-    </div>
+    {#if selectable}
+        <div class="text-muted-foreground flex-1 text-sm">
+            {m['common.datatable.selected-rows']({ count: table.getFilteredSelectedRowModel().rows.length, total: table.getFilteredRowModel().rows.length })}
+        </div>
+    {/if}
 
     <Pagination {paginatedObject} onChange={(page: number, limit: number) => onPaginationChange(page, limit)} />
 
     <div class="w-full flex justify-end gap-5">
-        <Button variant="destructive" disabled={!deletable || ![...selectedRows].length} onclick={() => (showDialog = true)}>
-            {m['common.delete']()}
-        </Button>
+        {#if deletable}
+            <Button variant="destructive" disabled={!deletable || ![...selectedRows].length} onclick={() => (showDialog = true)}>
+                {m['common.delete']()}
+            </Button>
+        {/if}
         <Button variant="secondary">
             <Link href={`${$location}/new`} class="p-0 !no-underline">
                 {m['common.create']()}
