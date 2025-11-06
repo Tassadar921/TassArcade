@@ -6,16 +6,18 @@
     import { Input } from '#lib/components/ui/input';
     import { showToast } from '#lib/services/toastService';
     import { Button } from '#lib/components/ui/button';
-    import { RefreshCcw } from '@lucide/svelte';
+    import { RefreshCcw, CircleQuestionMark } from '@lucide/svelte';
     import PhoneNumber from '#components/PhoneNumber.svelte';
     import { wrappedFetch } from '#lib/services/requestService';
     import { Popover, PopoverContent } from '#lib/components/ui/popover';
     import { PopoverTrigger } from '#lib/components/ui/popover';
     import { formatForCompany } from '#lib/services/stringService';
-    import { companyValidator } from '#lib/validators/new-company';
+    import { companyValidator } from '#lib/validators/company';
     import * as zod from 'zod';
     import AdminForm from '#lib/partials/AdminForm.svelte';
     import type { SerializedCompany } from 'backend/types';
+    import FileUpload from '#components/FileUpload.svelte';
+    import ConfirmCompanyForm from '#lib/partials/profile/company/ConfirmCompanyForm.svelte';
 
     type Props = {
         company?: SerializedCompany;
@@ -32,15 +34,17 @@
         };
     }
 
+    const country: Country | undefined = $derived(page.data.countries.find((country: Country): boolean => country.data.name === company?.address.country));
+
     let siret: string = $state(company?.siret ?? '10000000000000');
     let name: string = $state(company?.name ?? '');
     let address: string = $state(company?.address.address ?? '');
     let postalCode: string = $state(company?.address.postalCode ?? '');
     let city: string = $state(company?.address.city ?? '');
     let complement: string = $state(company?.address.complement ?? '');
-    let countryCode: string = $state(company?.address.country ? page.data.countries.find((country: Country): boolean => country.data.name === company?.address.country)?.data.code : 'FR');
+    let countryCode: string = $state(company?.address.country ? (country?.data.code ?? 'FR') : 'FR');
     let email: string | undefined = $state(company?.email ?? undefined);
-    let phoneNumber: string | undefined = $state(company?.phoneNumber ?? undefined);
+    let phoneNumber: string | undefined = $state(company?.phoneNumber?.replace(country?.data.dial_code ?? '', '') ?? undefined);
 
     let phoneValue = $derived(phoneNumber ?? '');
 
@@ -115,6 +119,10 @@
     });
 </script>
 
+{#if company && !company.enabled}
+    <ConfirmCompanyForm />
+{/if}
+
 <AdminForm
     id={company?.id}
     {canSubmit}
@@ -125,8 +133,8 @@
     <div class="flex gap-3">
         <Input
             name="siret"
-            placeholder={m['company.new.siret.placeholder']()}
-            label={m['company.new.siret.label']()}
+            placeholder={m['company.fields.siret.placeholder']()}
+            label={m['company.fields.siret.label']()}
             bind:value={siret}
             max={14}
             pattern="[0-9]*"
@@ -149,16 +157,24 @@
                         <PopoverTrigger class="absolute top-8 size-0" />
                     </div>
                 </Button>
-                <PopoverContent>{m['company.new.siret.popover.content']()}</PopoverContent>
+                <PopoverContent>{m['company.fields.siret.popover.content']()}</PopoverContent>
             </Popover>
         {/if}
     </div>
-    <Input type="text" name="name" placeholder={m['company.new.name.placeholder']()} label={m['company.new.name.label']()} bind:value={name} error={errors.properties?.name?.errors?.[0]} required />
+    <Input
+        type="text"
+        name="name"
+        placeholder={m['company.fields.name.placeholder']()}
+        label={m['company.fields.name.label']()}
+        bind:value={name}
+        error={errors.properties?.name?.errors?.[0]}
+        required
+    />
     <Input
         type="text"
         name="address"
-        placeholder={m['company.new.address.placeholder']()}
-        label={m['company.new.address.label']()}
+        placeholder={m['company.fields.address.placeholder']()}
+        label={m['company.fields.address.label']()}
         bind:value={address}
         error={errors.properties?.address?.errors?.[0]}
         required
@@ -167,8 +183,8 @@
         <Input
             type="text"
             name="postal-code"
-            placeholder={m['company.new.postal-code.placeholder']()}
-            label={m['company.new.postal-code.label']()}
+            placeholder={m['company.fields.postal-code.placeholder']()}
+            label={m['company.fields.postal-code.label']()}
             bind:value={postalCode}
             error={errors.properties?.postalCode?.errors?.[0]}
             required
@@ -176,8 +192,8 @@
         <Input
             type="text"
             name="city"
-            placeholder={m['company.new.city.placeholder']()}
-            label={m['company.new.city.label']()}
+            placeholder={m['company.fields.city.placeholder']()}
+            label={m['company.fields.city.label']()}
             bind:value={city}
             error={errors.properties?.city?.errors?.[0]}
             required
@@ -186,17 +202,17 @@
     <Input
         type="text"
         name="complement"
-        placeholder={m['company.new.complement.placeholder']()}
-        label={m['company.new.complement.label']()}
+        placeholder={m['company.fields.complement.placeholder']()}
+        label={m['company.fields.complement.label']()}
         bind:value={complement}
         error={errors.properties?.complement?.errors?.[0]}
     />
     <ComboBox
         name="country-code"
         items={countriesOptions}
-        placeholder={m['company.new.country.placeholder']()}
-        searchPlaceholder={m['company.new.country.search-placeholder']()}
-        noItemFound={m['company.new.country.no-item-found']()}
+        placeholder={m['company.fields.country.placeholder']()}
+        searchPlaceholder={m['company.fields.country.search-placeholder']()}
+        noItemFound={m['company.fields.country.no-item-found']()}
         bind:value={countryCode}
     />
     <div class="flex gap-5 items-start">

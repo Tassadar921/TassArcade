@@ -10,7 +10,7 @@ export const getCompanyColumns = (onSort: (field: string, order: 'asc' | 'desc')
         accessorKey: 'name',
         header: () =>
             renderComponent(SortableColumn, {
-                title: m['company.fields.name'](),
+                title: m['company.fields.name.label'](),
                 field: 'name',
                 onclick: onSort,
             }),
@@ -20,11 +20,11 @@ export const getCompanyColumns = (onSort: (field: string, order: 'asc' | 'desc')
         id: 'siret',
         accessorKey: 'siret',
         meta: {
-            headerName: m['company.fields.siret'](),
+            headerName: m['company.fields.siret.label'](),
         },
         header: () =>
             renderComponent(SortableColumn, {
-                title: m['company.fields.siret'](),
+                title: m['company.fields.siret.label'](),
                 field: 'siret',
                 onclick: onSort,
             }),
@@ -33,11 +33,11 @@ export const getCompanyColumns = (onSort: (field: string, order: 'asc' | 'desc')
         id: 'email',
         accessorKey: 'email',
         meta: {
-            headerName: m['company.fields.email'](),
+            headerName: m['company.fields.email.label'](),
         },
         header: () =>
             renderComponent(SortableColumn, {
-                title: m['company.fields.email'](),
+                title: m['company.fields.email.label'](),
                 field: 'email',
                 onclick: onSort,
             }),
@@ -46,12 +46,25 @@ export const getCompanyColumns = (onSort: (field: string, order: 'asc' | 'desc')
         id: 'phoneNumber',
         accessorKey: 'phoneNumber',
         meta: {
-            headerName: m['company.fields.phone-number'](),
+            headerName: m['common.phone-number.label'](),
         },
         header: () =>
             renderComponent(SortableColumn, {
-                title: m['company.fields.phone-number'](),
+                title: m['common.phone-number.label'](),
                 field: 'phoneNumber',
+                onclick: onSort,
+            }),
+    },
+    {
+        id: 'enabled',
+        accessorKey: 'enabled',
+        meta: {
+            headerName: m['company.fields.enabled'](),
+        },
+        header: () =>
+            renderComponent(SortableColumn, {
+                title: m['company.fields.enabled'](),
+                field: 'enabled',
                 onclick: onSort,
             }),
     },

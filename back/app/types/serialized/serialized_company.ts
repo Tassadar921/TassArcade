@@ -7,6 +7,7 @@ export type SerializedCompany = {
     name: string;
     phoneNumber?: string;
     email?: string;
+    enabled: boolean;
     address: SerializedAddress;
     equipments: SerializedCompanyEquipmentType[];
     createdAt?: string;

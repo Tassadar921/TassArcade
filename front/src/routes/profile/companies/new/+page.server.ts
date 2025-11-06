@@ -69,6 +69,7 @@ export const actions: Actions = {
 
         if (isSuccess) {
             redirect(
+                `/${cookies.get('PARAGLIDE_LOCALE')}/profile/companies/edit/${data.company.id}`,
                 {
                     type: 'success',
                     message: data?.message,

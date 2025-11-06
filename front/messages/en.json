@@ -16,6 +16,7 @@
         "updated-at": "Updated at",
         "public": "Public",
         "private": "Private",
+        "confirm": "Confirm",
         "error": {
             "default-message": "Something went wrong"
         },
@@ -196,7 +197,37 @@
             "meta": {
                 "title": "Create Company – TassArcade",
                 "description": "Easily create a new company on TassArcade. Enter your SIRET number to automatically fill in company details, then customize and save your information."
+            }
+        },
+        "edit": {
+            "title": "Editing {name}",
+            "meta": {
+                "title": "Edit {name}",
+                "description": "Edit your company information from your profile. Auto-load by SIRET or manual input."
             },
+            "confirm": {
+                "introduction": "Company Verification\n\nPlease upload a recent Kbis extract (less than 3 months old) or an INPI registration certificate or equivalent to activate your professional account.",
+                "file-upload": {
+                    "title": "Upload your document",
+                    "description": "Accepted formats: PDF, JPG, PNG\nMaximum size: 5 MB\nRequired document: Complete and legible Kbis extract, recent INPI certificate or equivalent",
+                    "error": {
+                        "type": "The file must be a PDF, JPG or PNG.",
+                        "format": "The file must be a PDF, JPG or PNG.",
+                        "size": "The file must be less than 5 MB."
+                    }
+                },
+                "rgpd": "By uploading your document, you agree that it will be used solely to verify the legal existence of your company, in accordance with GDPR.",
+                "popover": {
+                    "title": "Data Processing",
+                    "content": "The Kbis extract or INPI certificate is automatically analyzed to verify the legal existence of your company.\n\nUploaded files are not retained after verification.\n\nOnly the data necessary for identification (company name, SIRET, address, legal representative) is stored.\n\nThis processing is carried out as part of the execution of the service, in accordance with GDPR.\n\nFor any questions or to exercise your rights (access, correction, deletion), contact:\n dpo@yourapp.com"
+                }
+            }
+        },
+        "delete": {
+            "title": "Delete {name}",
+            "text": "Are you sure you want to delete {name} ?"
+        },
+        "fields": {
             "siret": {
                 "placeholder": "732 829 320 00074",
                 "label": "SIRET",
@@ -258,24 +289,8 @@
             "email": {
                 "placeholder": "ceo@ashfordandco.com",
                 "label": "Email"
-            }
-        },
-        "edit": {
-            "title": "Editing {name}",
-            "meta": {
-                "title": "Edit {name}",
-                "description": "Edit your company information from your profile. Auto-load by SIRET or manual input."
-            }
-        },
-        "delete": {
-            "title": "Delete {name}",
-            "text": "Are you sure you want to delete {name} ?"
-        },
-        "fields": {
-            "name": "Name",
-            "email": "Email",
-            "siret": "SIRET",
-            "phone-number": "Phone number"
+            },
+            "enabled": "Enabled"
         }
     },
     "logout": {

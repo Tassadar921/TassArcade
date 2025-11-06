@@ -27,6 +27,9 @@ export default class Company extends BaseModel {
     declare phoneNumber: string;
 
     @column()
+    declare enabled: boolean;
+
+    @column()
     declare addressId: string;
 
     @belongsTo((): typeof Address => Address)
@@ -76,6 +79,7 @@ export default class Company extends BaseModel {
             address: this.address.apiSerialize(),
             phoneNumber: this.phoneNumber,
             email: this.email,
+            enabled: this.enabled,
             equipments: this.equipments
                 .map((equipmentType: CompanyEquipmentType): SerializedCompanyEquipmentType => equipmentType.apiSerialize(language))
                 .sort((a: SerializedCompanyEquipmentType, b: SerializedCompanyEquipmentType): number => a.name.localeCompare(b.name)),

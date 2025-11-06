@@ -8,27 +8,15 @@
         name: string;
         title?: string;
         description?: string;
-        width?: number;
         accept: string;
         fileName?: string;
-        pathPrefix: string;
-        id: string;
+        pathPrefix?: string;
+        id?: string;
         disabled?: boolean;
         file?: File;
     };
 
-    let {
-        name,
-        title = m['common.file.title'](),
-        description = m['common.file.description'](),
-        width = 96,
-        accept,
-        fileName = '',
-        pathPrefix,
-        id,
-        disabled = false,
-        file = $bindable(),
-    }: Props = $props();
+    let { name, title = m['common.file.title'](), description = m['common.file.description'](), accept, fileName = '', pathPrefix, id, disabled = false, file = $bindable() }: Props = $props();
 
     let inputRef: HTMLInputElement;
     let acceptedFormats = $state(
@@ -120,7 +108,7 @@
 
     <button
         type="button"
-        class={`w-${width} flex flex-col items-center justify-center border-2 border-gray-400 dark:border-white rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-48 m-auto p-3 cursor-pointer`}
+        class={`flex flex-col items-center justify-center border-2 border-gray-400 dark:border-white rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-64 bg-gray-800 m-auto p-3 cursor-pointer`}
         class:bg-blue-50={isDragging && !disabled}
         class:border-blue-500={isDragging && !disabled}
         onclick={() => !disabled && inputRef.click()}

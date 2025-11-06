@@ -16,6 +16,7 @@
         "updated-at": "Mis à jour le",
         "public": "Public",
         "private": "Privé",
+        "confirm": "Confirmer",
         "error": {
             "default-message": "Quelque chose s'est mal passé"
         },
@@ -196,7 +197,37 @@
             "meta": {
                 "title": "Créer une entreprise – TassArcade",
                 "description": "Créez facilement une nouvelle entreprise sur TassArcade. Renseignez votre numéro SIRET pour remplir automatiquement les informations, puis personnalisez-les avant de les enregistrer."
+            }
+        },
+        "edit": {
+            "title": "Modification de {name}",
+            "meta": {
+                "title": "Édition de {name}",
+                "description": "Modifiez les informations de votre entreprise depuis votre profil. Chargement automatique par SIRET ou saisie manuelle."
             },
+            "confirm": {
+                "introduction": "Vérification de votre entreprise\n\nTéléversez un extrait Kbis récent (moins de 3 mois) ou un certificat d’immatriculation INPI ou équivalent pour activer votre compte professionnel.",
+                "file-upload": {
+                    "title": "Téléversez votre document",
+                    "description": "Formats acceptés : PDF, JPG, PNG\nTaille maximale : 5 Mo\nDocument attendu : Extrait Kbis complet et lisible, certificat INPI récent ou équivalent",
+                    "error": {
+                        "type": "Le fichier doit être un PDF, JPG ou PNG.",
+                        "format": "Le fichier doit être un PDF, JPG ou PNG.",
+                        "size": "Le fichier doit faire moins de 5 Mo."
+                    }
+                },
+                "rgpd": "En téléversant votre document, vous acceptez qu’il soit utilisé uniquement pour vérifier l’existence légale de votre entreprise, conformément au RGPD.",
+                "popover": {
+                    "title": "Traitement des données",
+                    "content": "Le document Kbis ou certificat INPI est analysé automatiquement pour vérifier l’existence légale de votre entreprise.\n\nLes fichiers téléversés ne sont pas conservés après vérification.\n\nSeules les données nécessaires à l’identification (nom, SIRET, adresse, représentant légal) sont enregistrées.\n\nCe traitement est effectué dans le cadre de l’exécution du service, conformément au RGPD.\n\nPour toute question ou pour exercer vos droits (accès, rectification, suppression), contactez :\n dpo@tonapp.com"
+                }
+            }
+        },
+        "delete": {
+            "title": "Supprimer {name}",
+            "text": "Êtes-vous sûr de vouloir supprimer {name} ?"
+        },
+        "fields": {
             "siret": {
                 "placeholder": "732 829 320 00074",
                 "label": "SIRET",
@@ -258,24 +289,8 @@
             "email": {
                 "placeholder": "direction@maison-delcourt.com",
                 "label": "Email"
-            }
-        },
-        "edit": {
-            "title": "Modification de {name}",
-            "meta": {
-                "title": "Édition de {name}",
-                "description": "Modifiez les informations de votre entreprise depuis votre profil. Chargement automatique par SIRET ou saisie manuelle."
-            }
-        },
-        "delete": {
-            "title": "Supprimer {name}",
-            "text": "Êtes-vous sûr de vouloir supprimer {name} ?"
-        },
-        "fields": {
-            "name": "Nom",
-            "email": "Email",
-            "siret": "SIRET",
-            "phone-number": "Numéro de téléphone"
+            },
+            "enabled": "Activé"
         }
     },
     "logout": {

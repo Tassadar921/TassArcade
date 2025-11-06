@@ -16,7 +16,7 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
     }
 
     public async getClusters(minLat: number, maxLat: number, minLng: number, maxLng: number, precision: number, language: Language, equipmentIds: string[]): Promise<Cluster[]> {
-        let query = `
+        let query: string = `
             SELECT
                 LEFT(address.geohash, ?) AS cluster,
                 AVG(address.latitude) AS lat,
@@ -26,7 +26,8 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
             FROM addresses address
               INNER JOIN companies company ON company.address_id = address.id
               INNER JOIN company_equipment_types equipment_type ON equipment_type.company_id = company.id
-            WHERE address.latitude BETWEEN ? AND ?
+            WHERE company.enabled = TRUE
+              AND address.latitude BETWEEN ? AND ?
               AND address.longitude BETWEEN ? AND ?
         `;
 
@@ -34,7 +35,7 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
 
         if (equipmentIds.length > 0) {
             query += `
-      AND equipment_type.equipment_type_id IN (${equipmentIds.map(() => '?').join(', ')})
+      AND equipment_type.equipment_type_id IN (${equipmentIds.map((): string => '?').join(', ')})
     `;
             bindings.push(...equipmentIds);
         }

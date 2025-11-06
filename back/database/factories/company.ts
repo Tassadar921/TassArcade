@@ -8,5 +8,6 @@ export const CompanyFactory = Factory.define(Company, ({ faker }: FactoryContext
         siret: faker.number.int({ min: 1000000000000, max: 9999999999999 }),
         email: faker.internet.email(),
         phoneNumber: faker.phone.number(),
+        enabled: true,
     };
 }).build();

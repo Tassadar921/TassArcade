@@ -160,7 +160,6 @@ export default class CompanyController {
     }
 
     public async update({ request, response, i18n, language }: HttpContext) {
-        console.log('ici');
         const { siret, name, address: inputAddress, postalCode, city, complement, countryCode, email, phoneNumber: inputPhoneNumber } = await request.validateUsing(updateCompanyValidator);
 
         const country: Country | undefined = CountryList.default.findOneByCountryCode(countryCode);
