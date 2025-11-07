@@ -3,7 +3,7 @@
     import { Button } from '#lib/components/ui/button';
     import { m } from '#lib/paraglide/messages';
     import { page } from '$app/state';
-    import type { PageDataError } from '../../../app';
+    import type { PageDataError } from '../../app';
     import { showToast } from '#lib/services/toastService';
     import {
         AlertDialog,
@@ -25,10 +25,11 @@
         canSubmit: boolean;
         deleteTitle?: string;
         deleteText?: string;
+        action?: string;
         onError?: () => void;
     };
 
-    let { children, id, canSubmit, deleteTitle, deleteText, onError }: Props = $props();
+    let { children, id, canSubmit, deleteTitle, deleteText, action, onError }: Props = $props();
 
     let showDialog: boolean = $state(false);
 
@@ -58,15 +59,15 @@
     });
 </script>
 
-<form use:enhance method="POST" enctype="multipart/form-data" class="pt-8 flex flex-col gap-8 rounded-lg shadow-md mt-5 p-3 bg-gray-300 dark:bg-gray-700">
+<form use:enhance method="POST" {action} enctype="multipart/form-data" class="py-10 px-5 flex flex-col gap-8 rounded-lg shadow-md mt-5 bg-gray-300 dark:bg-gray-700">
     {@render children?.()}
     <div class="w-full flex justify-end gap-5 pr-5">
         {#if id}
-            <Button variant="destructive" onclick={() => (showDialog = true)}>
+            <Button size="lg" variant="destructive" onclick={() => (showDialog = true)}>
                 {m['common.delete']()}
             </Button>
         {/if}
-        <Button type="submit" variant="secondary" disabled={!canSubmit}>{m[`common.${id ? 'update' : 'create'}`]()}</Button>
+        <Button size="lg" type="submit" variant="secondary" disabled={!canSubmit}>{m[`common.${id ? 'update' : 'create'}`]()}</Button>
     </div>
 </form>
 

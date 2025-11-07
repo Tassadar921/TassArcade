@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
 import hash from '@adonisjs/core/services/hash';
 import { compose } from '@adonisjs/core/helpers';
-import { afterCreate, beforeFind, beforeFetch, BaseModel, belongsTo, column } from '@adonisjs/lucid/orm';
+import { afterCreate, beforeFind, beforeFetch, BaseModel, belongsTo, column, beforeDelete } from '@adonisjs/lucid/orm';
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid';
 import type { BelongsTo } from '@adonisjs/lucid/types/relations';
 import SerializedUser from '#types/serialized/serialized_user';
@@ -9,6 +9,7 @@ import { AccessToken, DbAccessTokensProvider } from '@adonisjs/auth/access_token
 import File from '#models/file';
 import UserRoleEnum from '#types/enum/user_role_enum';
 import LogUser from '#models/log_user';
+import FileService from '#services/file_service';
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
     uids: ['email'],
@@ -69,6 +70,15 @@ export default class User extends compose(BaseModel, AuthFinder) {
     @beforeFetch()
     public static preloadDefaults(userQuery: any): void {
         userQuery.preload('profilePicture');
+    }
+
+    @beforeDelete()
+    public static async deleteNotCascadedRelations(user: User): Promise<void> {
+        if (user.profilePicture) {
+            const fileService: FileService = new FileService();
+            fileService.delete(user.profilePicture);
+            await user.profilePicture.delete();
+        }
     }
 
     static accessTokens: DbAccessTokensProvider<typeof User> = DbAccessTokensProvider.forModel(User, {

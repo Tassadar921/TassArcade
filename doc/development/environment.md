@@ -37,6 +37,10 @@ GITHUB_CLIENT_SECRET=
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 
+OPENAI_API_URL=https://api.openai.com/v1/chat/completions
+OPENAI_API_MODEL=gpt-4o-mini
+OPENAI_API_KEY=
+
 INSEE_API_KEY=
 BREVO_API_KEY=
 
@@ -76,6 +80,9 @@ API_URI=""
 | `GITHUB_CLIENT_SECRET`  | **`A valid GitHub client secret`**                                          |
 | `GOOGLE_CLIENT_ID`      | **`A valid Google client ID`**                                              |
 | `GOOGLE_CLIENT_SECRET`  | **`A valid Google client secret`**                                          |
+| `OPENAI_API_URL`        | https://api.openai.com/v1/chat/completions                                  |
+| `OPENAI_API_MODEL`      | gpt-4o-mini                                                                 |
+| `OPENAI_API_KEY`        | **`A valid OpenAi API key`**                                                |
 | `INSEE_API_KEY`         | **`A valid INSEE API key`**                                                 |
 | `BREVO_API_KEY`         | **`A valid Brevo API key`**                                                 |
 | `FRONT_PORT`            | 5173                                                                        |

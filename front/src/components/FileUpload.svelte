@@ -8,27 +8,15 @@
         name: string;
         title?: string;
         description?: string;
-        width?: number;
         accept: string;
         fileName?: string;
-        pathPrefix: string;
-        id: string;
+        pathPrefix?: string;
+        id?: string;
         disabled?: boolean;
         file?: File;
     };
 
-    let {
-        name,
-        title = m['common.file.title'](),
-        description = m['common.file.description'](),
-        width = 96,
-        accept,
-        fileName = '',
-        pathPrefix,
-        id,
-        disabled = false,
-        file = $bindable(),
-    }: Props = $props();
+    let { name, title = m['common.file.title'](), description = m['common.file.description'](), accept, fileName = '', pathPrefix, id, disabled = false, file = $bindable() }: Props = $props();
 
     let inputRef: HTMLInputElement;
     let acceptedFormats = $state(
@@ -39,7 +27,7 @@
     );
     let isDragging = $state(false);
     let isLoading = false;
-    let previewSrc: string = $state(`/assets/${pathPrefix}/${id}?no-cache=true`);
+    let previewSrc: string = $state('');
 
     const handleFileChange = (event: Event): void => {
         const target = event.target as HTMLInputElement;
@@ -105,6 +93,8 @@
                     inputRef.dispatchEvent(new Event('change', { bubbles: true }));
                 });
             }
+        } else {
+            previewSrc = '';
         }
     });
 </script>
@@ -120,7 +110,7 @@
 
     <button
         type="button"
-        class={`w-${width} flex flex-col items-center justify-center border-2 border-gray-400 dark:border-white rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-48 m-auto p-3 cursor-pointer`}
+        class={`flex flex-col items-center justify-center border-2 border-gray-400 dark:border-white rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-64 bg-gray-800 m-auto p-3 cursor-pointer`}
         class:bg-blue-50={isDragging && !disabled}
         class:border-blue-500={isDragging && !disabled}
         onclick={() => !disabled && inputRef.click()}
@@ -137,14 +127,14 @@
             <Upload class="size-6" />
         </span>
 
-        <span class="text-center text-sm text-gray-500 my-3">
+        <span class="text-center text-sm text-gray-500 my-3 w-full">
             {#if fileName}
                 {#if previewSrc}
                     <div class="mt-3 flex justify-center">
                         <img src={previewSrc} alt="Preview" class="size-24 object-cover rounded" />
                     </div>
                 {:else}
-                    {fileName}
+                    <p class="truncate w-full">{fileName}</p>
                 {/if}
             {:else}
                 {@html raw(description)}

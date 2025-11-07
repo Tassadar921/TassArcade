@@ -114,8 +114,11 @@
         "reset": {
             "success": "Password successfully reset"
         },
-        "update-profile": {
+        "update": {
             "success": "Profile successfully updated"
+        },
+        "update-profile": {
+            "success": "Profile updated successfully"
         }
     },
     "company": {
@@ -130,7 +133,36 @@
             "error": {
                 "already-exists": "A company with SIRET {siret} already exists",
                 "invalid-country-code": "Invalid country code {countryCode}",
+                "invalid-phone-number": "Invalid phone number {phoneNumber}",
                 "invalid-address": "Invalid address ({address})"
+            }
+        },
+        "get": {
+            "error": {
+                "not-found": "The requested company could not be found."
+            }
+        },
+        "delete": {
+            "success": "The company “{name}” has been successfully deleted.",
+            "error": {
+                "default": "An error occurred while deleting the company with ID {id}."
+            }
+        },
+        "update": {
+            "success": "The company “{name}” has been successfully updated.",
+            "error": {
+                "invalid-country-code": "The country code “{countryCode}” is invalid.",
+                "invalid-phone-number": "Invalid phone number {phoneNumber}",
+                "invalid-address": "Invalid address ({address})"
+            }
+        },
+        "confirm": {
+            "success": "{name} successfully confirmed",
+            "error": {
+                "already-enabled": "{name} is already confirmed",
+                "no-document": "No document provided",
+                "openai-error": "An error occurred while verifying the document",
+                "openai-mismatch": "The document does not match the provided data"
             }
         }
     }

@@ -1,7 +1,5 @@
 <script lang="ts">
     import { m } from '#lib/paraglide/messages';
-    import { Title } from '#lib/components/ui/title';
-    import Form from '#components/Form.svelte';
     import { onMount } from 'svelte';
     import { page } from '$app/state';
     import { ComboBox, type SelectItem } from '#lib/components/ui/combo-box';
@@ -12,10 +10,19 @@
     import PhoneNumber from '#components/PhoneNumber.svelte';
     import { wrappedFetch } from '#lib/services/requestService';
     import { Popover, PopoverContent } from '#lib/components/ui/popover';
-    import { PopoverTrigger } from '#lib/components/ui/popover/index.js';
+    import { PopoverTrigger } from '#lib/components/ui/popover';
     import { formatForCompany } from '#lib/services/stringService';
-    import { newCompanyValidator } from '#lib/validators/new-company';
+    import { companyValidator } from '#lib/validators/company';
     import * as zod from 'zod';
+    import AdminForm from '#lib/partials/AdminForm.svelte';
+    import type { SerializedCompany } from 'backend/types';
+    import ConfirmCompanyForm from '#lib/partials/profile/company/ConfirmCompanyForm.svelte';
+
+    type Props = {
+        company?: SerializedCompany;
+    };
+
+    let { company }: Props = $props();
 
     interface Country {
         data: {
@@ -26,22 +33,24 @@
         };
     }
 
-    let siret: string = $state('10000000000000');
-    let name: string = $state('');
-    let address: string = $state('');
-    let postalCode: string = $state('');
-    let city: string = $state('');
-    let complement: string = $state('');
-    let countryCode: string | undefined = $state('');
-    let email: string | undefined = $state(undefined);
-    let phoneNumber: string | undefined = $state(undefined);
+    const country: Country | undefined = $derived(page.data.countries.find((country: Country): boolean => country.data.name === company?.address.country));
+
+    let siret: string = $state(company?.siret ?? '10000000000000');
+    let name: string = $state(company?.name ?? '');
+    let address: string = $state(company?.address.address ?? '');
+    let postalCode: string = $state(company?.address.postalCode ?? '');
+    let city: string = $state(company?.address.city ?? '');
+    let complement: string = $state(company?.address.complement ?? '');
+    let countryCode: string = $state(company?.address.country ? (country?.data.code ?? 'FR') : 'FR');
+    let email: string | undefined = $state(company?.email ?? undefined);
+    let phoneNumber: string | undefined = $derived(company?.phoneNumber?.replace(country?.data.dial_code ?? '', '') ?? undefined);
 
     let phoneValue = $derived(phoneNumber ?? '');
 
     let showSiretPopover: boolean = $state(false);
 
     const validation = $derived(
-        newCompanyValidator.safeParse({
+        companyValidator.safeParse({
             siret,
             name,
             address,
@@ -58,11 +67,11 @@
     let errors: any = $state({ formErrors: [], properties: {} });
 
     let countriesOptions: SelectItem[] = $state([]);
-    let selectedCountry: Country | undefined = $derived(page.data.data.find((country: Country) => country.data.code === countryCode));
+    let selectedCountry: Country | undefined = $derived(page.data.countries.find((country: Country) => country.data.code === countryCode));
 
     onMount((): void => {
         if (page.data.isSuccess) {
-            countriesOptions = page.data.data.map(({ data: country }: Country): SelectItem => {
+            countriesOptions = page.data.countries.map(({ data: country }: Country): SelectItem => {
                 return {
                     value: country.code,
                     label: `${country.flag} ${country.name}`,
@@ -79,7 +88,7 @@
             return;
         }
 
-        await wrappedFetch(`/company/new/siret/${siret}`, { method: 'GET' }, ({ data }): void => {
+        await wrappedFetch(`/profile/companies/new/siret/${siret}`, { method: 'GET' }, ({ data }): void => {
             name = formatForCompany(data.periodesEtablissement[0]?.denominationUsuelleEtablissement);
             address = formatForCompany(
                 `${data.adresseEtablissement.numeroVoieEtablissement} ${data.adresseEtablissement.typeVoieEtablissement} ${data.adresseEtablissement.libelleVoieEtablissement}`,
@@ -109,44 +118,63 @@
     });
 </script>
 
-<Title title={m['company.new.title']()} />
+{#if company && !company.enabled}
+    <ConfirmCompanyForm />
+{/if}
 
-<Form isValid={canSubmit} onError={handleFormSubmitError}>
+<AdminForm
+    id={company?.id}
+    {canSubmit}
+    deleteTitle={m['company.delete.title']({ name: company?.name ?? '' })}
+    deleteText={m['company.delete.text']({ name: company?.name ?? '' })}
+    action={company ? '/update' : ''}
+    onError={handleFormSubmitError}
+>
     <div class="flex gap-3">
         <Input
             name="siret"
-            placeholder={m['company.new.siret.placeholder']()}
-            label={m['company.new.siret.label']()}
+            placeholder={m['company.fields.siret.placeholder']()}
+            label={m['company.fields.siret.label']()}
             bind:value={siret}
             max={14}
             pattern="[0-9]*"
             error={errors.properties?.siret?.errors?.[0]}
             required
         />
-        <Popover open={showSiretPopover}>
-            <Button
-                disabled={errors.properties?.siret?.errors?.[0]}
-                variant="outline"
-                onmouseenter={() => (showSiretPopover = true)}
-                onfocus={() => (showSiretPopover = true)}
-                onmouseleave={() => (showSiretPopover = false)}
-                onblur={() => (showSiretPopover = false)}
-                onclick={fillFromSiret}
-            >
-                <div class="relative">
-                    <RefreshCcw />
-                    <PopoverTrigger class="absolute top-8 size-0" />
-                </div>
-            </Button>
-            <PopoverContent>{m['company.new.siret.popover.content']()}</PopoverContent>
-        </Popover>
+        {#if !company}
+            <Popover open={showSiretPopover}>
+                <Button
+                    disabled={errors.properties?.siret?.errors?.[0]}
+                    variant="outline"
+                    onmouseenter={() => (showSiretPopover = true)}
+                    onfocus={() => (showSiretPopover = true)}
+                    onmouseleave={() => (showSiretPopover = false)}
+                    onblur={() => (showSiretPopover = false)}
+                    onclick={fillFromSiret}
+                >
+                    <div class="relative">
+                        <RefreshCcw />
+                        <PopoverTrigger class="absolute top-8 size-0" />
+                    </div>
+                </Button>
+                <PopoverContent>{m['company.fields.siret.popover.content']()}</PopoverContent>
+            </Popover>
+        {/if}
     </div>
-    <Input type="text" name="name" placeholder={m['company.new.name.placeholder']()} label={m['company.new.name.label']()} bind:value={name} error={errors.properties?.name?.errors?.[0]} required />
+    <Input
+        type="text"
+        name="name"
+        placeholder={m['company.fields.name.placeholder']()}
+        label={m['company.fields.name.label']()}
+        bind:value={name}
+        error={errors.properties?.name?.errors?.[0]}
+        required
+    />
     <Input
         type="text"
         name="address"
-        placeholder={m['company.new.address.placeholder']()}
-        label={m['company.new.address.label']()}
+        placeholder={m['company.fields.address.placeholder']()}
+        label={m['company.fields.address.label']()}
         bind:value={address}
         error={errors.properties?.address?.errors?.[0]}
         required
@@ -155,8 +183,8 @@
         <Input
             type="text"
             name="postal-code"
-            placeholder={m['company.new.postal-code.placeholder']()}
-            label={m['company.new.postal-code.label']()}
+            placeholder={m['company.fields.postal-code.placeholder']()}
+            label={m['company.fields.postal-code.label']()}
             bind:value={postalCode}
             error={errors.properties?.postalCode?.errors?.[0]}
             required
@@ -164,8 +192,8 @@
         <Input
             type="text"
             name="city"
-            placeholder={m['company.new.city.placeholder']()}
-            label={m['company.new.city.label']()}
+            placeholder={m['company.fields.city.placeholder']()}
+            label={m['company.fields.city.label']()}
             bind:value={city}
             error={errors.properties?.city?.errors?.[0]}
             required
@@ -174,17 +202,17 @@
     <Input
         type="text"
         name="complement"
-        placeholder={m['company.new.complement.placeholder']()}
-        label={m['company.new.complement.label']()}
+        placeholder={m['company.fields.complement.placeholder']()}
+        label={m['company.fields.complement.label']()}
         bind:value={complement}
         error={errors.properties?.complement?.errors?.[0]}
     />
     <ComboBox
         name="country-code"
         items={countriesOptions}
-        placeholder={m['company.new.country.placeholder']()}
-        searchPlaceholder={m['company.new.country.search-placeholder']()}
-        noItemFound={m['company.new.country.no-item-found']()}
+        placeholder={m['company.fields.country.placeholder']()}
+        searchPlaceholder={m['company.fields.country.search-placeholder']()}
+        noItemFound={m['company.fields.country.no-item-found']()}
         bind:value={countryCode}
     />
     <div class="flex gap-5 items-start">
@@ -198,4 +226,4 @@
             error={errors.properties?.phoneNumber?.errors?.[0]}
         />
     </div>
-</Form>
+</AdminForm>

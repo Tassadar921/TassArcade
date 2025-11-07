@@ -1,10 +1,10 @@
 import vine from '@vinejs/vine';
 import { FieldContext } from '@vinejs/vine/types';
-import Language from '#models/language';
+import Company from '#models/company';
 
-const validSortFields: string[] = [...Language.$columnsDefinitions.keys()];
+const validSortFields: string[] = [...Company.$columnsDefinitions.keys()];
 
-const sortByLanguageValidator = (value: unknown, _options: any, field: FieldContext): void => {
+const sortByCompanyValidator = (value: unknown, _options: any, field: FieldContext): void => {
     if (typeof value !== 'string') return;
 
     const [fieldName, direction] = value.split(':');
@@ -24,4 +24,4 @@ const sortByLanguageValidator = (value: unknown, _options: any, field: FieldCont
     }
 };
 
-export const sortByLanguageRule = vine.createRule(sortByLanguageValidator);
+export const sortByCompanyRule = vine.createRule(sortByCompanyValidator);

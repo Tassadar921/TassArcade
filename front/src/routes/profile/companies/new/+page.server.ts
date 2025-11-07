@@ -1,15 +1,26 @@
 import type { PageServerLoad } from './$types';
 import { type Actions, fail, type RequestEvent } from '@sveltejs/kit';
 import { redirect } from 'sveltekit-flash-message/server';
-import type { FormError } from '../../../app';
+import type { FormError } from '../../../../app';
 import { extractFormData, extractFormErrors } from '#lib/services/requestService';
+import { m } from '#lib/paraglide/messages';
 
 export const load: PageServerLoad = async ({ fetch }) => {
     const response: Response = await fetch('/countries');
 
+    const headers = {
+        title: m['company.new.title'](),
+        meta: {
+            title: m['company.new.meta.title'](),
+            description: m['company.new.meta.description'](),
+            pathname: '/profile/companies/new',
+        },
+        breadcrumb: [{ title: m['profile.title'](), href: '/profile' }, { title: m['profile.companies.title'](), href: '/profile/companies' }, { title: m['company.new.title']() }],
+    };
+
     const { isSuccess, data } = await response.json();
 
-    return isSuccess && response.ok ? { isSuccess, data } : { isSuccess: false, message: data.message };
+    return isSuccess && response.ok ? { isSuccess, countries: data, ...headers } : { isSuccess: false, message: data.message, ...headers };
 };
 
 export const actions: Actions = {
@@ -58,6 +69,7 @@ export const actions: Actions = {
 
         if (isSuccess) {
             redirect(
+                `/${cookies.get('PARAGLIDE_LOCALE')}/profile/companies/edit/${data.company.id}`,
                 {
                     type: 'success',
                     message: data?.message,

@@ -10,6 +10,7 @@
     "devDependencies": {
         "lint-staged": "^16.1.5",
         "npm-check-updates": "^18.0.1",
+        "patch-package": "^8.0.1",
         "prettier": "^3.5.3",
         "simple-git-hooks": "^2.13.1",
         "svelte-meta-tags": "^4.3.0"

@@ -4,7 +4,7 @@
     import { BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '#lib/components/ui/breadcrumb';
     import { Link } from '#lib/components/ui/link';
 
-    interface Item {
+    export interface Item {
         title: string;
         href?: string;
     }

@@ -13,7 +13,7 @@ COPY front/vite.config.* ./
 COPY front/svelte.config.* ./
 
 # Install deps
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copy the rest of the app, including static assets
 COPY front /app

@@ -11,6 +11,7 @@ export default class extends BaseSchema {
             table.string('name', 100).notNullable();
             table.string('email', 100).nullable().unique();
             table.string('phone_number', 50).nullable();
+            table.boolean('enabled').notNullable().defaultTo(false);
             table.uuid('address_id').notNullable().references('id').inTable('addresses');
             table.timestamp('created_at');
             table.timestamp('updated_at');

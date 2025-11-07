@@ -23,6 +23,7 @@
         target?: '_blank' | '_self';
         ariaLabel?: string;
         size?: SizeKeys;
+        disabled?: boolean;
     };
 </script>
 
@@ -31,7 +32,7 @@
     import { language } from '#lib/stores/languageStore';
     import { cn } from '#lib/utils';
 
-    let { children, ref, onclick, onmouseover, onfocus, onblur, onmouseout, href, target = '', class: className = '', ariaLabel, size = 'default' }: LinkProps = $props();
+    let { children, ref, onclick, onmouseover, onfocus, onblur, onmouseout, href, target = '_self', class: className = '', ariaLabel, size = 'default', disabled }: LinkProps = $props();
 
     let isAbsolute: boolean = href.startsWith('http://') || href.startsWith('https://');
 
@@ -41,6 +42,11 @@
     const handleClick = (event: MouseEvent) => {
         event.preventDefault();
         event.stopPropagation();
+
+        // if (disabled) {
+        //     return;
+        // }
+
         if (href) {
             onclick?.(event);
             if (isAbsolute) {

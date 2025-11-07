@@ -1,5 +1,5 @@
 <script lang="ts">
-    import AdminForm from '#lib/partials/admin/AdminForm.svelte';
+    import AdminForm from '#lib/partials/AdminForm.svelte';
     import type { SerializedUser } from 'backend/types';
     import { Input } from '#lib/components/ui/input';
     import { m } from '#lib/paraglide/messages';

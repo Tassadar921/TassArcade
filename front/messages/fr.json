@@ -16,6 +16,7 @@
         "updated-at": "Mis à jour le",
         "public": "Public",
         "private": "Privé",
+        "confirm": "Confirmer",
         "error": {
             "default-message": "Quelque chose s'est mal passé"
         },
@@ -94,6 +95,25 @@
         "combo-box": {
             "no-item-found": "Aucun item trouvé",
             "search-placeholder": "Rechercher ..."
+        },
+        "datatable": {
+            "actions": "Actions",
+            "no-result": "Pas de résultat",
+            "select": {
+                "row": "Sélectionner la ligne",
+                "all": "Tout sélectionner"
+            },
+            "selected-rows": [
+                {
+                    "declarations": ["input count", "input total"],
+                    "match": {
+                        "count=0": "Aucune ligne sélectionnée",
+                        "count=1": "{count} sur {total} ligne sélectionnée",
+                        "count=*": "{count} sur {total} lignes sélectionnées"
+                    }
+                }
+            ],
+            "columns": "Colonnes"
         }
     },
     "toast": {
@@ -155,19 +175,59 @@
         "description": "Mettez à jour votre profil",
         "meta": {
             "title": "Modifier le profil – TassArcade",
-            "description": "Mettez à jour votre nom d’utilisateur et votre photo de profil facilement sur TassArcade. Gérez vos informations personnelles en toute sécurité.",
-            "keywords": "modifier profil, changer nom d’utilisateur, changer photo de profil, paramètres utilisateur, TassArcade"
+            "description": "Mettez à jour votre nom d’utilisateur et votre photo de profil facilement sur TassArcade. Gérez vos informations personnelles en toute sécurité."
         },
         "reset-password": "Réinitialiser le mot de passe",
         "profile-picture": {
             "title": "Photo de profil",
             "description": "Uploadez ici une photo de profil"
         },
-        "new-company": "Enregistrer une entreprise"
+        "new-company": "Enregistrer une entreprise",
+        "companies": {
+            "title": "Entreprises",
+            "meta": {
+                "title": "Entreprises – TassArcade",
+                "description": "Gérez facilement vos entreprises sur TassArcade. Créez, mettez à jour et supprimez vos entreprises en toute simplicité."
+            }
+        }
     },
     "company": {
         "new": {
             "title": "Enregistrer une entreprise",
+            "meta": {
+                "title": "Créer une entreprise – TassArcade",
+                "description": "Créez facilement une nouvelle entreprise sur TassArcade. Renseignez votre numéro SIRET pour remplir automatiquement les informations, puis personnalisez-les avant de les enregistrer."
+            }
+        },
+        "edit": {
+            "title": "Modification de {name}",
+            "meta": {
+                "title": "Édition de {name}",
+                "description": "Modifiez les informations de votre entreprise depuis votre profil. Chargement automatique par SIRET ou saisie manuelle."
+            },
+            "confirm": {
+                "introduction": "Vérification de votre entreprise\n\nTéléversez un extrait Kbis récent (moins de 3 mois) ou un certificat d’immatriculation INPI ou équivalent pour activer votre compte professionnel.",
+                "file-upload": {
+                    "title": "Téléversez votre document",
+                    "description": "Formats acceptés : PDF, JPG, PNG\nTaille maximale : 5 Mo\nDocument attendu : Extrait Kbis complet et lisible, certificat INPI récent ou équivalent",
+                    "error": {
+                        "type": "Le fichier doit être un PDF, JPG ou PNG.",
+                        "format": "Le fichier doit être un PDF, JPG ou PNG.",
+                        "size": "Le fichier doit faire moins de 5 Mo."
+                    }
+                },
+                "rgpd": "En téléversant votre document, vous acceptez qu’il soit utilisé uniquement pour vérifier l’existence légale de votre entreprise, conformément au RGPD.",
+                "popover": {
+                    "title": "Traitement des données",
+                    "content": "Le document Kbis ou certificat INPI est analysé automatiquement pour vérifier l’existence légale de votre entreprise.\n\nLes fichiers téléversés ne sont pas conservés après vérification.\n\nSeules les données nécessaires à l’identification (nom, SIRET, adresse, représentant légal) sont enregistrées.\n\nCe traitement est effectué dans le cadre de l’exécution du service, conformément au RGPD.\n\nPour toute question ou pour exercer vos droits (accès, rectification, suppression), contactez :\n dpo@tonapp.com"
+                }
+            }
+        },
+        "delete": {
+            "title": "Supprimer {name}",
+            "text": "Êtes-vous sûr de vouloir supprimer {name} ?"
+        },
+        "fields": {
             "siret": {
                 "placeholder": "732 829 320 00074",
                 "label": "SIRET",
@@ -229,7 +289,8 @@
             "email": {
                 "placeholder": "direction@maison-delcourt.com",
                 "label": "Email"
-            }
+            },
+            "enabled": "Activé"
         }
     },
     "logout": {
@@ -288,25 +349,6 @@
     },
     "admin": {
         "title": "Tableau de bord",
-        "datatable": {
-            "actions": "Actions",
-            "no-result": "Pas de résultat",
-            "select": {
-                "row": "Sélectionner la ligne",
-                "all": "Tout sélectionner"
-            },
-            "selected-rows": [
-                {
-                    "declarations": ["input count", "input total"],
-                    "match": {
-                        "count=0": "Aucune ligne sélectionnée",
-                        "count=1": "{count} sur {total} ligne sélectionnée",
-                        "count=*": "{count} sur {total} lignes sélectionnées"
-                    }
-                }
-            ],
-            "columns": "Colonnes"
-        },
         "user": {
             "title": "Utilisateurs",
             "fields": {
