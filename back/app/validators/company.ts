@@ -55,3 +55,13 @@ export const updateCompanyValidator = vine.compile(
         phoneNumber: vine.string().trim().minLength(8).maxLength(20).optional(),
     })
 );
+
+export const confirmCompanyValidator = vine.compile(
+    vine.object({
+        companyId: vine.string().uuid(),
+        document: vine.file({
+            size: '5mb',
+            extnames: ['png', 'jpg', 'jpeg', 'pdf'],
+        }),
+    })
+);

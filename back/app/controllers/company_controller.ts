@@ -1,7 +1,15 @@
 import { HttpContext } from '@adonisjs/core/http';
 import { inject } from '@adonisjs/core';
 import CompanyRepository from '#repositories/company_repository';
-import { createCompanyValidator, getCompanyFromSiretValidator, getCompanyValidator, searchCompaniesValidator, updateCompanyValidator, deleteCompaniesValidator } from '#validators/company';
+import {
+    createCompanyValidator,
+    getCompanyFromSiretValidator,
+    getCompanyValidator,
+    searchCompaniesValidator,
+    updateCompanyValidator,
+    deleteCompaniesValidator,
+    confirmCompanyValidator,
+} from '#validators/company';
 import axios from 'axios';
 import env from '#start/env';
 import Company from '#models/company';
@@ -15,13 +23,18 @@ import cache from '@adonisjs/cache/services/main';
 import PaginatedCompanies from '#types/paginated/paginated_companies';
 import SerializedCompany from '#types/serialized/serialized_company';
 import CountryService from '#services/country_service';
+import FileService from '#services/file_service';
+import OpenAiApiService from '#services/open_ai_service';
+import { OpenAiCompanyVerificationResult } from '#types/open-ai/open_ai_company_verification_result';
 
 @inject()
 export default class CompanyController {
     constructor(
         private readonly companyRepository: CompanyRepository,
         private readonly nominatimService: NominatimService,
-        private readonly countryService: CountryService
+        private readonly countryService: CountryService,
+        private readonly fileService: FileService,
+        private readonly opanAiApiService: OpenAiApiService
     ) {}
 
     public async getFromSiret({ request, response, i18n }: HttpContext): Promise<void> {
@@ -159,7 +172,7 @@ export default class CompanyController {
         });
     }
 
-    public async update({ request, response, i18n, language }: HttpContext) {
+    public async update({ request, response, i18n, language, user }: HttpContext) {
         const { siret, name, address: inputAddress, postalCode, city, complement, countryCode, email, phoneNumber: inputPhoneNumber } = await request.validateUsing(updateCompanyValidator);
 
         const country: Country | undefined = CountryList.default.findOneByCountryCode(countryCode);
@@ -169,7 +182,7 @@ export default class CompanyController {
             });
         }
 
-        const company: Company = await this.companyRepository.firstOrFail({ siret });
+        const company: Company = await this.companyRepository.getFromUser(siret, user);
 
         const fullAddress: string = `${inputAddress}, ${postalCode} ${city}, ${country.name}`;
         const data: { latitude: number; longitude: number } | null = await this.nominatimService.getFromAddress(fullAddress);
@@ -228,11 +241,52 @@ export default class CompanyController {
             countries: await cache.getOrSet({
                 key: 'countries',
                 tags: ['countries'],
-                ttl: '3h',
+                ttl: '24h',
                 factory: async (): Promise<Country[]> => {
                     return await this.countryService.getAll();
                 },
             }),
+        });
+    }
+
+    public async confirm({ request, response, user, i18n, language }: HttpContext): Promise<void> {
+        const { companyId, document } = await request.validateUsing(confirmCompanyValidator);
+        if (!document.tmpPath) {
+            return response.badRequest({ error: i18n.t('messages.company.confirm.error.no-document') });
+        }
+
+        const company: Company = await this.companyRepository.getFromUser(companyId, user);
+        if (company.enabled) {
+            return response.badRequest({ error: i18n.t('messages.company.confirm.error.already-enabled', { name: company.name }) });
+        }
+
+        const mimeType: string = `${document.type}/${document.subtype}`;
+        const processedData: { mimeType: string; data: string }[] = await this.fileService.toBase64(document.tmpPath, mimeType);
+        const returnedData: OpenAiCompanyVerificationResult | null = await this.opanAiApiService.verifyCompanyDocument({
+            documents: processedData.map((document: { mimeType: string; data: string }): { mimeType: string; data: string } => ({
+                mimeType: document.mimeType,
+                data: document.data,
+            })),
+            name: company.name,
+            siret: company.siret,
+            address: company.address.fullAddress,
+            email: company.email,
+            phone: company.phoneNumber,
+        });
+
+        if (!returnedData) {
+            return response.badRequest({ error: i18n.t('messages.company.confirm.error.openai-error') });
+        } else if (!returnedData.match) {
+            return response.badRequest({ error: i18n.t('messages.company.confirm.error.openai-mismatch') });
+        }
+
+        company.enabled = true;
+
+        await Promise.all([company.save(), cache.deleteByTag({ tags: ['companies', `company:${company.id}`] })]);
+
+        return response.ok({
+            message: i18n.t('messages.company.confirm.success', { name: company.name }),
+            company: company.apiSerialize(language),
         });
     }
 }

@@ -6,6 +6,9 @@ WORKDIR /app
 # Accept the PORT build arg
 ARG PORT
 
+# Install pdf2pic system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends graphicsmagick ghostscript && rm -rf /var/lib/apt/lists/*
+
 # Copy backend dependencies
 COPY back/package*.json ./
 

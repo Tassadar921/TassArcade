@@ -103,6 +103,7 @@ router
                                 router.get('/', [CompanyController, 'getAll']);
                                 router.post('/delete', [CompanyController, 'delete']);
                                 router.post('/update', [CompanyController, 'update']);
+                                router.post('/confirm', [CompanyController, 'confirm']);
                                 router.get('/:companyId', [CompanyController, 'get']);
                             })
                             .prefix('company');

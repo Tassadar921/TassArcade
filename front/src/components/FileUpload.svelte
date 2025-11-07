@@ -27,7 +27,7 @@
     );
     let isDragging = $state(false);
     let isLoading = false;
-    let previewSrc: string = $state(`/assets/${pathPrefix}/${id}?no-cache=true`);
+    let previewSrc: string = $state('');
 
     const handleFileChange = (event: Event): void => {
         const target = event.target as HTMLInputElement;
@@ -93,6 +93,8 @@
                     inputRef.dispatchEvent(new Event('change', { bubbles: true }));
                 });
             }
+        } else {
+            previewSrc = '';
         }
     });
 </script>
@@ -125,14 +127,14 @@
             <Upload class="size-6" />
         </span>
 
-        <span class="text-center text-sm text-gray-500 my-3">
+        <span class="text-center text-sm text-gray-500 my-3 w-full">
             {#if fileName}
                 {#if previewSrc}
                     <div class="mt-3 flex justify-center">
                         <img src={previewSrc} alt="Preview" class="size-24 object-cover rounded" />
                     </div>
                 {:else}
-                    {fileName}
+                    <p class="truncate w-full">{fileName}</p>
                 {/if}
             {:else}
                 {@html raw(description)}

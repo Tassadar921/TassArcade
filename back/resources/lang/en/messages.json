@@ -116,6 +116,9 @@
         },
         "update": {
             "success": "Profile successfully updated"
+        },
+        "update-profile": {
+            "success": "Profile updated successfully"
         }
     },
     "company": {
@@ -151,6 +154,15 @@
                 "invalid-country-code": "The country code “{countryCode}” is invalid.",
                 "invalid-phone-number": "Invalid phone number {phoneNumber}",
                 "invalid-address": "Invalid address ({address})"
+            }
+        },
+        "confirm": {
+            "success": "{name} successfully confirmed",
+            "error": {
+                "already-enabled": "{name} is already confirmed",
+                "no-document": "No document provided",
+                "openai-error": "An error occurred while verifying the document",
+                "openai-mismatch": "The document does not match the provided data"
             }
         }
     }

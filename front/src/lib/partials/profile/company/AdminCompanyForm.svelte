@@ -6,7 +6,7 @@
     import { Input } from '#lib/components/ui/input';
     import { showToast } from '#lib/services/toastService';
     import { Button } from '#lib/components/ui/button';
-    import { RefreshCcw, CircleQuestionMark } from '@lucide/svelte';
+    import { RefreshCcw } from '@lucide/svelte';
     import PhoneNumber from '#components/PhoneNumber.svelte';
     import { wrappedFetch } from '#lib/services/requestService';
     import { Popover, PopoverContent } from '#lib/components/ui/popover';
@@ -16,7 +16,6 @@
     import * as zod from 'zod';
     import AdminForm from '#lib/partials/AdminForm.svelte';
     import type { SerializedCompany } from 'backend/types';
-    import FileUpload from '#components/FileUpload.svelte';
     import ConfirmCompanyForm from '#lib/partials/profile/company/ConfirmCompanyForm.svelte';
 
     type Props = {
@@ -44,7 +43,7 @@
     let complement: string = $state(company?.address.complement ?? '');
     let countryCode: string = $state(company?.address.country ? (country?.data.code ?? 'FR') : 'FR');
     let email: string | undefined = $state(company?.email ?? undefined);
-    let phoneNumber: string | undefined = $state(company?.phoneNumber?.replace(country?.data.dial_code ?? '', '') ?? undefined);
+    let phoneNumber: string | undefined = $derived(company?.phoneNumber?.replace(country?.data.dial_code ?? '', '') ?? undefined);
 
     let phoneValue = $derived(phoneNumber ?? '');
 
@@ -128,6 +127,7 @@
     {canSubmit}
     deleteTitle={m['company.delete.title']({ name: company?.name ?? '' })}
     deleteText={m['company.delete.text']({ name: company?.name ?? '' })}
+    action={company ? '/update' : ''}
     onError={handleFormSubmitError}
 >
     <div class="flex gap-3">

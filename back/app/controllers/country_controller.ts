@@ -13,7 +13,7 @@ export default class CountryController {
             await cache.getOrSet({
                 key: 'countries',
                 tags: ['countries'],
-                ttl: '3h',
+                ttl: '24h',
                 factory: async (): Promise<Country[]> => {
                     return await this.countryService.getAll();
                 },

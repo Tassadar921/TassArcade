@@ -34,15 +34,11 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
         const bindings: any[] = [precision, minLat, maxLat, minLng, maxLng];
 
         if (equipmentIds.length > 0) {
-            query += `
-      AND equipment_type.equipment_type_id IN (${equipmentIds.map((): string => '?').join(', ')})
-    `;
+            query += `AND equipment_type.equipment_type_id IN (${equipmentIds.map((): string => '?').join(', ')})`;
             bindings.push(...equipmentIds);
         }
 
-        query += `
-    GROUP BY cluster
-  `;
+        query += `GROUP BY cluster`;
 
         const result = await db.rawQuery(query, bindings);
 
@@ -111,9 +107,9 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
             ...ids.map(async (id: string): Promise<{ isDeleted: boolean; name?: string; id: string }> => {
                 try {
                     const company: Company = await this.Model.query()
-                        .where('id', id)
                         .innerJoin('company_administrators', 'company_administrators.company_id', 'companies.id')
-                        .where('company_administrators.user_id', user.id)
+                        .where('companies.id', id)
+                        .andWhere('company_administrators.user_id', user.id)
                         .andWhere('company_administrators.role', CompanyAdministratorRoleEnum.CEO)
                         .firstOrFail();
 
@@ -125,5 +121,14 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
                 }
             }),
         ]);
+    }
+
+    public async getFromUser(companyId: string, user: User): Promise<Company> {
+        return await Company.query()
+            .select('companies.*')
+            .innerJoin('company_administrators', 'company_administrators.company_id', 'companies.id')
+            .where('companies.id', companyId)
+            .andWhere('company_administrators.user_id', user.id)
+            .firstOrFail();
     }
 }

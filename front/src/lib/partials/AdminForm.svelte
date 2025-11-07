@@ -25,10 +25,11 @@
         canSubmit: boolean;
         deleteTitle?: string;
         deleteText?: string;
+        action?: string;
         onError?: () => void;
     };
 
-    let { children, id, canSubmit, deleteTitle, deleteText, onError }: Props = $props();
+    let { children, id, canSubmit, deleteTitle, deleteText, action, onError }: Props = $props();
 
     let showDialog: boolean = $state(false);
 
@@ -58,7 +59,7 @@
     });
 </script>
 
-<form use:enhance method="POST" enctype="multipart/form-data" class="py-10 px-5 flex flex-col gap-8 rounded-lg shadow-md mt-5 bg-gray-300 dark:bg-gray-700">
+<form use:enhance method="POST" {action} enctype="multipart/form-data" class="py-10 px-5 flex flex-col gap-8 rounded-lg shadow-md mt-5 bg-gray-300 dark:bg-gray-700">
     {@render children?.()}
     <div class="w-full flex justify-end gap-5 pr-5">
         {#if id}
