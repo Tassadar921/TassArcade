@@ -34,7 +34,7 @@ export default class CompanyController {
         private readonly nominatimService: NominatimService,
         private readonly countryService: CountryService,
         private readonly fileService: FileService,
-        private readonly opanAiApiService: OpenAiApiService
+        private readonly openAiApiService: OpenAiApiService
     ) {}
 
     public async getFromSiret({ request, response, i18n }: HttpContext): Promise<void> {
@@ -262,7 +262,7 @@ export default class CompanyController {
 
         const mimeType: string = `${document.type}/${document.subtype}`;
         const processedData: { mimeType: string; data: string }[] = await this.fileService.toBase64(document.tmpPath, mimeType);
-        const returnedData: OpenAiCompanyVerificationResult | null = await this.opanAiApiService.verifyCompanyDocument({
+        const returnedData: OpenAiCompanyVerificationResult | null = await this.openAiApiService.verifyCompanyDocument({
             documents: processedData.map((document: { mimeType: string; data: string }): { mimeType: string; data: string } => ({
                 mimeType: document.mimeType,
                 data: document.data,

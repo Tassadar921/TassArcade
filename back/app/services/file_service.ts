@@ -101,13 +101,17 @@ export default class FileService {
      * Convert PDF to PNG image (base64)
      */
     private async pdfToImages(pdfPath: string): Promise<{ mimeType: 'image/png'; data: string }[]> {
-        const pages = await fromPath(pdfPath, {
-            format: 'png',
-        }).bulk(-1, { responseType: 'base64' });
+        try {
+            const pages = await fromPath(pdfPath, {
+                format: 'png',
+            }).bulk(-1, { responseType: 'base64' });
 
-        return pages.map((page) => ({
-            mimeType: 'image/png',
-            data: `data:image/png;base64,${page.base64}`,
-        }));
+            return pages.map((page): { mimeType: 'image/png'; data: string } => ({
+                mimeType: 'image/png',
+                data: `data:image/png;base64,${page.base64}`,
+            }));
+        } catch (error: any) {
+            throw new Error(`PDF convert error : ${error.message || error}`);
+        }
     }
 }
