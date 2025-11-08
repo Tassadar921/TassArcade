@@ -5,8 +5,10 @@ import Address from '#models/address';
 import CompanyAdministrator from '#models/company_administrator';
 import CompanyEquipmentType from '#models/company_equipment_type';
 import Language from '#models/language';
-import { SerializedCompany, SerializedCompanyEquipmentType } from '../types/index.js';
 import SerializedCompanyLight from '#types/serialized/serialized_company_light';
+import File from '#models/file';
+import SerializedCompanyEquipmentType from '#types/serialized/serialized_company_equipment_type';
+import SerializedCompany from '#types/serialized/serialized_company';
 
 export default class Company extends BaseModel {
     public static table: string = 'companies';
@@ -30,6 +32,12 @@ export default class Company extends BaseModel {
     declare enabled: boolean;
 
     @column()
+    declare logoId: string;
+
+    @belongsTo((): typeof File => File)
+    declare logo: BelongsTo<typeof File>;
+
+    @column()
     declare addressId: string;
 
     @belongsTo((): typeof Address => Address)
@@ -50,7 +58,7 @@ export default class Company extends BaseModel {
     @beforeFind()
     @beforeFetch()
     public static preloadDefaults(userQuery: any): void {
-        userQuery.preload('address').preload('equipments');
+        userQuery.preload('address').preload('equipments').preload('logo');
     }
 
     @beforeDelete()
@@ -62,6 +70,7 @@ export default class Company extends BaseModel {
         return {
             id: this.id,
             name: this.name,
+            logo: this.logo?.apiSerialize(),
             address: this.address.apiSerialize(),
             equipments: this.equipments
                 .map((equipmentType: CompanyEquipmentType): SerializedCompanyEquipmentType => equipmentType.apiSerialize(language))
@@ -76,10 +85,11 @@ export default class Company extends BaseModel {
             id: this.id,
             siret: this.siret,
             name: this.name,
-            address: this.address.apiSerialize(),
             phoneNumber: this.phoneNumber,
             email: this.email,
             enabled: this.enabled,
+            logo: this.logo?.apiSerialize(),
+            address: this.address.apiSerialize(),
             equipments: this.equipments
                 .map((equipmentType: CompanyEquipmentType): SerializedCompanyEquipmentType => equipmentType.apiSerialize(language))
                 .sort((a: SerializedCompanyEquipmentType, b: SerializedCompanyEquipmentType): number => a.name.localeCompare(b.name)),

@@ -209,10 +209,9 @@
                 "introduction": "Vérification de votre entreprise\n\nTéléversez un extrait Kbis récent (moins de 3 mois) ou un certificat d’immatriculation INPI ou équivalent pour activer votre compte professionnel.",
                 "file-upload": {
                     "title": "Téléversez votre document",
-                    "description": "Formats acceptés : PDF, JPG, PNG\nTaille maximale : 5 Mo\nDocument attendu : Extrait Kbis complet et lisible, certificat INPI récent ou équivalent",
+                    "description": "Formats acceptés : PDF, JPG, JPEG, PNG\nTaille maximale : 5 Mo\nDocument attendu : Extrait Kbis complet et lisible, certificat INPI récent ou équivalent",
                     "error": {
-                        "type": "Le fichier doit être un PDF, JPG ou PNG.",
-                        "format": "Le fichier doit être un PDF, JPG ou PNG.",
+                        "type": "Le fichier doit être un PDF, JPG, JPEG ou PNG.",
                         "size": "Le fichier doit faire moins de 5 Mo."
                     }
                 },
@@ -289,6 +288,14 @@
             "email": {
                 "placeholder": "direction@maison-delcourt.com",
                 "label": "Email"
+            },
+            "logo": {
+                "title": "Logo",
+                "description": "Formats acceptés : JPG, JPEG, PNG, SVG, GIF, WEBP\nTaille maximale : 5 Mo",
+                "error": {
+                    "type": "Le logo doit être une image",
+                    "size": "Le logo doit peser moins de 5 MB"
+                }
             },
             "enabled": "Activé"
         }

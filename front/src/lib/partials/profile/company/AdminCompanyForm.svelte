@@ -17,6 +17,7 @@
     import AdminForm from '#lib/partials/AdminForm.svelte';
     import type { SerializedCompany } from 'backend/types';
     import ConfirmCompanyForm from '#lib/partials/profile/company/ConfirmCompanyForm.svelte';
+    import FileUpload from '#components/FileUpload.svelte';
 
     type Props = {
         company?: SerializedCompany;
@@ -44,6 +45,7 @@
     let countryCode: string = $state(company?.address.country ? (country?.data.code ?? 'FR') : 'FR');
     let email: string | undefined = $state(company?.email ?? undefined);
     let phoneNumber: string | undefined = $derived(company?.phoneNumber?.replace(country?.data.dial_code ?? '', '') ?? undefined);
+    let logo: File | undefined = $state();
 
     let phoneValue = $derived(phoneNumber ?? '');
 
@@ -60,6 +62,7 @@
             countryCode,
             email,
             phoneNumber,
+            logo,
         })
     );
 
@@ -226,4 +229,12 @@
             error={errors.properties?.phoneNumber?.errors?.[0]}
         />
     </div>
+    <FileUpload
+        name="logo"
+        accept="png jpg jpeg webp svg"
+        title={m['company.fields.logo.title']()}
+        description={m['company.fields.logo.description']()}
+        bind:file={logo}
+        error={errors.properties?.logo?.errors?.[0]}
+    />
 </AdminForm>

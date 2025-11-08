@@ -50,7 +50,7 @@
     <div class="flex flex-col gap-1">
         <FileUpload
             name="document"
-            accept="png jpg jpeg webp svg pdf"
+            accept="png jpg jpeg pdf"
             title={m['company.edit.confirm.file-upload.title']()}
             description={m['company.edit.confirm.file-upload.description']()}
             bind:file={document}
