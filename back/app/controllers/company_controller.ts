@@ -7,7 +7,7 @@ import {
     getCompanyValidator,
     searchCompaniesValidator,
     updateCompanyValidator,
-    deleteCompaniesValidator,
+    deleteCompanyValidator,
     confirmCompanyValidator,
 } from '#validators/company';
 import axios from 'axios';
@@ -154,26 +154,21 @@ export default class CompanyController {
     }
 
     public async delete({ request, response, i18n, user }: HttpContext): Promise<void> {
-        const { companies } = await request.validateUsing(deleteCompaniesValidator);
+        const { companyId } = await request.validateUsing(deleteCompanyValidator);
 
-        const statuses: { isDeleted: boolean; name?: string; id: string }[] = await this.companyRepository.delete(companies, user);
+        const statuses: { isDeleted: boolean; name?: string; id: string }[] = await this.companyRepository.delete([companyId], user);
+        const status: { isDeleted: boolean; name?: string; id: string } = statuses[0];
 
-        return response.ok({
-            messages: await Promise.all(
-                statuses.map(async (status: { isDeleted: boolean; name?: string; id: string }): Promise<{ id: string; message: string; isSuccess: boolean }> => {
-                    if (status.isDeleted) {
-                        await cache.deleteByTag({ tags: ['companies', `company:${status.id}`] });
-                        return { id: status.id, message: i18n.t(`messages.company.delete.success`, { name: status.name }), isSuccess: true };
-                    } else {
-                        return { id: status.id, message: i18n.t(`messages.company.delete.error.default`, { id: status.id }), isSuccess: false };
-                    }
-                })
-            ),
-        });
+        if (status.isDeleted) {
+            await cache.deleteByTag({ tags: ['companies', `company:${status.id}`] });
+            return response.ok({ messages: [{ message: i18n.t(`messages.company.delete.success`, { name: status.name }), isSuccess: true }] });
+        } else {
+            return response.ok({ messages: [{ message: i18n.t(`messages.company.delete.error.default`, { id: status.id }), isSuccess: false }] });
+        }
     }
 
     public async update({ request, response, i18n, language, user }: HttpContext) {
-        const { siret, name, address: inputAddress, postalCode, city, complement, countryCode, email, phoneNumber: inputPhoneNumber } = await request.validateUsing(updateCompanyValidator);
+        const { companyId, name, address: inputAddress, postalCode, city, complement, countryCode, email, phoneNumber: inputPhoneNumber } = await request.validateUsing(updateCompanyValidator);
 
         const country: Country | undefined = CountryList.default.findOneByCountryCode(countryCode);
         if (!country) {
@@ -182,7 +177,7 @@ export default class CompanyController {
             });
         }
 
-        const company: Company = await this.companyRepository.getFromUser(siret, user);
+        const company: Company = await this.companyRepository.getFromUser(companyId, user);
 
         const fullAddress: string = `${inputAddress}, ${postalCode} ${city}, ${country.name}`;
         const data: { latitude: number; longitude: number } | null = await this.nominatimService.getFromAddress(fullAddress);

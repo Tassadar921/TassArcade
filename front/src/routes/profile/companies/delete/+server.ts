@@ -5,15 +5,13 @@ import { m } from '#lib/paraglide/messages';
 export const POST: RequestHandler = async ({ request, locals }): Promise<Response> => {
     const body = await request.json();
     try {
-        const response = await locals.client.post(`/api/admin/user/delete`, {
-            users: body.data,
+        const response = await locals.client.post(`/api/profile/company/delete`, {
+            companyId: body.data[0],
         });
 
         if (response.status < 200 || response.status >= 300) {
             throw response;
         }
-
-        console.log(response.data);
 
         return json({
             isSuccess: true,

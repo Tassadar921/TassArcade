@@ -9,6 +9,9 @@ import { ModelPaginatorContract, ModelQueryBuilderContract } from '@adonisjs/luc
 import PaginatedCompanies from '#types/paginated/paginated_companies';
 import CompanyAdministratorRoleEnum from '#types/enum/company_administrator_role_enum';
 import SerializedCompanyLight from '#types/serialized/serialized_company_light';
+import Address from '#models/address';
+import { TransactionClientContract } from '@adonisjs/lucid/types/database';
+import { DeleteCompanyResult } from '#types/delete_company_result';
 
 export default class CompanyRepository extends BaseRepository<typeof Company> {
     constructor() {
@@ -101,26 +104,35 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
         };
     }
 
-    public async delete(ids: string[], user: User): Promise<{ isDeleted: boolean; name?: string; id: string }[]> {
-        // Delete some other things if needed
-        return await Promise.all([
-            ...ids.map(async (id: string): Promise<{ isDeleted: boolean; name?: string; id: string }> => {
+    public async delete(ids: string[], user: User): Promise<DeleteCompanyResult[]> {
+        return await Promise.all(
+            ids.map(async (id: string): Promise<DeleteCompanyResult> => {
                 try {
-                    const company: Company = await this.Model.query()
-                        .innerJoin('company_administrators', 'company_administrators.company_id', 'companies.id')
-                        .where('companies.id', id)
-                        .andWhere('company_administrators.user_id', user.id)
-                        .andWhere('company_administrators.role', CompanyAdministratorRoleEnum.CEO)
-                        .firstOrFail();
+                    return await db.transaction(async (trx: TransactionClientContract): Promise<DeleteCompanyResult> => {
+                        const company: Company = await Company.query({ client: trx })
+                            .innerJoin('company_administrators', 'company_administrators.company_id', 'companies.id')
+                            .where('companies.id', id)
+                            .andWhere('company_administrators.user_id', user.id)
+                            .andWhere('company_administrators.role', CompanyAdministratorRoleEnum.CEO)
+                            .select('companies.*')
+                            .firstOrFail();
 
-                    await company.delete();
+                        const addressId: string = company.addressId;
 
-                    return { isDeleted: true, name: company.name, id };
+                        await Company.query({ client: trx }).where('id', id).delete();
+
+                        if (addressId) {
+                            await Address.query({ client: trx }).where('id', addressId).delete();
+                        }
+
+                        return { isDeleted: true, name: company.name, id };
+                    });
                 } catch (error: any) {
+                    console.log(error);
                     return { isDeleted: false, id };
                 }
-            }),
-        ]);
+            })
+        );
     }
 
     public async getFromUser(companyId: string, user: User): Promise<Company> {

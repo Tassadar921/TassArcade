@@ -30,9 +30,9 @@ export const searchCompaniesValidator = vine.compile(
     })
 );
 
-export const deleteCompaniesValidator = vine.compile(
+export const deleteCompanyValidator = vine.compile(
     vine.object({
-        companies: vine.array(vine.string().uuid()),
+        companyId: vine.string().uuid(),
     })
 );
 
@@ -44,6 +44,7 @@ export const getCompanyValidator = vine.compile(
 
 export const updateCompanyValidator = vine.compile(
     vine.object({
+        companyId: vine.string().uuid(),
         siret: vine.string().fixedLength(14),
         name: vine.string().trim().minLength(3).maxLength(100),
         address: vine.string().trim().minLength(5).maxLength(100),

@@ -131,8 +131,8 @@ router
 
         router
             .group((): void => {
-                router.get('/language-flag/:languageCode', [FileController, 'serveStaticLanguageFlagFile']);
                 router.get('/equipment-thumbnail/:equipmentId', [FileController, 'serveStaticEquipmentThumbnailFile']);
+                router.get('/company-logo/:companyId', [FileController, 'serveStaticCompanyLogoFile']);
             })
             .prefix('static');
     })

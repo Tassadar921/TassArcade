@@ -74,16 +74,16 @@
                 "no-file": "Photo de profil de l'utilisateur introuvable"
             }
         },
-        "serve-language-flag": {
-            "error": {
-                "language-not-found": "Langue non trouvée",
-                "no-file": "Drapeau de la langue introuvable"
-            }
-        },
         "serve-equipment-thumbnail": {
             "error": {
                 "equipment-not-found": "Équipement non trouvé",
                 "no-file": "Miniature de l'équipement introuvable"
+            }
+        },
+        "serve-company-logo": {
+            "error": {
+                "logo-not-found": "Company non trouvée",
+                "no-file": "Logo de l'entreprise introuvable"
             }
         }
     },

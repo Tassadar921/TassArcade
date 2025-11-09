@@ -5,6 +5,9 @@ import PaginatedUsers from '#types/paginated/paginated_users';
 import SerializedUser from '#types/serialized/serialized_user';
 import { inject } from '@adonisjs/core';
 import LogUserRepository from '#repositories/log_user_repository';
+import db from '@adonisjs/lucid/services/db';
+import { DeleteUserResult } from '#types/delete_user_result';
+import { TransactionClientContract } from '@adonisjs/lucid/types/database';
 
 @inject()
 export default class UserRepository extends BaseRepository<typeof User> {
@@ -32,24 +35,37 @@ export default class UserRepository extends BaseRepository<typeof User> {
         };
     }
 
-    public async delete(ids: string[], currentUser: User): Promise<{ isDeleted: boolean; isCurrentUser?: boolean; username?: string; id: string }[]> {
-        // Delete some other things if needed
-        return await Promise.all([
-            ...ids.map(async (id: string): Promise<{ isDeleted: boolean; isCurrentUser?: boolean; username?: string; id: string }> => {
+    public async delete(ids: string[], currentUser: User): Promise<DeleteUserResult[]> {
+        return Promise.all(
+            ids.map(async (id: string): Promise<DeleteUserResult> => {
                 try {
-                    const user: User = await this.firstOrFail({ id });
+                    const user: User = await User.query().where('id', id).firstOrFail();
+
                     if (user.id === currentUser.id) {
-                        return { isDeleted: false, isCurrentUser: true, username: user.username, id };
+                        return {
+                            isDeleted: false,
+                            isCurrentUser: true,
+                            username: user.username,
+                            id,
+                        };
                     }
 
-                    await user.delete();
-                    await this.logUserRepository.deleteByUser(user);
+                    return await db.transaction(async (trx: TransactionClientContract): Promise<DeleteUserResult> => {
+                        await user.useTransaction(trx).delete();
 
-                    return { isDeleted: true, username: user.username, id };
-                } catch (error: any) {
+                        await this.logUserRepository.deleteByUser(user, trx);
+
+                        return {
+                            isDeleted: true,
+                            username: user.username,
+                            id,
+                        };
+                    });
+                } catch (error) {
+                    console.error('Delete user error:', error);
                     return { isDeleted: false, id };
                 }
-            }),
-        ]);
+            })
+        );
     }
 }
