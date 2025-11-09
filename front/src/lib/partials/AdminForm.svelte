@@ -39,7 +39,6 @@
         showDialog = false;
         await wrappedFetch(`${$location.replace(`/edit/${id}`, '')}/delete`, { method: 'POST', body: { data: [id] } }, (data) => {
             const isSuccess: boolean = data.messages.map((status: { isSuccess: boolean; message: string; id: string }) => {
-                console.log(status);
                 showToast(status.message, status.isSuccess ? 'success' : 'error');
                 return status.isSuccess;
             })[0];
