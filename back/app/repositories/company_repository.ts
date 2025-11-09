@@ -9,7 +9,6 @@ import { ModelPaginatorContract, ModelQueryBuilderContract } from '@adonisjs/luc
 import PaginatedCompanies from '#types/paginated/paginated_companies';
 import CompanyAdministratorRoleEnum from '#types/enum/company_administrator_role_enum';
 import SerializedCompanyLight from '#types/serialized/serialized_company_light';
-import Address from '#models/address';
 import { TransactionClientContract } from '@adonisjs/lucid/types/database';
 import { DeleteCompanyResult } from '#types/delete_company_result';
 
@@ -48,7 +47,7 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
         const clusters: Cluster[] = [];
 
         for (const row of result.rows) {
-            const companies: Company[] = await Company.query().whereIn('address_id', row.address_ids);
+            const companies: Company[] = await this.Model.query().whereIn('address_id', row.address_ids);
 
             clusters.push({
                 id: row.cluster,
@@ -70,7 +69,7 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
         limit: number,
         sortBy: { field: keyof Company['$attributes']; order: 'asc' | 'desc' }
     ): Promise<PaginatedCompanies> {
-        const paginator: ModelPaginatorContract<Company> = await Company.query()
+        const paginator: ModelPaginatorContract<Company> = await this.Model.query()
             .select('companies.*')
             .innerJoin('company_administrators', 'company_administrators.company_id', 'companies.id')
             .where('company_administrators.user_id', user.id)
@@ -109,25 +108,20 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
             ids.map(async (id: string): Promise<DeleteCompanyResult> => {
                 try {
                     return await db.transaction(async (trx: TransactionClientContract): Promise<DeleteCompanyResult> => {
-                        const company: Company = await Company.query({ client: trx })
+                        const company: Company = await this.Model.query({ client: trx })
+                            .select('companies.*')
                             .innerJoin('company_administrators', 'company_administrators.company_id', 'companies.id')
                             .where('companies.id', id)
                             .andWhere('company_administrators.user_id', user.id)
                             .andWhere('company_administrators.role', CompanyAdministratorRoleEnum.CEO)
-                            .select('companies.*')
                             .firstOrFail();
 
-                        const addressId: string = company.addressId;
-
-                        await Company.query({ client: trx }).where('id', id).delete();
-
-                        if (addressId) {
-                            await Address.query({ client: trx }).where('id', addressId).delete();
-                        }
+                        await company.useTransaction(trx).delete();
+                        await company.address.useTransaction(trx).delete();
 
                         return { isDeleted: true, name: company.name, id };
                     });
-                } catch (error: any) {
+                } catch {
                     return { isDeleted: false, id };
                 }
             })
@@ -135,7 +129,7 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
     }
 
     public async getFromUser(companyId: string, user: User): Promise<Company> {
-        return await Company.query()
+        return await this.Model.query()
             .select('companies.*')
             .innerJoin('company_administrators', 'company_administrators.company_id', 'companies.id')
             .where('companies.id', companyId)
