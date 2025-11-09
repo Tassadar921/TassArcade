@@ -62,7 +62,6 @@ export default class UserRepository extends BaseRepository<typeof User> {
                         };
                     });
                 } catch (error) {
-                    console.error('Delete user error:', error);
                     return { isDeleted: false, id };
                 }
             })

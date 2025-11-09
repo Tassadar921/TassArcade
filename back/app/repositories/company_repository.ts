@@ -128,7 +128,6 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
                         return { isDeleted: true, name: company.name, id };
                     });
                 } catch (error: any) {
-                    console.log(error);
                     return { isDeleted: false, id };
                 }
             })

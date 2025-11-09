@@ -13,8 +13,6 @@ export const POST: RequestHandler = async ({ request, locals }): Promise<Respons
             throw response;
         }
 
-        console.log(response.data);
-
         return json({
             isSuccess: true,
             messages: response.data.messages,
