@@ -32,7 +32,7 @@ export default class Company extends BaseModel {
     declare enabled: boolean;
 
     @column()
-    declare logoId: string;
+    declare logoId: string | null;
 
     @belongsTo((): typeof File => File, {
         foreignKey: 'logoId',

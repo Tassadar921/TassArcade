@@ -17,7 +17,7 @@ export const GET: RequestHandler = async ({ params, url, locals }): Promise<Resp
             headers: {
                 'Content-Type': response.headers['content-type'] || 'application/octet-stream',
                 'Content-Disposition': response.headers['content-disposition'] || 'inline',
-                'Cache-Control': noCache ? 'no-cache, no-store, must-revalidate' : 'public, max-age=3600',
+                'Cache-Control': noCache ? 'no-store, max-age=0, must-revalidate' : 'public, max-age=3600',
             },
         });
     } catch (error: any) {

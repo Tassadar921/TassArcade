@@ -291,7 +291,7 @@
             },
             "logo": {
                 "title": "Logo",
-                "description": "Accepted formats: JPG, JPEG, PNG, GIF, WEBP\nMaximum size: 5 MB",
+                "description": "Accepted formats: JPG, JPEG, PNG, WEBP\nMaximum size: 2 MB",
                 "error": {
                     "type": "The logo must be an image.",
                     "size": "The logo must be less than 5 MB."

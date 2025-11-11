@@ -291,7 +291,7 @@
             },
             "logo": {
                 "title": "Logo",
-                "description": "Formats acceptés : JPG, JPEG, PNG, SVG, GIF, WEBP\nTaille maximale : 5 Mo",
+                "description": "Formats acceptés : JPG, JPEG, PNG, SVG, WEBP\nTaille maximale : 2 Mo",
                 "error": {
                     "type": "Le logo doit être une image",
                     "size": "Le logo doit peser moins de 5 MB"

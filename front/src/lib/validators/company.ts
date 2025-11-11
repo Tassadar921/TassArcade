@@ -38,6 +38,6 @@ export const companyValidator = zod.object({
     logo: zod
         .instanceof(File, { error: m['company.fields.logo.error.type']() })
         .refine((file: File): boolean => ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml'].includes(file.type), { error: m['company.fields.logo.error.type']() })
-        .refine((file: File): boolean => file.size <= 5 * 1024 * 1024, { error: m['company.fields.logo.error.size']() })
+        .refine((file: File): boolean => file.size <= 2 * 1024 * 1024, { error: m['company.fields.logo.error.size']() })
         .optional(),
 });

@@ -18,6 +18,12 @@ export const createCompanyValidator = vine.compile(
         countryCode: vine.string().trim().fixedLength(2),
         email: vine.string().trim().email().maxLength(100).optional(),
         phoneNumber: vine.string().trim().minLength(8).maxLength(20).optional(),
+        logo: vine
+            .file({
+                size: '2mb',
+                extnames: ['png', 'jpg', 'jpeg', 'webp', 'svg'],
+            })
+            .optional(),
     })
 );
 
@@ -54,6 +60,12 @@ export const updateCompanyValidator = vine.compile(
         countryCode: vine.string().trim().fixedLength(2),
         email: vine.string().trim().email().maxLength(100).optional(),
         phoneNumber: vine.string().trim().minLength(8).maxLength(20).optional(),
+        logo: vine
+            .file({
+                size: '2mb',
+                extnames: ['png', 'jpg', 'jpeg', 'webp', 'svg'],
+            })
+            .optional(),
     })
 );
 

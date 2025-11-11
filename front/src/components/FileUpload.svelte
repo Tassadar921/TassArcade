@@ -3,6 +3,7 @@
     import { raw } from '#lib/services/stringService';
     import Loader from '#components/Loader.svelte';
     import { Upload } from '@lucide/svelte';
+    import { onMount } from 'svelte';
 
     type Props = {
         name: string;
@@ -29,6 +30,20 @@
     let isDragging: boolean = $state(false);
     let isLoading: boolean = false;
     let previewSrc: string = $state('');
+
+    onMount(() => {
+        if (fileName && pathPrefix && id && inputRef) {
+            const bust = Date.now();
+            urlToFile(`/assets/${pathPrefix}/${id}?no-cache=true&_=${bust}`, fileName).then((f) => {
+                const dt = new DataTransfer();
+                dt.items.add(f);
+                inputRef.files = dt.files;
+                inputRef.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+        } else {
+            previewSrc = '';
+        }
+    });
 
     const handleFileChange = (event: Event): void => {
         const target: HTMLInputElement = event.target as HTMLInputElement;
@@ -89,21 +104,6 @@
         const blob = await res.blob();
         return new File([blob], filename, { type: blob.type });
     };
-
-    $effect((): void => {
-        if (fileName && pathPrefix && id && inputRef) {
-            if (!inputRef.files?.length) {
-                urlToFile(`/assets/${pathPrefix}/${id}`, fileName).then((f) => {
-                    const dt = new DataTransfer();
-                    dt.items.add(f);
-                    inputRef.files = dt.files;
-                    inputRef.dispatchEvent(new Event('change', { bubbles: true }));
-                });
-            }
-        } else {
-            previewSrc = '';
-        }
-    });
 </script>
 
 <Loader {isLoading} />
