@@ -105,7 +105,7 @@ export const actions: Actions = {
         }
     },
     update: async (event: RequestEvent): Promise<void> => {
-        const { request, cookies, locals } = event;
+        const { request, cookies, locals, params } = event;
 
         const formData: FormData = await request.formData();
 
@@ -113,6 +113,13 @@ export const actions: Actions = {
         let isSuccess: boolean = true;
 
         try {
+            const companyId: string | undefined = params.id;
+            if (!companyId) {
+                throw 'Missing variable';
+            }
+
+            formData.append('companyId', companyId);
+
             const postalCode: FormDataEntryValue | null = formData.get('postal-code');
             const countryCode: FormDataEntryValue | null = formData.get('country-code');
             if (!postalCode || !countryCode) {
