@@ -8,6 +8,9 @@ import LogUserRepository from '#repositories/log_user_repository';
 import db from '@adonisjs/lucid/services/db';
 import { DeleteUserResult } from '#types/delete_user_result';
 import { TransactionClientContract } from '@adonisjs/lucid/types/database';
+import Company from '#models/company';
+import PaginatedSearchCompanyAdministrators from '#types/paginated/paginated_search_company_administrators';
+import SearchCompanyAdministrator from '#types/search_company_administrator';
 
 @inject()
 export default class UserRepository extends BaseRepository<typeof User> {
@@ -66,5 +69,41 @@ export default class UserRepository extends BaseRepository<typeof User> {
                 }
             })
         );
+    }
+
+    public async getSearchCompanyAdministrators(
+        company: Company,
+        query: string,
+        page: number,
+        limit: number,
+        sortBy: { field: keyof User['$attributes']; order: 'asc' | 'desc' }
+    ): Promise<PaginatedSearchCompanyAdministrators> {
+        const paginator: ModelPaginatorContract<User> = await this.Model.query()
+            .select('users.*', 'company_administrators.id')
+            .leftJoin('company_administrators', 'users.id', 'company_administrators.user_id')
+            .where('company_administrators.company_id', '!=', company.id)
+            .if(query, (queryBuilder: ModelQueryBuilderContract<typeof User>): void => {
+                queryBuilder.where('users.username', 'ILIKE', `%${query}%`).orWhere('users.email', 'ILIKE', `%${query}%`);
+            })
+            .if(sortBy, (queryBuilder: ModelQueryBuilderContract<typeof User>): void => {
+                queryBuilder.orderBy(sortBy.field as string, sortBy.order);
+            })
+            .paginate(page, limit);
+
+        console.log(paginator.all()[0]);
+
+        return {
+            users: paginator.all().map(
+                (user: User): SearchCompanyAdministrator => ({
+                    user: user.apiSerialize(),
+                    isAdministrator: true,
+                })
+            ),
+            firstPage: paginator.firstPage,
+            lastPage: paginator.lastPage,
+            limit,
+            total: paginator.total,
+            currentPage: paginator.currentPage,
+        };
     }
 }

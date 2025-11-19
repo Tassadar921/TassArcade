@@ -220,6 +220,20 @@
                     "title": "Data Processing",
                     "content": "The Kbis extract or INPI certificate is automatically analyzed to verify the legal existence of your company.\n\nUploaded files are not retained after verification.\n\nOnly the data necessary for identification (company name, SIRET, address, legal representative) is stored.\n\nThis processing is carried out as part of the execution of the service, in accordance with GDPR.\n\nFor any questions or to exercise your rights (access, correction, deletion), contact:\n dpo@yourapp.com"
                 }
+            },
+            "administrators": {
+                "title": "Manage administrators",
+                "meta": {
+                    "title": "Edit Administrators",
+                    "description": "Manage the administrators of your company. Search for users and update access permissions easily."
+                }
+            },
+            "equipments": {
+                "title": "Manage equipments",
+                "meta": {
+                    "title": "Edit Equipments",
+                    "description": "Manage your company's equipments. Add, edit, or remove equipments directly from your company settings."
+                }
             }
         },
         "delete": {

@@ -19,6 +19,8 @@ const EquipmentController = () => import('#controllers/equipment_controller');
 const ClusterController = () => import('#controllers/cluster_controller');
 const CountryController = () => import('#controllers/country_controller');
 const CompanyController = () => import('#controllers/company_controller');
+const CompanyAdministratorController = () => import('#controllers/company_administrator_controller');
+const CompanyEquipmentsController = () => import('#controllers/company_equipment_controller');
 
 router.get('healthcheck', [HealthCheckController]);
 
@@ -104,7 +106,13 @@ router
                                 router.post('/delete', [CompanyController, 'delete']);
                                 router.post('/update', [CompanyController, 'update']);
                                 router.post('/confirm', [CompanyController, 'confirm']);
-                                router.get('/:companyId', [CompanyController, 'get']);
+                                router
+                                    .group((): void => {
+                                        router.get('/', [CompanyController, 'get']);
+                                        router.get('/administrators', [CompanyAdministratorController, 'getAll']);
+                                        router.get('/equipments', [CompanyEquipmentsController, 'getAll']);
+                                    })
+                                    .prefix(':companyId');
                             })
                             .prefix('company');
                     })

@@ -5,9 +5,6 @@
     import { Link } from '#lib/components/ui/link';
     import { location } from '#lib/stores/locationStore';
     import { language } from '#lib/stores/languageStore';
-    import { Breadcrumb } from '#lib/components/ui/breadcrumb';
-    import { Title } from '#lib/components/ui/title';
-    import Meta from '#components/Meta.svelte';
     import { page } from '$app/state';
 
     interface Props {
@@ -17,8 +14,8 @@
     let { children }: Props = $props();
 
     const TranslationKeyEnum = {
-        PROFILE: 'profile',
-        PROFILE_COMPANY: 'profile.companies',
+        MANAGE_ADMINISTRATORS: 'company.edit.administrators',
+        MANAGE_EQUIPMENTS: 'company.edit.equipments',
     } as const;
 
     type TranslationKeyEnum = (typeof TranslationKeyEnum)[keyof typeof TranslationKeyEnum];
@@ -33,13 +30,13 @@
     }
 
     const tabs: Tabs = {
-        profile: {
-            path: '/profile',
-            translationKey: TranslationKeyEnum.PROFILE,
+        administrators: {
+            path: `/profile/companies/edit/${page.params.id}/administrators`,
+            translationKey: TranslationKeyEnum.MANAGE_ADMINISTRATORS,
         },
-        companies: {
-            path: '/profile/companies',
-            translationKey: TranslationKeyEnum.PROFILE_COMPANY,
+        equipments: {
+            path: `/profile/companies/edit/${page.params.id}/equipments`,
+            translationKey: TranslationKeyEnum.MANAGE_EQUIPMENTS,
         },
     };
 
@@ -50,7 +47,7 @@
         ...config,
     }));
 
-    let activeTab: TabKey = $state(displayedTabs.find((tab) => $location.replace(`/${$language}`, '') === tab.path)?.key ?? tabs.profile.path);
+    let activeTab: TabKey = $state(displayedTabs.find((tab) => $location.replace(`/${$language}`, '') === tab.path)?.key ?? tabs.administrators.path);
 
     const handleSwitchTab = (tab: TabKey): void => {
         activeTab = tab;
@@ -60,12 +57,6 @@
         activeTab = displayedTabs.find((tab) => $location.replace(`/${$language}`, '') === tab.path)?.key ?? '';
     });
 </script>
-
-<Meta title={page.data.meta.title} description={page.data.meta.description} pathname={page.data.meta.pathname} />
-
-<Title title={page.data.title} hasBackground />
-
-<Breadcrumb items={page.data.breadcrumb} />
 
 <div class="w-full grid grid-cols-2 gap-2 mt-5">
     {#each displayedTabs as { key, path, translationKey }}

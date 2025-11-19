@@ -5,6 +5,8 @@ export { LogRouteMethodEnum } from './enum/log_route_method_enum.js';
 export { UserRoleEnum } from './enum/user_role_enum.js';
 
 export type { PaginatedUsers } from './paginated/paginated_users.js';
+export type { PaginatedCompanyAdministrators } from './paginated/paginated_company_administrators.js';
+export type { PaginatedSearchCompanyAdministrators } from './paginated/paginated_search_company_administrators.js';
 export type { PaginatedCompanies } from './paginated/paginated_companies.js';
 
 export type { SerializedFile } from './serialized/serialized_file.js';

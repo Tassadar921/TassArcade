@@ -4,7 +4,6 @@ import type { PageServerLoad } from './$types';
 import { type Actions, fail, type RequestEvent } from '@sveltejs/kit';
 import type { FormError } from '../../../../../app';
 import { extractFormData, extractFormErrors } from '#lib/services/requestService';
-import { page } from '$app/state';
 
 export const load: PageServerLoad = async (event) => {
     const { locals, params, cookies } = event;

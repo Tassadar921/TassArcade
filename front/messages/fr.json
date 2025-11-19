@@ -220,6 +220,20 @@
                     "title": "Traitement des données",
                     "content": "Le document Kbis ou certificat INPI est analysé automatiquement pour vérifier l’existence légale de votre entreprise.\n\nLes fichiers téléversés ne sont pas conservés après vérification.\n\nSeules les données nécessaires à l’identification (nom, SIRET, adresse, représentant légal) sont enregistrées.\n\nCe traitement est effectué dans le cadre de l’exécution du service, conformément au RGPD.\n\nPour toute question ou pour exercer vos droits (accès, rectification, suppression), contactez :\n dpo@tonapp.com"
                 }
+            },
+            "administrators": {
+                "title": "Gérer les administrateurs",
+                "meta": {
+                    "title": "Modifier les administrateurs",
+                    "description": "Gérez les administrateurs de votre entreprise. Recherchez des utilisateurs et mettez à jour leurs autorisations d’accès facilement."
+                }
+            },
+            "equipments": {
+                "title": "Gérer les équipments",
+                "meta": {
+                    "title": "Modifier les équipements",
+                    "description": "Gérez les équipements de votre entreprise. Ajoutez, modifiez ou supprimez des équipements depuis les paramètres de votre société."
+                }
             }
         },
         "delete": {
