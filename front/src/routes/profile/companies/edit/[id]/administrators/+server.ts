@@ -22,7 +22,6 @@ export const GET: RequestHandler = async ({ url, locals, params }): Promise<Resp
             data: response.data,
         });
     } catch (error: any) {
-        console.log(error.response.data.errors);
         return json(
             {
                 isSuccess: false,
