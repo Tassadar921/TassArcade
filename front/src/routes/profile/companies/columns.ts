@@ -8,6 +8,9 @@ export const getCompanyColumns = (onSort: (field: string, order: 'asc' | 'desc')
     {
         id: 'name',
         accessorKey: 'name',
+        meta: {
+            headerName: m['company.fields.name.label'](),
+        },
         header: () =>
             renderComponent(SortableColumn, {
                 title: m['company.fields.name.label'](),

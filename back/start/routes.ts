@@ -19,6 +19,8 @@ const EquipmentController = () => import('#controllers/equipment_controller');
 const ClusterController = () => import('#controllers/cluster_controller');
 const CountryController = () => import('#controllers/country_controller');
 const CompanyController = () => import('#controllers/company_controller');
+const CompanyAdministratorController = () => import('#controllers/company_administrator_controller');
+const CompanyEquipmentsController = () => import('#controllers/company_equipment_controller');
 
 router.get('healthcheck', [HealthCheckController]);
 
@@ -104,7 +106,19 @@ router
                                 router.post('/delete', [CompanyController, 'delete']);
                                 router.post('/update', [CompanyController, 'update']);
                                 router.post('/confirm', [CompanyController, 'confirm']);
-                                router.get('/:companyId', [CompanyController, 'get']);
+                                router
+                                    .group((): void => {
+                                        router.get('/', [CompanyController, 'get']);
+                                        router
+                                            .group((): void => {
+                                                router.get('/init', [CompanyAdministratorController, 'init']);
+                                                router.get('/', [CompanyAdministratorController, 'getAll']);
+                                            })
+                                            .prefix('administrators');
+
+                                        router.get('/equipments/init', [CompanyEquipmentsController, 'init']);
+                                    })
+                                    .prefix(':companyId');
                             })
                             .prefix('company');
                     })
@@ -131,8 +145,8 @@ router
 
         router
             .group((): void => {
-                router.get('/language-flag/:languageCode', [FileController, 'serveStaticLanguageFlagFile']);
                 router.get('/equipment-thumbnail/:equipmentId', [FileController, 'serveStaticEquipmentThumbnailFile']);
+                router.get('/company-logo/:companyId', [FileController, 'serveStaticCompanyLogoFile']);
             })
             .prefix('static');
     })

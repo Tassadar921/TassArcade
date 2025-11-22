@@ -74,16 +74,16 @@
                 "no-file": "User's profile picture not found"
             }
         },
-        "serve-language-flag": {
-            "error": {
-                "language-not-found": "Language not found",
-                "no-file": "Language flag not found"
-            }
-        },
         "serve-equipment-thumbnail": {
             "error": {
                 "equipment-not-found": "Equipment not found",
                 "no-file": "Equipment thumbnail not found"
+            }
+        },
+        "serve-company-logo": {
+            "error": {
+                "logo-not-found": "Company not found",
+                "no-file": "Company logo not found"
             }
         }
     },

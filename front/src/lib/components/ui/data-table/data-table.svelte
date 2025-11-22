@@ -43,6 +43,9 @@
         selectable?: boolean;
         onBatchDelete?: (ids: string[]) => void;
         onPaginationChange: (page: number, limit: number) => void;
+        editable?: boolean;
+        createText?: string;
+        onCreateClick?: () => void;
     };
 
     let {
@@ -57,6 +60,9 @@
         selectable = true,
         onBatchDelete,
         onPaginationChange,
+        editable = true,
+        createText,
+        onCreateClick,
     }: Props = $props();
 
     let rowSelection = $state<RowSelectionState>({});
@@ -156,15 +162,10 @@
             </TableHeader>
             <TableBody>
                 {#each table.getRowModel().rows as row (row.id)}
-                    <TableRow
-                        data-state={row.getIsSelected() && 'selected'}
-                        onclick={() => {
-                            row.toggleSelected(!row.getIsSelected());
-                        }}
-                    >
+                    <TableRow data-state={row.getIsSelected() && 'selected'} onclick={() => row.toggleSelected(!row.getIsSelected())}>
                         {#each row.getVisibleCells() as cell (cell.id)}
                             <TableCell>
-                                <FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} id={row.original.id} />
+                                <FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} id={row.original.id} {editable} />
                             </TableCell>
                         {/each}
                     </TableRow>
@@ -193,11 +194,17 @@
                 {m['common.delete']()}
             </Button>
         {/if}
-        <Button variant="secondary">
-            <Link href={`${$location}/new`} class="p-0 !no-underline">
-                {m['common.create']()}
-            </Link>
-        </Button>
+        {#if onCreateClick}
+            <Button variant="secondary" onclick={onCreateClick}>
+                {createText || m['common.create']()}
+            </Button>
+        {:else}
+            <Button variant="secondary">
+                <Link href={`${$location}/new`} class="p-0 !no-underline">
+                    {createText || m['common.create']()}
+                </Link>
+            </Button>
+        {/if}
     </div>
 </div>
 
