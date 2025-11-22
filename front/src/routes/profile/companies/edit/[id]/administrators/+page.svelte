@@ -5,6 +5,7 @@
     import { wrappedFetch } from '#lib/services/requestService';
     import { DataTable } from '#lib/components/ui/data-table';
     import { getUserColumns } from './columns';
+    import { m } from '#lib/paraglide/messages';
 
     let paginatedCompanyAdministrators: PaginatedCompanyAdministrators | undefined = $state();
     let selectedUsers: string[] = $state([]);
@@ -42,6 +43,8 @@
             bind:selectedRows={selectedUsers}
             onPaginationChange={async (page: number, limit: number) => await getAdministrators(page, limit)}
             editable={false}
+            createText={m['common.add']()}
+            onCreateClick={() => console.log('create')}
         />
     </div>
 {/if}

@@ -18,7 +18,6 @@
     };
 
     let { content, context, id, editable = true }: Props = $props();
-    console.log(editable);
 </script>
 
 {#if typeof content === 'string'}
