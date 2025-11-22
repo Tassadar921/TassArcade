@@ -14,9 +14,11 @@
         /** The result of the `getContext()` function of the header or cell */
         context: TContext;
         id?: string;
+        editable?: boolean;
     };
 
-    let { content, context, id }: Props = $props();
+    let { content, context, id, editable = true }: Props = $props();
+    console.log(editable);
 </script>
 
 {#if typeof content === 'string'}
@@ -31,7 +33,9 @@
     {:else if result instanceof RenderSnippetConfig}
         {@const { snippet, params } = result}
         {@render snippet(params)}
-    {:else}
+    {:else if editable}
         <Link href={`${$location}/edit/${id}`} class="px-3">{result}</Link>
+    {:else}
+        <p class="py-2 px-3 text-sm font-medium">{result}</p>
     {/if}
 {/if}

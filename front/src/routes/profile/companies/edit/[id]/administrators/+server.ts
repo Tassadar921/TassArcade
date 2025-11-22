@@ -25,7 +25,7 @@ export const GET: RequestHandler = async ({ url, locals, params }): Promise<Resp
         return json(
             {
                 isSuccess: false,
-                message: error?.response?.data?.error || m['common.error.default-message'](),
+                message: error?.response?.data?.error || error?.response?.data?.errors[0].message || m['common.error.default-message'](),
             },
             { status: error?.response?.status || 500 }
         );

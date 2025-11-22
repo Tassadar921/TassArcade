@@ -24,7 +24,7 @@ export const GET: RequestHandler = async ({ params, url, locals }): Promise<Resp
         return new Response(
             JSON.stringify({
                 isSuccess: false,
-                message: error?.response?.data?.error ?? m['common.error.default-message'](),
+                message: error?.response?.data?.error || error?.response?.data?.errors[0].message || m['common.error.default-message'](),
             }),
             {
                 status: error?.response?.status ?? 400,

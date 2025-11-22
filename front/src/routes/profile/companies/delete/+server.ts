@@ -21,7 +21,7 @@ export const POST: RequestHandler = async ({ request, locals }): Promise<Respons
         return json(
             {
                 isSuccess: false,
-                message: error?.response?.data?.error || m['common.error.default-message'](),
+                message: error?.response?.data?.error || error?.response?.data?.errors[0].message || m['common.error.default-message'](),
             },
             { status: error?.response?.status || 500 }
         );

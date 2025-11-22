@@ -41,6 +41,7 @@
             bind:query
             bind:selectedRows={selectedUsers}
             onPaginationChange={async (page: number, limit: number) => await getAdministrators(page, limit)}
+            editable={false}
         />
     </div>
 {/if}

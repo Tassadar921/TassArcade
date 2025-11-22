@@ -43,6 +43,7 @@
         selectable?: boolean;
         onBatchDelete?: (ids: string[]) => void;
         onPaginationChange: (page: number, limit: number) => void;
+        editable?: boolean;
     };
 
     let {
@@ -57,6 +58,7 @@
         selectable = true,
         onBatchDelete,
         onPaginationChange,
+        editable = true,
     }: Props = $props();
 
     let rowSelection = $state<RowSelectionState>({});
@@ -164,7 +166,7 @@
                     >
                         {#each row.getVisibleCells() as cell (cell.id)}
                             <TableCell>
-                                <FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} id={row.original.id} />
+                                <FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} id={row.original.id} {editable} />
                             </TableCell>
                         {/each}
                     </TableRow>
