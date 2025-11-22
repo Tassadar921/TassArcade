@@ -7,7 +7,7 @@ export const GET: RequestHandler = async ({ url, locals, params }): Promise<Resp
         const page: number = Number(url.searchParams.get('page')) || 1;
         const limit: number = Number(url.searchParams.get('limit')) || 10;
         const query: string = url.searchParams.get('query') || '';
-        const sortBy: string = url.searchParams.get('sortBy') || 'username:asc';
+        const sortBy: string = url.searchParams.get('sortBy') || 'users.username:asc';
 
         const response = await locals.client.get(`/api/profile/company/${params.id}/administrators`, {
             params: { page, limit, query, sortBy },
@@ -22,6 +22,7 @@ export const GET: RequestHandler = async ({ url, locals, params }): Promise<Resp
             data: response.data,
         });
     } catch (error: any) {
+        console.log(error.response.data.errors);
         return json(
             {
                 isSuccess: false,

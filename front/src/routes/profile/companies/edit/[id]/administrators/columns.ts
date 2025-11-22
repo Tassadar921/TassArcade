@@ -28,7 +28,7 @@ export const getUserColumns = (onSort: (field: string, order: 'asc' | 'desc') =>
         header: () =>
             renderComponent(SortableColumn, {
                 title: m['common.username.label'](),
-                field: 'user.username',
+                field: 'users.username',
                 onclick: onSort,
             }),
         enableHiding: false,
@@ -36,13 +36,15 @@ export const getUserColumns = (onSort: (field: string, order: 'asc' | 'desc') =>
     {
         id: 'email',
         accessorKey: 'user.email',
+        meta: {
+            headerName: m['common.email.label'](),
+        },
         header: () =>
             renderComponent(SortableColumn, {
                 title: m['common.email.label'](),
-                field: 'user.email',
+                field: 'users.email',
                 onclick: onSort,
             }),
-        enableHiding: false,
     },
     {
         id: 'role',
@@ -55,14 +57,6 @@ export const getUserColumns = (onSort: (field: string, order: 'asc' | 'desc') =>
                 title: m['company.edit.administrators.fields.role'](),
                 field: 'role',
                 onclick: onSort,
-            }),
-    },
-    {
-        header: m['common.datatable.actions'](),
-        enableHiding: false,
-        cell: ({ row }) =>
-            renderComponent(DataTableActions, {
-                id: row.original.user.id,
             }),
     },
 ];

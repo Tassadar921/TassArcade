@@ -16,7 +16,7 @@ export default class CompanyAdministratorRepository extends BaseRepository<typeo
         query: string,
         page: number,
         limit: number,
-        sortBy: { field: keyof CompanyAdministrator['$attributes'] | keyof User['$attributes']; order: 'asc' | 'desc' }
+        sortBy: { field: keyof CompanyAdministrator['$attributes'] | `users.${keyof User['$attributes']}`; order: 'asc' | 'desc' }
     ): Promise<PaginatedCompanyAdministrators> {
         const paginator: ModelPaginatorContract<CompanyAdministrator> = await this.Model.query()
             .select('company_administrators.*', 'users.username', 'users.email', 'companies.name')

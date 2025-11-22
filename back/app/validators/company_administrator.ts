@@ -1,5 +1,5 @@
 import vine from '@vinejs/vine';
-import { sortByUserRule } from '#validators/custom/user';
+import { sortByCompanyAdministratorRule } from '#validators/custom/company_administrator';
 
 export const companyIdValidator = vine.compile(
     vine.object({
@@ -12,6 +12,6 @@ export const searchCompanyAdministratorsValidator = vine.compile(
         query: vine.string().trim().maxLength(50),
         page: vine.number().positive(),
         limit: vine.number().positive(),
-        sortBy: vine.string().trim().use(sortByUserRule()),
+        sortBy: vine.string().trim().use(sortByCompanyAdministratorRule()),
     })
 );
