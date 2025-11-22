@@ -226,6 +226,9 @@
                 "meta": {
                     "title": "Modifier les administrateurs",
                     "description": "Gérez les administrateurs de votre entreprise. Recherchez des utilisateurs et mettez à jour leurs autorisations d’accès facilement."
+                },
+                "fields": {
+                    "role": "Rôle"
                 }
             },
             "equipments": {

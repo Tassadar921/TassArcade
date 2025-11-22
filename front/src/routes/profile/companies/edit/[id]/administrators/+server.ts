@@ -2,14 +2,14 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { m } from '#lib/paraglide/messages';
 
-export const GET: RequestHandler = async ({ url, locals }): Promise<Response> => {
+export const GET: RequestHandler = async ({ url, locals, params }): Promise<Response> => {
     try {
         const page: number = Number(url.searchParams.get('page')) || 1;
         const limit: number = Number(url.searchParams.get('limit')) || 10;
         const query: string = url.searchParams.get('query') || '';
         const sortBy: string = url.searchParams.get('sortBy') || 'username:asc';
 
-        const response = await locals.client.get('/api/admin/user', {
+        const response = await locals.client.get(`/api/profile/company/${params.id}/administrators`, {
             params: { page, limit, query, sortBy },
         });
 

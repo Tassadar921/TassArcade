@@ -8,7 +8,7 @@ import type { FormError } from '../../../../../../app';
 export const load: PageServerLoad = async (event) => {
     const { locals, params, cookies } = event;
     try {
-        const response = await locals.client.get(`/api/profile/company/${params.id}/equipments`);
+        const response = await locals.client.get(`/api/profile/company/${params.id}/equipments/init`);
 
         if (response.status < 200 || response.status >= 300) {
             throw response;
@@ -32,18 +32,23 @@ export const load: PageServerLoad = async (event) => {
         return {
             isSuccess: true,
             company: response.data.company,
-            countries: response.data.countries,
+            equipments: response.data.equipments,
             ...headers,
         };
     } catch (error: any) {
-        redirect(
-            `/${cookies.get('PARAGLIDE_LOCALE')}/profile/companies/edit/${params.id}`,
-            {
-                type: 'error',
-                message: error?.response?.data?.error ?? m['common.error.default-message'](),
-            },
-            event
-        );
+        const form: FormError = {
+            data: {},
+            errors: extractFormErrors(error?.response?.data),
+        };
+
+        cookies.set('formError', JSON.stringify(form), {
+            path: '/',
+            httpOnly: true,
+            sameSite: 'lax',
+            maxAge: 60 * 60 * 24 * 7,
+        });
+
+        redirect(303, `/${cookies.get('PARAGLIDE_LOCALE')}/profile/companies/edit/${params.id}`);
     }
 };
 

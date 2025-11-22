@@ -5,8 +5,8 @@ import cache from '@adonisjs/cache/services/main';
 import Company from '#models/company';
 import SerializedCompany from '#types/serialized/serialized_company';
 import CompanyEquipmentTypeRepository from '#repositories/company_equipment_type_repository';
-import PaginatedCompanyEquipmentTypes from '#types/paginated/paginated_company_equipment_types';
 import { getCompanyEquipmentsValidator } from '#validators/company_equipment';
+import SerializedCompanyEquipmentType from '#types/serialized/serialized_company_equipment_type';
 
 @inject()
 export default class CompanyAdministratorController {
@@ -15,12 +15,9 @@ export default class CompanyAdministratorController {
         private readonly companyEquipmentRepository: CompanyEquipmentTypeRepository
     ) {}
 
-    public async getAll({ request, response, language, i18n }: HttpContext) {
-        const { companyId } = await request.validateUsing(getCompanyEquipmentsValidator);
-        const company: Company | null = await this.companyRepository.findOneBy({ id: companyId }, ['administrators']);
-        if (!company) {
-            return response.notFound({ error: i18n.t('messages.company.get.error.not-found') });
-        }
+    public async init({ request, response, language, user }: HttpContext) {
+        const { companyId } = await getCompanyEquipmentsValidator.validate(request.params());
+        const company: Company = await this.companyRepository.getFromUser(companyId, user);
 
         return response.ok({
             company: await cache.getOrSet({
@@ -32,11 +29,11 @@ export default class CompanyAdministratorController {
                 },
             }),
             equipments: await cache.getOrSet({
-                key: `company-equipment-types:companyId:${companyId}:query::page:1:limit:10:sortBy:username:asc`,
+                key: `company-equipment-types:companyId:${companyId}`,
                 tags: [`company:${companyId}`],
                 ttl: '1h',
-                factory: async (): Promise<PaginatedCompanyEquipmentTypes> => {
-                    return await this.companyEquipmentRepository.getCompanyEquipments(company, language, '', 1, 10, { field: 'username', order: 'asc' });
+                factory: async (): Promise<SerializedCompanyEquipmentType[]> => {
+                    return await this.companyEquipmentRepository.getCompanyEquipments(company, language);
                 },
             }),
         });

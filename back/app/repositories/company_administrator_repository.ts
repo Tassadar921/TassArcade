@@ -20,15 +20,17 @@ export default class CompanyAdministratorRepository extends BaseRepository<typeo
     ): Promise<PaginatedCompanyAdministrators> {
         const paginator: ModelPaginatorContract<CompanyAdministrator> = await this.Model.query()
             .select('company_administrators.*', 'users.username', 'users.email', 'companies.name')
-            .leftJoin('users', 'company_administrators.userId', 'users.id')
-            .leftJoin('companies', 'company_administrators.companyId', 'companies.id')
+            .leftJoin('users', 'company_administrators.user_id', 'users.id')
+            .leftJoin('companies', 'company_administrators.company_id', 'companies.id')
             .if(query, (queryBuilder: ModelQueryBuilderContract<typeof CompanyAdministrator>): void => {
-                queryBuilder.where('users.username', 'ILIKE', `%${query}%`).orWhere('users.email', 'ILIKE', `%${query}%`);
+                queryBuilder.where((subQuery: ModelQueryBuilderContract<typeof CompanyAdministrator>): void => {
+                    subQuery.where('users.username', 'ILIKE', `%${query}%`).orWhere('users.email', 'ILIKE', `%${query}%`);
+                });
             })
             .if(sortBy, (queryBuilder: ModelQueryBuilderContract<typeof CompanyAdministrator>): void => {
                 queryBuilder.orderBy(sortBy.field as string, sortBy.order);
             })
-            .where('company_administrators.companyId', company.id)
+            .where('company_administrators.company_id', company.id)
             .preload('user')
             .paginate(page, limit);
 

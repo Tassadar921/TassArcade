@@ -226,6 +226,9 @@
                 "meta": {
                     "title": "Edit Administrators",
                     "description": "Manage the administrators of your company. Search for users and update access permissions easily."
+                },
+                "fields": {
+                    "role": "Role"
                 }
             },
             "equipments": {

@@ -109,8 +109,14 @@ router
                                 router
                                     .group((): void => {
                                         router.get('/', [CompanyController, 'get']);
-                                        router.get('/administrators', [CompanyAdministratorController, 'getAll']);
-                                        router.get('/equipments', [CompanyEquipmentsController, 'getAll']);
+                                        router
+                                            .group((): void => {
+                                                router.get('/init', [CompanyAdministratorController, 'init']);
+                                                router.get('/', [CompanyAdministratorController, 'getAll']);
+                                            })
+                                            .prefix('administrators');
+
+                                        router.get('/equipments/init', [CompanyEquipmentsController, 'init']);
                                     })
                                     .prefix(':companyId');
                             })
