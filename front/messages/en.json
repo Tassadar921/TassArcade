@@ -10,6 +10,7 @@
         "delete": "Delete",
         "create": "Create",
         "cancel": "Cancel",
+        "remove": "Remove",
         "add": "Add",
         "back-to-home": "Back to homepage",
         "name": "Name",
@@ -230,7 +231,8 @@
                 },
                 "fields": {
                     "role": "Role"
-                }
+                },
+                "add": "Add administrator"
             },
             "equipments": {
                 "title": "Manage equipments",

@@ -79,22 +79,25 @@ export default class UserRepository extends BaseRepository<typeof User> {
         sortBy: { field: keyof User['$attributes']; order: 'asc' | 'desc' }
     ): Promise<PaginatedSearchCompanyAdministrators> {
         const paginator: ModelPaginatorContract<User> = await this.Model.query()
-            .select('users.*', 'company_administrators.id')
-            .leftJoin('company_administrators', 'users.id', 'company_administrators.user_id')
+            .select('users.*', 'company_administrators.id as admin_id')
+            .leftJoin('company_administrators', (join): void => {
+                join.on('users.id', '=', 'company_administrators.user_id').onVal('company_administrators.company_id', company.id);
+            })
             .if(query, (queryBuilder: ModelQueryBuilderContract<typeof User>): void => {
-                queryBuilder.where('users.username', 'ILIKE', `%${query}%`).orWhere('users.email', 'ILIKE', `%${query}%`);
+                queryBuilder.where((subQuery: ModelQueryBuilderContract<typeof User>): void => {
+                    subQuery.where('users.username', 'ILIKE', `%${query}%`).orWhere('users.email', 'ILIKE', `%${query}%`);
+                });
             })
             .if(sortBy, (queryBuilder: ModelQueryBuilderContract<typeof User>): void => {
                 queryBuilder.orderBy(sortBy.field as string, sortBy.order);
             })
-            .where('company_administrators.company_id', company.id)
             .paginate(page, limit);
 
         return {
             users: paginator.all().map(
                 (user: User): SearchCompanyAdministrator => ({
                     user: user.apiSerialize(),
-                    isAdministrator: true,
+                    isAdministrator: user.$extras.admin_id !== null,
                 })
             ),
             firstPage: paginator.firstPage,

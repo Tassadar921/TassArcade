@@ -1,11 +1,12 @@
 import type { ColumnDef } from '@tanstack/table-core';
 import { m } from '#lib/paraglide/messages';
 import { renderComponent } from '#lib/components/ui/data-table/render-helpers';
-import { SortableColumn, DataTableActions } from '#lib/components/ui/data-table';
-import type { SerializedCompanyAdministrator } from 'backend/types';
+import { DataTableActions, SortableColumn } from '#lib/components/ui/data-table';
+import type { SearchCompanyAdministrator, SerializedCompanyAdministrator } from 'backend/types';
 import { Checkbox } from '#lib/components/ui/checkbox';
+import DatatableSearchCompanyAdministratorAction from '#lib/partials/profile/company/administrators/DatatableSearchCompanyAdministratorAction.svelte';
 
-export const getUserColumns = (onSort: (field: string, order: 'asc' | 'desc') => void): ColumnDef<SerializedCompanyAdministrator>[] => [
+export const getCompanyAdministratorsColumns = (onSort: (field: string, order: 'asc' | 'desc') => void): ColumnDef<SerializedCompanyAdministrator>[] => [
     {
         id: 'select',
         header: ({ table }) =>
@@ -57,6 +58,47 @@ export const getUserColumns = (onSort: (field: string, order: 'asc' | 'desc') =>
                 title: m['company.edit.administrators.fields.role'](),
                 field: 'role',
                 onclick: onSort,
+            }),
+    },
+];
+
+export const getSearchCompanyAdministratorsColumns = (
+    onSort: (field: string, order: 'asc' | 'desc') => void,
+    addAdministrator: (userId: string) => void,
+    removeAdministrator: (userId: string) => void
+): ColumnDef<SearchCompanyAdministrator>[] => [
+    {
+        id: 'username',
+        accessorKey: 'user.username',
+        header: () =>
+            renderComponent(SortableColumn, {
+                title: m['common.username.label'](),
+                field: 'username',
+                onclick: onSort,
+            }),
+        enableHiding: false,
+    },
+    {
+        id: 'email',
+        accessorKey: 'user.email',
+        meta: {
+            headerName: m['common.email.label'](),
+        },
+        header: () =>
+            renderComponent(SortableColumn, {
+                title: m['common.email.label'](),
+                field: 'email',
+                onclick: onSort,
+            }),
+    },
+    {
+        header: m['common.datatable.actions'](),
+        enableHiding: false,
+        cell: ({ row }) =>
+            renderComponent(DatatableSearchCompanyAdministratorAction, {
+                user: row.original,
+                addAdministrator,
+                removeAdministrator,
             }),
     },
 ];

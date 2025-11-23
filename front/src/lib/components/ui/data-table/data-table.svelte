@@ -46,6 +46,7 @@
         editable?: boolean;
         createText?: string;
         onCreateClick?: () => void;
+        creatable?: boolean;
     };
 
     let {
@@ -63,6 +64,7 @@
         editable = true,
         createText,
         onCreateClick,
+        creatable = true,
     }: Props = $props();
 
     let rowSelection = $state<RowSelectionState>({});
@@ -194,16 +196,18 @@
                 {m['common.delete']()}
             </Button>
         {/if}
-        {#if onCreateClick}
-            <Button variant="secondary" onclick={onCreateClick}>
-                {createText || m['common.create']()}
-            </Button>
-        {:else}
-            <Button variant="secondary">
-                <Link href={`${$location}/new`} class="p-0 !no-underline">
+        {#if creatable}
+            {#if onCreateClick}
+                <Button variant="secondary" onclick={onCreateClick}>
                     {createText || m['common.create']()}
-                </Link>
-            </Button>
+                </Button>
+            {:else}
+                <Button variant="secondary">
+                    <Link href={`${$location}/new`} class="p-0 !no-underline">
+                        {createText || m['common.create']()}
+                    </Link>
+                </Button>
+            {/if}
         {/if}
     </div>
 </div>

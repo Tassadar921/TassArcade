@@ -10,6 +10,7 @@
         "delete": "Supprimer",
         "create": "Créer",
         "cancel": "Annuler",
+        "remove": "Supprimer",
         "add": "Ajouter",
         "back-to-home": "Retour à la page d'accueil",
         "name": "Nom",
@@ -230,7 +231,8 @@
                 },
                 "fields": {
                     "role": "Rôle"
-                }
+                },
+                "add": "Ajouter un administrateur"
             },
             "equipments": {
                 "title": "Gérer les équipments",

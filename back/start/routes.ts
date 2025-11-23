@@ -113,6 +113,9 @@ router
                                             .group((): void => {
                                                 router.get('/init', [CompanyAdministratorController, 'init']);
                                                 router.get('/', [CompanyAdministratorController, 'getAll']);
+                                                router.get('/search', [CompanyAdministratorController, 'searchUsers']);
+                                                router.post('/add', [CompanyAdministratorController, 'addAdministrator']);
+                                                router.post('/remove', [CompanyAdministratorController, 'removeAdministrator']);
                                             })
                                             .prefix('administrators');
 
