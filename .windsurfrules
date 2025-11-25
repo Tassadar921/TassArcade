@@ -1,0 +1,11 @@
+Always use context7 when I need code generation, setup or configuration steps, or library/API documentation. This means you should automatically use the Context7 MCP tools to resolve library id and get library docs without me having to explicitly ask.
+For the backend, I use Adonisjs v6 & postgres database.
+For the frontend, I use Svelte 5 (runes mode), Tailwind v4 & Sveltekit 2 for SSR.
+Crée un composant Svelte avec TypeScript en suivant ces règles :
+- Typage fort pour toutes les variables, fonctions et props
+- Interfaces détaillées pour les types personnalisés
+- Types explicites pour les événements
+- Utilisation de $state et $derived avec leurs types génériques
+- Documentation des types complexes
+- Gestion stricte des valeurs null/undefined
+- Export des types pour une réutilisation externe
