@@ -5,24 +5,9 @@ import { DataTableActions, SortableColumn } from '#lib/components/ui/data-table'
 import type { SearchCompanyAdministrator, SerializedCompanyAdministrator } from 'backend/types';
 import { Checkbox } from '#lib/components/ui/checkbox';
 import DatatableSearchCompanyAdministratorAction from '#lib/partials/profile/company/administrators/DatatableSearchCompanyAdministratorAction.svelte';
+import DatatableRemoveCompanyAdministratorAction from '#lib/partials/profile/company/administrators/DatatableRemoveCompanyAdministratorAction.svelte';
 
-export const getCompanyAdministratorsColumns = (onSort: (field: string, order: 'asc' | 'desc') => void): ColumnDef<SerializedCompanyAdministrator>[] => [
-    {
-        id: 'select',
-        header: ({ table }) =>
-            renderComponent(Checkbox, {
-                checked: table.getIsAllPageRowsSelected(),
-                indeterminate: table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected(),
-                onCheckedChange: (value: boolean): void => table.toggleAllPageRowsSelected(value),
-                'aria-label': m['common.datatable.select.all'](),
-            }),
-        cell: ({ row }) =>
-            renderComponent(Checkbox, {
-                checked: row.getIsSelected(),
-                'aria-label': m['common.datatable.select.row'](),
-            }),
-        enableHiding: false,
-    },
+export const getCompanyAdministratorsColumns = (onSort: (field: string, order: 'asc' | 'desc') => void, removeAdministrator: (userId: string) => void): ColumnDef<SerializedCompanyAdministrator>[] => [
     {
         id: 'username',
         accessorKey: 'user.username',
@@ -58,6 +43,15 @@ export const getCompanyAdministratorsColumns = (onSort: (field: string, order: '
                 title: m['company.edit.administrators.fields.role'](),
                 field: 'role',
                 onclick: onSort,
+            }),
+    },
+    {
+        header: m['common.datatable.actions'](),
+        enableHiding: false,
+        cell: ({ row }) =>
+            renderComponent(DatatableRemoveCompanyAdministratorAction, {
+                administrator: row.original,
+                removeAdministrator,
             }),
     },
 ];

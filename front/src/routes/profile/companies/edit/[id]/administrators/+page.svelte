@@ -1,13 +1,14 @@
 <script lang="ts">
     import { page } from '$app/state';
     import { onMount } from 'svelte';
-    import type { PaginatedCompanyAdministrators, PaginatedSearchCompanyAdministrators } from 'backend/types';
+    import type { PaginatedCompanyAdministrators, PaginatedSearchCompanyAdministrators, SearchCompanyAdministrator, SerializedCompanyAdministrator } from 'backend/types';
     import { wrappedFetch } from '#lib/services/requestService';
     import { DataTable } from '#lib/components/ui/data-table';
     import { getCompanyAdministratorsColumns, getSearchCompanyAdministratorsColumns } from './columns';
     import { m } from '#lib/paraglide/messages';
     import { Dialog, DialogContent, DialogPortal } from '#lib/components/ui/dialog';
     import AddCompanyAdministrator from '#lib/partials/profile/company/administrators/AddCompanyAdministrator.svelte';
+    import { showToast } from '#lib/services/toastService';
 
     let paginatedCompanyAdministrators: PaginatedCompanyAdministrators | undefined = $state();
     let paginatedUsers: PaginatedSearchCompanyAdministrators | undefined = $state();
@@ -35,6 +36,19 @@
             paginatedCompanyAdministrators = data;
         });
     };
+
+    const removeAdministrator = async (userId: string): Promise<void> => {
+        if (!paginatedCompanyAdministrators) {
+            return;
+        }
+
+        await wrappedFetch(`/profile/companies/edit/${page.params.id}/administrators/remove`, { method: 'POST', body: { userId } }, ({ data }): void => {
+            showToast(data.message, data.isSuccess, 'success');
+            paginatedCompanyAdministrators!.administrators = paginatedCompanyAdministrators!.administrators.filter(
+                (administrator: SerializedCompanyAdministrator, i: number): boolean => administrator.user.id !== userId
+            );
+        });
+    };
 </script>
 
 {#if paginatedCompanyAdministrators}
@@ -42,7 +56,7 @@
         <DataTable
             paginatedObject={paginatedCompanyAdministrators}
             data={paginatedCompanyAdministrators.administrators}
-            columns={getCompanyAdministratorsColumns(handleSort)}
+            columns={getCompanyAdministratorsColumns(handleSort, removeAdministrator)}
             onSearch={getAdministrators}
             bind:query
             bind:selectedRows={selectedUsers}

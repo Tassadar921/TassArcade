@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { PaginatedCompanyAdministrators, PaginatedSearchCompanyAdministrators, SearchCompanyAdministrator } from 'backend/types';
+    import type { PaginatedSearchCompanyAdministrators, SearchCompanyAdministrator } from 'backend/types';
     import { DataTable } from '#lib/components/ui/data-table';
     import { wrappedFetch } from '#lib/services/requestService';
     import { page } from '$app/state';

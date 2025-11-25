@@ -110,7 +110,7 @@ export default class CompanyAdministratorController {
         }
 
         const administrator: CompanyAdministrator = await CompanyAdministrator.create({ companyId: company.id, userId, role: CompanyAdministratorRoleEnum.ADMINISTRATOR });
-        await Promise.all([cache.deleteByTag({ tags: [`company-search-users:${companyId}`] }), administrator.load('user')]);
+        await Promise.all([cache.deleteByTag({ tags: [`company:${companyId}`] }), administrator.load('user')]);
 
         return response.ok({
             message: i18n.t('messages.administrator.add.success', { username: administrator.user.username }),
@@ -126,15 +126,15 @@ export default class CompanyAdministratorController {
         const administrator: CompanyAdministrator | null = await this.companyAdministratorRepository.findOneBy({ companyId: company.id, userId });
         if (!administrator) {
             return response.notFound({
-                message: i18n.t('messages.administrator.remove.error.not-found'),
+                error: i18n.t('messages.administrator.remove.error.not-found'),
             });
         } else if (administrator.role === CompanyAdministratorRoleEnum.CEO) {
             return response.badRequest({
-                message: i18n.t('messages.administrator.remove.error.ceo'),
+                error: i18n.t('messages.administrator.remove.error.ceo'),
             });
         }
 
-        await Promise.all([administrator.delete(), cache.deleteByTag({ tags: [`company-search-users:${companyId}`] })]);
+        await Promise.all([administrator.delete(), cache.deleteByTag({ tags: [`company:${companyId}`] })]);
 
         return response.ok({ message: i18n.t('messages.administrator.remove.success', { username: administrator.user.username }) });
     }

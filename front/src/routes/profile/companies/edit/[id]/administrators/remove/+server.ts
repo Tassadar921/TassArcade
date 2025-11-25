@@ -4,7 +4,6 @@ import { m } from '#lib/paraglide/messages';
 
 export const POST: RequestHandler = async ({ request, locals, params }): Promise<Response> => {
     const body = await request.json();
-    console.log(body);
     try {
         const response = await locals.client.post(`/api/profile/company/${params.id}/administrators/remove`, {
             userId: body.userId,
