@@ -1,5 +1,5 @@
 import vine from '@vinejs/vine';
-import { sortByUserRule } from '#validators/custom/admin/user';
+import { sortByUserRule } from '#validators/custom/user';
 
 export const searchAdminUsersValidator = vine.compile(
     vine.object({

@@ -4,7 +4,6 @@ import type { PageServerLoad } from './$types';
 import { type Actions, fail, type RequestEvent } from '@sveltejs/kit';
 import type { FormError } from '../../../../../app';
 import { extractFormData, extractFormErrors } from '#lib/services/requestService';
-import { page } from '$app/state';
 
 export const load: PageServerLoad = async (event) => {
     const { locals, params, cookies } = event;
@@ -36,14 +35,19 @@ export const load: PageServerLoad = async (event) => {
             ...headers,
         };
     } catch (error: any) {
-        redirect(
-            `/${cookies.get('PARAGLIDE_LOCALE')}/profile/companies`,
-            {
-                type: 'error',
-                message: error?.response?.data?.error ?? m['common.error.default-message'](),
-            },
-            event
-        );
+        const form: FormError = {
+            data: {},
+            errors: extractFormErrors(error?.response?.data),
+        };
+
+        cookies.set('formError', JSON.stringify(form), {
+            path: '/',
+            httpOnly: true,
+            sameSite: 'lax',
+            maxAge: 60 * 60 * 24 * 7,
+        });
+
+        redirect(303, `/${cookies.get('PARAGLIDE_LOCALE')}/profile/companies`);
     }
 };
 
@@ -105,7 +109,7 @@ export const actions: Actions = {
         }
     },
     update: async (event: RequestEvent): Promise<void> => {
-        const { request, cookies, locals } = event;
+        const { request, cookies, locals, params } = event;
 
         const formData: FormData = await request.formData();
 
@@ -113,6 +117,13 @@ export const actions: Actions = {
         let isSuccess: boolean = true;
 
         try {
+            const companyId: string | undefined = params.id;
+            if (!companyId) {
+                throw 'Missing variable';
+            }
+
+            formData.append('companyId', companyId);
+
             const postalCode: FormDataEntryValue | null = formData.get('postal-code');
             const countryCode: FormDataEntryValue | null = formData.get('country-code');
             if (!postalCode || !countryCode) {

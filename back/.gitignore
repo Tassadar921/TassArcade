@@ -10,11 +10,12 @@ tmp
 .env.development.local
 
 # Assets & compiled code
+.persist
+.adonisjs
 static/profile-picture
 static/language-flag
 static/equipment-thumbnail
-.persist
-.adonisjs
+static/company-logo
 
 # Build tools specific
 npm-debug.log

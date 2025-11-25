@@ -3,11 +3,11 @@
     import AddressExternalLink from '#components/AddressExternalLink.svelte';
     import { Button } from '#lib/components/ui/button';
     import { DialogDescription, DialogHeader, DialogTitle } from '#lib/components/ui/dialog';
-    import type { SerializedCompany, SerializedCompanyEquipmentType, SerializedEquipmentLight } from 'backend/types';
+    import type { SerializedCompanyEquipmentType, SerializedCompanyLight, SerializedEquipmentLight } from 'backend/types';
 
     type Props = {
         handleCompanyEquipmentClicked: (equipment: SerializedCompanyEquipmentType) => void;
-        selectedCompany: SerializedCompany | null;
+        selectedCompany: SerializedCompanyLight | null;
         reorganizedEquipments: Record<string, { category: SerializedEquipmentLight; items: SerializedCompanyEquipmentType[] }> | undefined;
     };
 

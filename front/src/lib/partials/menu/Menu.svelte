@@ -7,7 +7,6 @@
     import { Link } from '#lib/components/ui/link';
     import { page } from '$app/state';
     import type { Snippet } from 'svelte';
-    import { FooterGroup, FooterGroupItem } from '#lib/components/ui/footer';
 
     type Props = {
         children: Snippet;

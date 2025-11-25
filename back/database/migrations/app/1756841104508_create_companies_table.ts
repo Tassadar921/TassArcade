@@ -13,6 +13,7 @@ export default class extends BaseSchema {
             table.string('phone_number', 50).nullable();
             table.boolean('enabled').notNullable().defaultTo(false);
             table.uuid('address_id').notNullable().references('id').inTable('addresses');
+            table.uuid('logo_id').nullable().references('id').inTable('files').onDelete('SET NULL');
             table.timestamp('created_at');
             table.timestamp('updated_at');
         });
