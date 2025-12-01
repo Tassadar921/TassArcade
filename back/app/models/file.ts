@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { BaseModel, column } from '@adonisjs/lucid/orm';
+import { afterCreate, BaseModel, column } from '@adonisjs/lucid/orm';
 import SerializedFile from '#types/serialized/serialized_file';
 import FileTypeEnum from '#types/enum/file_type_enum';
 
@@ -33,6 +33,11 @@ export default class File extends BaseModel {
 
     @column.dateTime({ autoCreate: true, autoUpdate: true })
     declare updatedAt: DateTime;
+
+    @afterCreate()
+    public static async refresh(file: File): Promise<void> {
+        await file.refresh();
+    }
 
     public apiSerialize(): SerializedFile {
         return {

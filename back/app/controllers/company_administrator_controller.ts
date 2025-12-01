@@ -55,7 +55,7 @@ export default class CompanyAdministratorController {
         });
     }
 
-    public async getAll({ request, response, user }: HttpContext): Promise<void> {
+    public async getAll({ request, response, user }: HttpContext) {
         const { companyId } = await companyIdValidator.validate(request.params());
         const { query, page, limit, sortBy: inputSortBy } = await request.validateUsing(searchCompanyAdministratorsValidator);
         const company: Company = await this.companyRepository.getFromUser(companyId, user);
@@ -75,12 +75,10 @@ export default class CompanyAdministratorController {
         );
     }
 
-    public async searchUsers({ request, response, user }: HttpContext): Promise<void> {
+    public async searchUsers({ request, response, user }: HttpContext) {
         const { companyId } = await companyIdValidator.validate(request.params());
         const { query, page, limit, sortBy: inputSortBy } = await request.validateUsing(searchUsersValidator);
         const company: Company = await this.companyRepository.getFromUser(companyId, user);
-
-        await cache.deleteByTag({ tags: [`company:${companyId}`] });
 
         return response.ok(
             await cache.getOrSet({
@@ -97,7 +95,7 @@ export default class CompanyAdministratorController {
         );
     }
 
-    public async addAdministrator({ request, response, user, i18n }: HttpContext): Promise<void> {
+    public async addAdministrator({ request, response, user, i18n }: HttpContext) {
         const { companyId } = await companyIdValidator.validate(request.params());
         const { userId } = await request.validateUsing(addAdministratorValidator);
         const company: Company = await this.companyRepository.getFromUser(companyId, user);
@@ -110,7 +108,7 @@ export default class CompanyAdministratorController {
         }
 
         const administrator: CompanyAdministrator = await CompanyAdministrator.create({ companyId: company.id, userId, role: CompanyAdministratorRoleEnum.ADMINISTRATOR });
-        await Promise.all([cache.deleteByTag({ tags: [`company:${companyId}`] }), administrator.load('user')]);
+        await Promise.all([cache.deleteByTag({ tags: [`company:${companyId}`] })]);
 
         return response.ok({
             message: i18n.t('messages.administrator.add.success', { username: administrator.user.username }),
@@ -118,7 +116,7 @@ export default class CompanyAdministratorController {
         });
     }
 
-    public async removeAdministrator({ request, response, user, i18n }: HttpContext): Promise<void> {
+    public async removeAdministrator({ request, response, user, i18n }: HttpContext) {
         const { companyId } = await companyIdValidator.validate(request.params());
         const { userId } = await request.validateUsing(removeAdministratorValidator);
         const company: Company = await this.companyRepository.getFromUser(companyId, user);

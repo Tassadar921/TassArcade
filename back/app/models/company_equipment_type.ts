@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { BaseModel, beforeFetch, beforeFind, belongsTo, column } from '@adonisjs/lucid/orm';
+import { afterCreate, BaseModel, beforeFetch, beforeFind, belongsTo, column } from '@adonisjs/lucid/orm';
 import type { BelongsTo } from '@adonisjs/lucid/types/relations';
 import Company from '#models/company';
 import EquipmentType from '#models/equipment_type';
@@ -12,6 +12,9 @@ export default class CompanyEquipmentType extends BaseModel {
 
     @column({ isPrimary: true })
     declare id: string;
+
+    @translation()
+    declare name: Translation;
 
     @translation()
     declare description: Translation;
@@ -38,17 +41,24 @@ export default class CompanyEquipmentType extends BaseModel {
     @beforeFetch()
     public static preloadDefaults(companyEquipmentTypeQuery: any): void {
         companyEquipmentTypeQuery.preload('equipmentType', (equipmentTypeQuery: any): void => {
-            equipmentTypeQuery.preload('equipment', (equipmentQuery: any): void => {
-                equipmentQuery.preload('thumbnail');
-            });
+            equipmentTypeQuery.preload('equipment');
         });
+    }
+
+    @afterCreate()
+    public static async refresh(companyEquipment: CompanyEquipmentType): Promise<void> {
+        await companyEquipment.load('equipmentType', (equipmentTypeQuery: any): void => {
+            equipmentTypeQuery.preload('equipment');
+        });
+        await companyEquipment.refresh();
     }
 
     public apiSerialize(language: Language): SerializedCompanyEquipmentType {
         return {
             id: this.id,
             category: this.equipmentType.equipment.apiSerializeLight(language),
-            name: this.equipmentType.name.get(language.code) || this.equipmentType.name.get(Language.LANGUAGE_ENGLISH.code) || '',
+            type: this.equipmentType.apiSerialize(language),
+            name: this.name.get(language.code) || this.name.get(Language.LANGUAGE_ENGLISH.code) || '',
             description: this.description?.get(language.code) || this.description?.get(Language.LANGUAGE_ENGLISH.code) || undefined,
             createdAt: this.createdAt?.toString(),
             updatedAt: this.updatedAt?.toString(),

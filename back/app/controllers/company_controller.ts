@@ -117,7 +117,6 @@ export default class CompanyController {
             latitude: data.latitude,
             longitude: data.longitude,
         });
-        await address.refresh();
 
         company = await Company.create({
             siret,
@@ -126,7 +125,6 @@ export default class CompanyController {
             phoneNumber: phoneNumber?.format('E.164'),
             addressId: address.id,
         });
-        await company.refresh();
 
         await CompanyAdministrator.create({
             role: CompanyAdministratorRoleEnum.CEO,
@@ -138,7 +136,7 @@ export default class CompanyController {
             company = await this.updateLogo(company, logo);
         }
 
-        await Promise.all([company.load('address'), company.load('equipments'), company.load('logo'), cache.deleteByTag({ tags: ['companies'] })]);
+        await Promise.all([cache.deleteByTag({ tags: ['companies'] })]);
 
         return response.created({
             message: i18n.t('messages.company.create.success', { companyName: company.name }),
@@ -225,7 +223,6 @@ export default class CompanyController {
 
         if (logo) {
             company = await this.updateLogo(company, logo);
-            await company.load('logo');
         }
 
         await Promise.all([
@@ -345,15 +342,12 @@ export default class CompanyController {
 
         company.logoId = newLogo.id;
 
-        await Promise.all([
-            newLogo.refresh(),
-            cache.set({
-                key: `company-logo:${company.id}`,
-                tags: [`company:${company.id}`],
-                ttl: '1h',
-                value: app.makePath(newLogo.path),
-            }),
-        ]);
+        await cache.set({
+            key: `company-logo:${company.id}`,
+            tags: [`company:${company.id}`],
+            ttl: '1h',
+            value: app.makePath(newLogo.path),
+        });
 
         return company;
     }

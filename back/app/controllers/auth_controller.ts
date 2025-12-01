@@ -80,7 +80,6 @@ export default class AuthController {
                 role: UserRoleEnum.USER,
                 acceptedTermsAndConditions: true,
             });
-            await existingUser.refresh();
         }
 
         try {

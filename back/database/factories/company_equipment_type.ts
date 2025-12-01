@@ -5,6 +5,7 @@ import { Translation } from '@stouder-io/adonis-translatable';
 
 export const CompanyEquipmentTypeFactory = Factory.define(CompanyEquipmentType, ({ faker }: FactoryContextContract) => {
     return {
+        name: Math.random() > 0.5 ? Translation.from({ en: faker.lorem.sentence({ min: 1, max: 5 }), fr: faker.lorem.sentence({ min: 1, max: 5 }) }) : undefined,
         description: Math.random() > 0.5 ? Translation.from({ en: faker.lorem.sentence({ min: 1, max: 5 }), fr: faker.lorem.sentence({ min: 1, max: 5 }) }) : undefined,
     };
 }).build();

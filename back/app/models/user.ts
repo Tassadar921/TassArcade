@@ -72,6 +72,14 @@ export default class User extends compose(BaseModel, AuthFinder) {
         userQuery.preload('profilePicture');
     }
 
+    @afterCreate()
+    public static async refresh(user: User): Promise<void> {
+        if (user.profilePictureId) {
+            await user.load('profilePicture');
+        }
+        await user.refresh();
+    }
+
     @beforeDelete()
     public static async deleteNotCascadedRelations(user: User): Promise<void> {
         if (user.profilePicture) {
