@@ -151,7 +151,6 @@ export default class OauthController {
             acceptedTermsAndConditions: true,
             role: UserRoleEnum.USER,
         });
-        await createdUser.refresh();
         await cache.deleteByTag({ tags: [`admin-users`] });
 
         await UserToken.create({
@@ -167,7 +166,7 @@ export default class OauthController {
         const profilePicturePath: string = await this.fileService.saveOauthProfilePictureFromUrl(url);
         const { size, mimeType, extension, name } = await this.fileService.getFileInfo(app.makePath(profilePicturePath));
 
-        const profilePicture: File | null = await File.create({
+        return await File.create({
             name,
             path: profilePicturePath,
             extension,
@@ -175,8 +174,6 @@ export default class OauthController {
             size,
             type: FileTypeEnum.PROFILE_PICTURE,
         });
-
-        return await profilePicture.refresh();
     }
 
     private async revokeAccessToken(user: User): Promise<void> {

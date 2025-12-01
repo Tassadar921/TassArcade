@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { BaseModel, beforeFetch, beforeFind, belongsTo, column } from '@adonisjs/lucid/orm';
+import { afterCreate, BaseModel, beforeFetch, beforeFind, belongsTo, column } from '@adonisjs/lucid/orm';
 import type { BelongsTo } from '@adonisjs/lucid/types/relations';
 import Company from '#models/company';
 import User from '#models/user';
@@ -37,6 +37,12 @@ export default class CompanyAdministrator extends BaseModel {
     @beforeFetch()
     public static preloadDefaults(companyAdministratorQuery: any): void {
         companyAdministratorQuery.preload('user');
+    }
+
+    @afterCreate()
+    public static async refresh(companyAdministrator: CompanyAdministrator): Promise<void> {
+        await companyAdministrator.load('user');
+        await companyAdministrator.refresh();
     }
 
     public apiSerialize(): SerializedCompanyAdministrator {

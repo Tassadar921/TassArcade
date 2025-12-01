@@ -18,6 +18,12 @@ export const createCompanyValidator = vine.compile(
         countryCode: vine.string().trim().fixedLength(2),
         email: vine.string().trim().email().maxLength(100).optional(),
         phoneNumber: vine.string().trim().minLength(8).maxLength(20).optional(),
+        logo: vine
+            .file({
+                size: '2mb',
+                extnames: ['png', 'jpg', 'jpeg', 'webp', 'svg'],
+            })
+            .optional(),
     })
 );
 
@@ -30,9 +36,9 @@ export const searchCompaniesValidator = vine.compile(
     })
 );
 
-export const deleteCompaniesValidator = vine.compile(
+export const deleteCompanyValidator = vine.compile(
     vine.object({
-        companies: vine.array(vine.string().uuid()),
+        companyId: vine.string().uuid(),
     })
 );
 
@@ -44,6 +50,7 @@ export const getCompanyValidator = vine.compile(
 
 export const updateCompanyValidator = vine.compile(
     vine.object({
+        companyId: vine.string().uuid(),
         siret: vine.string().fixedLength(14),
         name: vine.string().trim().minLength(3).maxLength(100),
         address: vine.string().trim().minLength(5).maxLength(100),
@@ -53,6 +60,12 @@ export const updateCompanyValidator = vine.compile(
         countryCode: vine.string().trim().fixedLength(2),
         email: vine.string().trim().email().maxLength(100).optional(),
         phoneNumber: vine.string().trim().minLength(8).maxLength(20).optional(),
+        logo: vine
+            .file({
+                size: '2mb',
+                extnames: ['png', 'jpg', 'jpeg', 'webp', 'svg'],
+            })
+            .optional(),
     })
 );
 

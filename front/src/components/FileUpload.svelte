@@ -3,6 +3,7 @@
     import { raw } from '#lib/services/stringService';
     import Loader from '#components/Loader.svelte';
     import { Upload } from '@lucide/svelte';
+    import { onMount } from 'svelte';
 
     type Props = {
         name: string;
@@ -14,23 +15,38 @@
         id?: string;
         disabled?: boolean;
         file?: File;
+        error?: string;
     };
 
-    let { name, title = m['common.file.title'](), description = m['common.file.description'](), accept, fileName = '', pathPrefix, id, disabled = false, file = $bindable() }: Props = $props();
+    let { name, title = m['common.file.title'](), description = m['common.file.description'](), accept, fileName = '', pathPrefix, id, disabled = false, file = $bindable(), error }: Props = $props();
 
     let inputRef: HTMLInputElement;
-    let acceptedFormats = $state(
+    let acceptedFormats: string = $state(
         accept
             .split(' ')
             .map((format: string) => `.${format}`)
             .join(',')
     );
-    let isDragging = $state(false);
-    let isLoading = false;
+    let isDragging: boolean = $state(false);
+    let isLoading: boolean = false;
     let previewSrc: string = $state('');
 
+    onMount(() => {
+        if (fileName && pathPrefix && id && inputRef) {
+            const bust = Date.now();
+            urlToFile(`/assets/${pathPrefix}/${id}?no-cache=true&_=${bust}`, fileName).then((f) => {
+                const dt = new DataTransfer();
+                dt.items.add(f);
+                inputRef.files = dt.files;
+                inputRef.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+        } else {
+            previewSrc = '';
+        }
+    });
+
     const handleFileChange = (event: Event): void => {
-        const target = event.target as HTMLInputElement;
+        const target: HTMLInputElement = event.target as HTMLInputElement;
         if (disabled || !target.files || target.files.length === 0) return;
 
         file = target.files[0];
@@ -48,18 +64,24 @@
     };
 
     const handleDragOver = (event: DragEvent): void => {
-        if (disabled) return;
+        if (disabled) {
+            return;
+        }
         event.preventDefault();
         isDragging = true;
     };
 
     const handleDragLeave = (): void => {
-        if (disabled) return;
+        if (disabled) {
+            return;
+        }
         isDragging = false;
     };
 
     const handleDrop = (event: DragEvent): void => {
-        if (disabled) return;
+        if (disabled) {
+            return;
+        }
         event.preventDefault();
         isDragging = false;
 
@@ -82,21 +104,6 @@
         const blob = await res.blob();
         return new File([blob], filename, { type: blob.type });
     };
-
-    $effect((): void => {
-        if (fileName && pathPrefix && id && inputRef) {
-            if (!inputRef.files?.length) {
-                urlToFile(`/assets/${pathPrefix}/${id}`, fileName).then((f) => {
-                    const dt = new DataTransfer();
-                    dt.items.add(f);
-                    inputRef.files = dt.files;
-                    inputRef.dispatchEvent(new Event('change', { bubbles: true }));
-                });
-            }
-        } else {
-            previewSrc = '';
-        }
-    });
 </script>
 
 <Loader {isLoading} />
@@ -141,4 +148,8 @@
             {/if}
         </span>
     </button>
+
+    {#if error && file}
+        <p class="text-red-500 text-sm mt-1">{error}</p>
+    {/if}
 </div>

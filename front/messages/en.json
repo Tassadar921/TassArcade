@@ -10,6 +10,8 @@
         "delete": "Delete",
         "create": "Create",
         "cancel": "Cancel",
+        "remove": "Remove",
+        "add": "Add",
         "back-to-home": "Back to homepage",
         "name": "Name",
         "created-at": "Created at",
@@ -209,10 +211,9 @@
                 "introduction": "Company Verification\n\nPlease upload a recent Kbis extract (less than 3 months old) or an INPI registration certificate or equivalent to activate your professional account.",
                 "file-upload": {
                     "title": "Upload your document",
-                    "description": "Accepted formats: PDF, JPG, PNG\nMaximum size: 5 MB\nRequired document: Complete and legible Kbis extract, recent INPI certificate or equivalent",
+                    "description": "Accepted formats: PDF, JPG, JPEG, PNG\nMaximum size: 5 MB\nRequired document: Complete and legible Kbis extract, recent INPI certificate or equivalent",
                     "error": {
-                        "type": "The file must be a PDF, JPG or PNG.",
-                        "format": "The file must be a PDF, JPG or PNG.",
+                        "type": "The file must be a PDF, JPG, JPEG or PNG.",
                         "size": "The file must be less than 5 MB."
                     }
                 },
@@ -220,6 +221,24 @@
                 "popover": {
                     "title": "Data Processing",
                     "content": "The Kbis extract or INPI certificate is automatically analyzed to verify the legal existence of your company.\n\nUploaded files are not retained after verification.\n\nOnly the data necessary for identification (company name, SIRET, address, legal representative) is stored.\n\nThis processing is carried out as part of the execution of the service, in accordance with GDPR.\n\nFor any questions or to exercise your rights (access, correction, deletion), contact:\n dpo@yourapp.com"
+                }
+            },
+            "administrators": {
+                "title": "Manage administrators",
+                "meta": {
+                    "title": "Edit Administrators",
+                    "description": "Manage the administrators of your company. Search for users and update access permissions easily."
+                },
+                "fields": {
+                    "role": "Role"
+                },
+                "add": "Add administrator"
+            },
+            "equipments": {
+                "title": "Manage equipments",
+                "meta": {
+                    "title": "Edit Equipments",
+                    "description": "Manage your company's equipments. Add, edit, or remove equipments directly from your company settings."
                 }
             }
         },
@@ -289,6 +308,14 @@
             "email": {
                 "placeholder": "ceo@ashfordandco.com",
                 "label": "Email"
+            },
+            "logo": {
+                "title": "Logo",
+                "description": "Accepted formats: JPG, JPEG, PNG, WEBP\nMaximum size: 2 MB",
+                "error": {
+                    "type": "The logo must be an image.",
+                    "size": "The logo must be less than 5 MB."
+                }
             },
             "enabled": "Enabled"
         }

@@ -6,14 +6,14 @@ export const serveStaticProfilePictureFileValidator = vine.compile(
     })
 );
 
-export const serveStaticLanguageFlagFileValidator = vine.compile(
-    vine.object({
-        languageCode: vine.string().fixedLength(2).toLowerCase(),
-    })
-);
-
 export const serveStaticEquipmentThumbnailFileValidator = vine.compile(
     vine.object({
         equipmentId: vine.string().uuid(),
+    })
+);
+
+export const serveStaticCompanyLogoFileValidator = vine.compile(
+    vine.object({
+        companyId: vine.string().uuid(),
     })
 );

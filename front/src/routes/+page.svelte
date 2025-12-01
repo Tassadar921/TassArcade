@@ -6,7 +6,7 @@
     import { onMount } from 'svelte';
     import { MultiSelectWithTags, type SelectItem } from '#lib/components/ui/multi-select-with-tags';
     import { page } from '$app/state';
-    import type { Cluster, SerializedCompanyEquipmentType, SerializedEquipment, SerializedEquipmentType, SerializedEquipmentLight, SerializedCompany } from 'backend/types';
+    import type { Cluster, SerializedCompanyEquipmentType, SerializedEquipment, SerializedEquipmentType, SerializedEquipmentLight, SerializedCompanyLight } from 'backend/types';
     import MapControls from '#lib/partials/map/MapControls.svelte';
     import { mode } from 'mode-watcher';
     import { wrappedFetch } from '#lib/services/requestService';
@@ -24,7 +24,7 @@
 
     let selectedEquipments: SelectItem[] = $state([]);
 
-    let selectedCompany: SerializedCompany | null = $state(null);
+    let selectedCompany: SerializedCompanyLight | null = $state(null);
     let selectedCompanyEquipment: SerializedCompanyEquipmentType | null = $state(null);
     let reorganizedEquipments: Record<string, { category: SerializedEquipmentLight; items: SerializedCompanyEquipmentType[] }> | undefined = $state();
 

@@ -50,7 +50,7 @@
         ...config,
     }));
 
-    let activeTab: TabKey = $state(displayedTabs.find((tab) => $location.replace(`/${$language}`, '') === tab.path)?.key ?? 'profile');
+    let activeTab: TabKey = $state(displayedTabs.find((tab) => $location.replace(`/${$language}`, '') === tab.path)?.key ?? tabs.profile.path);
 
     const handleSwitchTab = (tab: TabKey): void => {
         activeTab = tab;
@@ -70,7 +70,7 @@
 <div class="w-full grid grid-cols-2 gap-2 mt-5">
     {#each displayedTabs as { key, path, translationKey }}
         <Link class="p-0" href={path} disabled={activeTab === key}>
-            <Button variant="outline" class="w-full" disabled={activeTab === key} onclick={() => handleSwitchTab(key)}>
+            <Button variant="secondary" class="w-full" disabled={activeTab === key} onclick={() => handleSwitchTab(key)}>
                 {m[`${translationKey}.title`]()}
             </Button>
         </Link>

@@ -108,7 +108,11 @@ export default class ProfileController {
             if (user.profilePictureId) {
                 // Physically delete the file
                 this.fileService.delete(user.profilePicture);
+
+                const oldProfilePicture: File = user.profilePicture;
+                user.profilePictureId = null;
                 await user.save();
+                await oldProfilePicture.delete();
             }
 
             profilePicture.clientName = `${cuid()}-${this.slugifyService.slugify(profilePicture.clientName)}`;
@@ -122,7 +126,6 @@ export default class ProfileController {
                 size: profilePicture.size,
                 type: FileTypeEnum.PROFILE_PICTURE,
             });
-            await newProfilePicture.refresh();
             user.profilePictureId = newProfilePicture.id;
 
             await cache.deleteByTag({ tags: [`user:${user.id}`, `admin-users`, `admin-user:${user.id}`] });
@@ -135,7 +138,6 @@ export default class ProfileController {
         }
 
         await user.save();
-        await user.load('profilePicture');
 
         return response.ok({
             message: i18n.t('messages.profile.update-profile.success'),

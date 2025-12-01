@@ -1,12 +1,15 @@
 import { DateTime } from 'luxon';
-import { BaseModel, beforeDelete, beforeFetch, beforeFind, belongsTo, column, hasMany } from '@adonisjs/lucid/orm';
+import { afterCreate, BaseModel, beforeFetch, beforeFind, belongsTo, column, hasMany } from '@adonisjs/lucid/orm';
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations';
 import Address from '#models/address';
 import CompanyAdministrator from '#models/company_administrator';
 import CompanyEquipmentType from '#models/company_equipment_type';
 import Language from '#models/language';
-import { SerializedCompany, SerializedCompanyEquipmentType } from '../types/index.js';
 import SerializedCompanyLight from '#types/serialized/serialized_company_light';
+import File from '#models/file';
+import SerializedCompanyEquipmentType from '#types/serialized/serialized_company_equipment_type';
+import SerializedCompany from '#types/serialized/serialized_company';
+import type { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model';
 
 export default class Company extends BaseModel {
     public static table: string = 'companies';
@@ -30,6 +33,14 @@ export default class Company extends BaseModel {
     declare enabled: boolean;
 
     @column()
+    declare logoId: string | null;
+
+    @belongsTo((): typeof File => File, {
+        foreignKey: 'logoId',
+    })
+    declare logo: BelongsTo<typeof File>;
+
+    @column()
     declare addressId: string;
 
     @belongsTo((): typeof Address => Address)
@@ -49,19 +60,28 @@ export default class Company extends BaseModel {
 
     @beforeFind()
     @beforeFetch()
-    public static preloadDefaults(userQuery: any): void {
-        userQuery.preload('address').preload('equipments');
+    public static preloadDefaults(companyQuery: ModelQueryBuilderContract<typeof this>): void {
+        companyQuery.preload('address');
+        companyQuery.preload('equipments');
+        companyQuery.preload('logo');
     }
 
-    @beforeDelete()
-    public static async deleteNotCascadedRelations(company: Company): Promise<void> {
-        await company.address.delete();
+    @afterCreate()
+    public static async refresh(company: Company): Promise<void> {
+        let promises = [company.load('address'), company.load('equipments')];
+        if (company.logoId) {
+            promises.push(company.load('logo'));
+        }
+
+        await Promise.all(promises);
+        await company.refresh();
     }
 
     public apiSerializeLight(language: Language): SerializedCompanyLight {
         return {
             id: this.id,
             name: this.name,
+            logo: this.logo?.apiSerialize(),
             address: this.address.apiSerialize(),
             equipments: this.equipments
                 .map((equipmentType: CompanyEquipmentType): SerializedCompanyEquipmentType => equipmentType.apiSerialize(language))
@@ -76,10 +96,11 @@ export default class Company extends BaseModel {
             id: this.id,
             siret: this.siret,
             name: this.name,
-            address: this.address.apiSerialize(),
             phoneNumber: this.phoneNumber,
             email: this.email,
             enabled: this.enabled,
+            logo: this.logo?.apiSerialize(),
+            address: this.address.apiSerialize(),
             equipments: this.equipments
                 .map((equipmentType: CompanyEquipmentType): SerializedCompanyEquipmentType => equipmentType.apiSerialize(language))
                 .sort((a: SerializedCompanyEquipmentType, b: SerializedCompanyEquipmentType): number => a.name.localeCompare(b.name)),

@@ -5,6 +5,8 @@ export { LogRouteMethodEnum } from './enum/log_route_method_enum.js';
 export { UserRoleEnum } from './enum/user_role_enum.js';
 
 export type { PaginatedUsers } from './paginated/paginated_users.js';
+export type { PaginatedCompanyAdministrators } from './paginated/paginated_company_administrators.js';
+export type { PaginatedSearchCompanyAdministrators } from './paginated/paginated_search_company_administrators.js';
 export type { PaginatedCompanies } from './paginated/paginated_companies.js';
 
 export type { SerializedFile } from './serialized/serialized_file.js';
@@ -19,5 +21,7 @@ export type { SerializedCompanyAdministrator } from './serialized/serialized_com
 export type { SerializedAddress } from './serialized/serialized_address.js';
 export type { SerializedCompanyEquipmentType } from './serialized/serialized_company_equipment_type.js';
 export type { SerializedEquipmentLight } from './serialized/serialized_equipment_light.js';
+
+export type { SearchCompanyAdministrator } from './search_company_administrator.js';
 
 export type { Cluster } from './cluster.js';

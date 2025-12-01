@@ -84,15 +84,7 @@ export default class AdminUserController {
             password: cuid(),
         });
 
-        await user.refresh();
-
-        const promises: any[] = [cache.deleteByTag({ tags: ['admin-users'] })];
-
-        if (profilePicture) {
-            promises.push(user.load('profilePicture'));
-        }
-
-        await Promise.all(promises);
+        await Promise.all([cache.deleteByTag({ tags: ['admin-users'] })]);
 
         return response.created({ user: user.apiSerialize(), message: i18n.t('messages.admin.user.create.success', { email, username }) });
     }
@@ -119,7 +111,7 @@ export default class AdminUserController {
             await user.profilePicture.delete();
         }
 
-        await Promise.all([user.load('profilePicture'), cache.deleteByTag({ tags: ['admin-users', `admin-user:${user.id}`] })]);
+        await Promise.all([cache.deleteByTag({ tags: ['admin-users', `admin-user:${user.id}`] })]);
 
         return response.ok({ user: user.apiSerialize(), message: i18n.t('messages.admin.user.update.success', { username }) });
     }
@@ -148,7 +140,7 @@ export default class AdminUserController {
         inputProfilePicture.clientName = `${cuid()}-${this.slugifyService.slugify(inputProfilePicture.clientName)}`;
         const profilePicturePath: string = `static/profile-picture`;
         await inputProfilePicture.move(app.makePath(profilePicturePath));
-        const flag: File = await File.create({
+        return await File.create({
             name: inputProfilePicture.clientName,
             path: `${profilePicturePath}/${inputProfilePicture.clientName}`,
             extension,
@@ -156,8 +148,6 @@ export default class AdminUserController {
             size: inputProfilePicture.size,
             type: FileTypeEnum.PROFILE_PICTURE,
         });
-
-        return await flag.refresh();
     }
 
     private areSameFiles(file: File, multipartFile: MultipartFile): boolean {

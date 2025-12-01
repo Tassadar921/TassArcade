@@ -10,6 +10,8 @@
         "delete": "Supprimer",
         "create": "Créer",
         "cancel": "Annuler",
+        "remove": "Supprimer",
+        "add": "Ajouter",
         "back-to-home": "Retour à la page d'accueil",
         "name": "Nom",
         "created-at": "Créé le",
@@ -209,10 +211,9 @@
                 "introduction": "Vérification de votre entreprise\n\nTéléversez un extrait Kbis récent (moins de 3 mois) ou un certificat d’immatriculation INPI ou équivalent pour activer votre compte professionnel.",
                 "file-upload": {
                     "title": "Téléversez votre document",
-                    "description": "Formats acceptés : PDF, JPG, PNG\nTaille maximale : 5 Mo\nDocument attendu : Extrait Kbis complet et lisible, certificat INPI récent ou équivalent",
+                    "description": "Formats acceptés : PDF, JPG, JPEG, PNG\nTaille maximale : 5 Mo\nDocument attendu : Extrait Kbis complet et lisible, certificat INPI récent ou équivalent",
                     "error": {
-                        "type": "Le fichier doit être un PDF, JPG ou PNG.",
-                        "format": "Le fichier doit être un PDF, JPG ou PNG.",
+                        "type": "Le fichier doit être un PDF, JPG, JPEG ou PNG.",
                         "size": "Le fichier doit faire moins de 5 Mo."
                     }
                 },
@@ -220,6 +221,24 @@
                 "popover": {
                     "title": "Traitement des données",
                     "content": "Le document Kbis ou certificat INPI est analysé automatiquement pour vérifier l’existence légale de votre entreprise.\n\nLes fichiers téléversés ne sont pas conservés après vérification.\n\nSeules les données nécessaires à l’identification (nom, SIRET, adresse, représentant légal) sont enregistrées.\n\nCe traitement est effectué dans le cadre de l’exécution du service, conformément au RGPD.\n\nPour toute question ou pour exercer vos droits (accès, rectification, suppression), contactez :\n dpo@tonapp.com"
+                }
+            },
+            "administrators": {
+                "title": "Gérer les administrateurs",
+                "meta": {
+                    "title": "Modifier les administrateurs",
+                    "description": "Gérez les administrateurs de votre entreprise. Recherchez des utilisateurs et mettez à jour leurs autorisations d’accès facilement."
+                },
+                "fields": {
+                    "role": "Rôle"
+                },
+                "add": "Ajouter un administrateur"
+            },
+            "equipments": {
+                "title": "Gérer les équipments",
+                "meta": {
+                    "title": "Modifier les équipements",
+                    "description": "Gérez les équipements de votre entreprise. Ajoutez, modifiez ou supprimez des équipements depuis les paramètres de votre société."
                 }
             }
         },
@@ -289,6 +308,14 @@
             "email": {
                 "placeholder": "direction@maison-delcourt.com",
                 "label": "Email"
+            },
+            "logo": {
+                "title": "Logo",
+                "description": "Formats acceptés : JPG, JPEG, PNG, SVG, WEBP\nTaille maximale : 2 Mo",
+                "error": {
+                    "type": "Le logo doit être une image",
+                    "size": "Le logo doit peser moins de 5 MB"
+                }
             },
             "enabled": "Activé"
         }

@@ -7,7 +7,7 @@ import {
     getCompanyValidator,
     searchCompaniesValidator,
     updateCompanyValidator,
-    deleteCompaniesValidator,
+    deleteCompanyValidator,
     confirmCompanyValidator,
 } from '#validators/company';
 import axios from 'axios';
@@ -26,6 +26,12 @@ import CountryService from '#services/country_service';
 import FileService from '#services/file_service';
 import OpenAiApiService from '#services/open_ai_service';
 import { OpenAiCompanyVerificationResult } from '#types/open-ai/open_ai_company_verification_result';
+import { cuid } from '@adonisjs/core/helpers';
+import app from '@adonisjs/core/services/app';
+import File from '#models/file';
+import path from 'node:path';
+import FileTypeEnum from '#types/enum/file_type_enum';
+import SlugifyService from '#services/slugify_service';
 
 @inject()
 export default class CompanyController {
@@ -34,7 +40,8 @@ export default class CompanyController {
         private readonly nominatimService: NominatimService,
         private readonly countryService: CountryService,
         private readonly fileService: FileService,
-        private readonly openAiApiService: OpenAiApiService
+        private readonly openAiApiService: OpenAiApiService,
+        private readonly slugifyService: SlugifyService
     ) {}
 
     public async getFromSiret({ request, response, i18n }: HttpContext): Promise<void> {
@@ -66,7 +73,7 @@ export default class CompanyController {
     }
 
     public async create({ request, response, user, language, i18n }: HttpContext): Promise<void> {
-        const { siret, name, address: inputAddress, postalCode, city, complement, countryCode, email, phoneNumber: inputPhoneNumber } = await request.validateUsing(createCompanyValidator);
+        const { siret, name, address: inputAddress, postalCode, city, complement, countryCode, email, phoneNumber: inputPhoneNumber, logo } = await request.validateUsing(createCompanyValidator);
 
         let company: Company | null = await this.companyRepository.findOneBy({ siret });
         if (company) {
@@ -110,7 +117,6 @@ export default class CompanyController {
             latitude: data.latitude,
             longitude: data.longitude,
         });
-        await address.refresh();
 
         company = await Company.create({
             siret,
@@ -119,7 +125,6 @@ export default class CompanyController {
             phoneNumber: phoneNumber?.format('E.164'),
             addressId: address.id,
         });
-        await company.refresh();
 
         await CompanyAdministrator.create({
             role: CompanyAdministratorRoleEnum.CEO,
@@ -127,7 +132,11 @@ export default class CompanyController {
             userId: user.id,
         });
 
-        await Promise.all([company.load('address'), company.load('equipments'), cache.deleteByTag({ tags: ['companies'] })]);
+        if (logo) {
+            company = await this.updateLogo(company, logo);
+        }
+
+        await Promise.all([cache.deleteByTag({ tags: ['companies'] })]);
 
         return response.created({
             message: i18n.t('messages.company.create.success', { companyName: company.name }),
@@ -154,26 +163,21 @@ export default class CompanyController {
     }
 
     public async delete({ request, response, i18n, user }: HttpContext): Promise<void> {
-        const { companies } = await request.validateUsing(deleteCompaniesValidator);
+        const { companyId } = await request.validateUsing(deleteCompanyValidator);
 
-        const statuses: { isDeleted: boolean; name?: string; id: string }[] = await this.companyRepository.delete(companies, user);
+        const statuses: { isDeleted: boolean; name?: string; id: string }[] = await this.companyRepository.delete([companyId], user);
+        const status: { isDeleted: boolean; name?: string; id: string } = statuses[0];
 
-        return response.ok({
-            messages: await Promise.all(
-                statuses.map(async (status: { isDeleted: boolean; name?: string; id: string }): Promise<{ id: string; message: string; isSuccess: boolean }> => {
-                    if (status.isDeleted) {
-                        await cache.deleteByTag({ tags: ['companies', `company:${status.id}`] });
-                        return { id: status.id, message: i18n.t(`messages.company.delete.success`, { name: status.name }), isSuccess: true };
-                    } else {
-                        return { id: status.id, message: i18n.t(`messages.company.delete.error.default`, { id: status.id }), isSuccess: false };
-                    }
-                })
-            ),
-        });
+        if (status.isDeleted) {
+            await cache.deleteByTag({ tags: ['companies', `company:${status.id}`] });
+            return response.ok({ messages: [{ message: i18n.t(`messages.company.delete.success`, { name: status.name }), isSuccess: true }] });
+        } else {
+            return response.ok({ messages: [{ message: i18n.t(`messages.company.delete.error.default`, { id: status.id }), isSuccess: false }] });
+        }
     }
 
     public async update({ request, response, i18n, language, user }: HttpContext) {
-        const { siret, name, address: inputAddress, postalCode, city, complement, countryCode, email, phoneNumber: inputPhoneNumber } = await request.validateUsing(updateCompanyValidator);
+        const { companyId, name, address: inputAddress, postalCode, city, complement, countryCode, email, phoneNumber: inputPhoneNumber, logo } = await request.validateUsing(updateCompanyValidator);
 
         const country: Country | undefined = CountryList.default.findOneByCountryCode(countryCode);
         if (!country) {
@@ -182,7 +186,7 @@ export default class CompanyController {
             });
         }
 
-        const company: Company = await this.companyRepository.getFromUser(siret, user);
+        let company: Company = await this.companyRepository.getFromUser(companyId, user);
 
         const fullAddress: string = `${inputAddress}, ${postalCode} ${city}, ${country.name}`;
         const data: { latitude: number; longitude: number } | null = await this.nominatimService.getFromAddress(fullAddress);
@@ -217,7 +221,21 @@ export default class CompanyController {
             company.phoneNumber = phoneNumber.format('E.164');
         }
 
-        await Promise.all([company.save(), company.address.save(), cache.deleteByTag({ tags: ['companies', `company:${company.id}`] })]);
+        if (logo) {
+            company = await this.updateLogo(company, logo);
+        }
+
+        await Promise.all([
+            company.save(),
+            company.address.save(),
+            cache.deleteByTag({ tags: ['companies'] }),
+            cache.set({
+                key: `company:${company.id}`,
+                tags: [`company:${company.id}`],
+                ttl: '1h',
+                value: company.apiSerialize(language),
+            }),
+        ]);
 
         return response.ok({ company: company.apiSerializeLight(language), message: i18n.t('messages.company.update.success', { name }) });
     }
@@ -282,11 +300,55 @@ export default class CompanyController {
 
         company.enabled = true;
 
-        await Promise.all([company.save(), cache.deleteByTag({ tags: ['companies', `company:${company.id}`] })]);
+        await Promise.all([
+            company.save(),
+            cache.deleteByTag({ tags: ['companies'] }),
+            cache.set({
+                key: `company:${company.id}`,
+                tags: [`company:${company.id}`],
+                ttl: '1h',
+                value: company.apiSerialize(language),
+            }),
+        ]);
 
         return response.ok({
             message: i18n.t('messages.company.confirm.success', { name: company.name }),
             company: company.apiSerialize(language),
         });
+    }
+
+    private async updateLogo(company: Company, logo: any): Promise<Company> {
+        if (company.logoId) {
+            // Physically delete the file
+            this.fileService.delete(company.logo);
+
+            const oldLogo: File = company.logo;
+            company.logoId = null;
+            await company.save();
+            await oldLogo.delete();
+        }
+
+        logo.clientName = `${cuid()}-${this.slugifyService.slugify(logo.clientName)}`;
+        const logoPath: string = `static/company-logo`;
+        await logo.move(app.makePath(logoPath));
+        const newLogo: File = await File.create({
+            name: logo.clientName,
+            path: `${logoPath}/${logo.clientName}`,
+            extension: path.extname(logo.clientName),
+            mimeType: `${logo.type}/${logo.subtype}`,
+            size: logo.size,
+            type: FileTypeEnum.COMPANY_LOGO,
+        });
+
+        company.logoId = newLogo.id;
+
+        await cache.set({
+            key: `company-logo:${company.id}`,
+            tags: [`company:${company.id}`],
+            ttl: '1h',
+            value: app.makePath(newLogo.path),
+        });
+
+        return company;
     }
 }

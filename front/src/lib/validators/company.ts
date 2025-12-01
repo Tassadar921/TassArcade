@@ -35,4 +35,9 @@ export const companyValidator = zod.object({
         .min(8, { error: m['common.phone-number.error.min']({ min: 8 }) })
         .max(50, { error: m['common.phone-number.error.max']({ min: 20 }) })
         .optional(),
+    logo: zod
+        .instanceof(File, { error: m['company.fields.logo.error.type']() })
+        .refine((file: File): boolean => ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml'].includes(file.type), { error: m['company.fields.logo.error.type']() })
+        .refine((file: File): boolean => file.size <= 2 * 1024 * 1024, { error: m['company.fields.logo.error.size']() })
+        .optional(),
 });

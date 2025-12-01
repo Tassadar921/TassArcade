@@ -74,16 +74,16 @@
                 "no-file": "Photo de profil de l'utilisateur introuvable"
             }
         },
-        "serve-language-flag": {
-            "error": {
-                "language-not-found": "Langue non trouvée",
-                "no-file": "Drapeau de la langue introuvable"
-            }
-        },
         "serve-equipment-thumbnail": {
             "error": {
                 "equipment-not-found": "Équipement non trouvé",
                 "no-file": "Miniature de l'équipement introuvable"
+            }
+        },
+        "serve-company-logo": {
+            "error": {
+                "logo-not-found": "Company non trouvée",
+                "no-file": "Logo de l'entreprise introuvable"
             }
         }
     },
@@ -163,6 +163,21 @@
                 "no-document": "Aucun document fourni",
                 "openai-error": "Une erreur est survenue lors de la vérification du document",
                 "openai-mismatch": "Le document ne correspond pas aux données fournies"
+            }
+        }
+    },
+    "administrator": {
+        "add": {
+            "success": "Administrateur ajouté avec succès",
+            "error": {
+                "already-exists": "{username} est déjà administrateur"
+            }
+        },
+        "remove": {
+            "success": "{username} retiré des administrateurs",
+            "error": {
+                "not-found": "Administrateurs non trouvé",
+                "ceo": "Vous ne pouvez pas retirer le CEO de cette entreprise"
             }
         }
     }

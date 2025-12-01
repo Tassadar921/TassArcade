@@ -5,6 +5,12 @@ import PaginatedUsers from '#types/paginated/paginated_users';
 import SerializedUser from '#types/serialized/serialized_user';
 import { inject } from '@adonisjs/core';
 import LogUserRepository from '#repositories/log_user_repository';
+import db from '@adonisjs/lucid/services/db';
+import { DeleteUserResult } from '#types/delete_user_result';
+import { TransactionClientContract } from '@adonisjs/lucid/types/database';
+import Company from '#models/company';
+import PaginatedSearchCompanyAdministrators from '#types/paginated/paginated_search_company_administrators';
+import SearchCompanyAdministrator from '#types/search_company_administrator';
 
 @inject()
 export default class UserRepository extends BaseRepository<typeof User> {
@@ -32,24 +38,73 @@ export default class UserRepository extends BaseRepository<typeof User> {
         };
     }
 
-    public async delete(ids: string[], currentUser: User): Promise<{ isDeleted: boolean; isCurrentUser?: boolean; username?: string; id: string }[]> {
-        // Delete some other things if needed
-        return await Promise.all([
-            ...ids.map(async (id: string): Promise<{ isDeleted: boolean; isCurrentUser?: boolean; username?: string; id: string }> => {
+    public async delete(ids: string[], currentUser: User): Promise<DeleteUserResult[]> {
+        return Promise.all(
+            ids.map(async (id: string): Promise<DeleteUserResult> => {
                 try {
-                    const user: User = await this.firstOrFail({ id });
+                    const user: User = await User.query().where('id', id).firstOrFail();
+
                     if (user.id === currentUser.id) {
-                        return { isDeleted: false, isCurrentUser: true, username: user.username, id };
+                        return {
+                            isDeleted: false,
+                            isCurrentUser: true,
+                            username: user.username,
+                            id,
+                        };
                     }
 
-                    await user.delete();
-                    await this.logUserRepository.deleteByUser(user);
+                    return await db.transaction(async (trx: TransactionClientContract): Promise<DeleteUserResult> => {
+                        await user.useTransaction(trx).delete();
 
-                    return { isDeleted: true, username: user.username, id };
-                } catch (error: any) {
+                        await this.logUserRepository.deleteByUser(user, trx);
+
+                        return {
+                            isDeleted: true,
+                            username: user.username,
+                            id,
+                        };
+                    });
+                } catch (error) {
                     return { isDeleted: false, id };
                 }
-            }),
-        ]);
+            })
+        );
+    }
+
+    public async getSearchCompanyAdministrators(
+        company: Company,
+        query: string,
+        page: number,
+        limit: number,
+        sortBy: { field: keyof User['$attributes']; order: 'asc' | 'desc' }
+    ): Promise<PaginatedSearchCompanyAdministrators> {
+        const paginator: ModelPaginatorContract<User> = await this.Model.query()
+            .select('users.*', 'company_administrators.id as admin_id')
+            .leftJoin('company_administrators', (join): void => {
+                join.on('users.id', '=', 'company_administrators.user_id').onVal('company_administrators.company_id', company.id);
+            })
+            .if(query, (queryBuilder: ModelQueryBuilderContract<typeof User>): void => {
+                queryBuilder.where((subQuery: ModelQueryBuilderContract<typeof User>): void => {
+                    subQuery.where('users.username', 'ILIKE', `%${query}%`).orWhere('users.email', 'ILIKE', `%${query}%`);
+                });
+            })
+            .if(sortBy, (queryBuilder: ModelQueryBuilderContract<typeof User>): void => {
+                queryBuilder.orderBy(sortBy.field as string, sortBy.order);
+            })
+            .paginate(page, limit);
+
+        return {
+            users: paginator.all().map(
+                (user: User): SearchCompanyAdministrator => ({
+                    user: user.apiSerialize(),
+                    isAdministrator: user.$extras.admin_id !== null,
+                })
+            ),
+            firstPage: paginator.firstPage,
+            lastPage: paginator.lastPage,
+            limit,
+            total: paginator.total,
+            currentPage: paginator.currentPage,
+        };
     }
 }
