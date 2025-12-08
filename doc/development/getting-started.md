@@ -25,6 +25,8 @@ You should have Node.js >= 20.6 installed. If you don't have it installed, you c
 
 We strongly recommend using [nvm](https://github.com/nvm-sh/nvm) to manage your Node.js versions.
 
+---
+
 ### 4) Make sure you have Docker and the `compose` plugin installed
 
 ```bash

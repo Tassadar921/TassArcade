@@ -58,7 +58,7 @@ export default class CompanyEquipmentType extends BaseModel {
             id: this.id,
             category: this.equipmentType.equipment.apiSerializeLight(language),
             type: this.equipmentType.apiSerialize(language),
-            name: this.name.get(language.code) || this.name.get(Language.LANGUAGE_ENGLISH.code) || '',
+            name: this.name?.get(language.code) || this.name?.get(Language.LANGUAGE_ENGLISH.code) || '',
             description: this.description?.get(language.code) || this.description?.get(Language.LANGUAGE_ENGLISH.code) || undefined,
             createdAt: this.createdAt?.toString(),
             updatedAt: this.updatedAt?.toString(),
