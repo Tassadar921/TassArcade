@@ -44,9 +44,9 @@
 
         await wrappedFetch(`/profile/companies/edit/${page.params.id}/administrators/remove`, { method: 'POST', body: { userId } }, ({ data }): void => {
             showToast(data.message, data.isSuccess, 'success');
-            paginatedCompanyAdministrators!.administrators = paginatedCompanyAdministrators!.administrators.filter(
-                (administrator: SerializedCompanyAdministrator, i: number): boolean => administrator.user.id !== userId
-            );
+            paginatedCompanyAdministrators!.administrators = paginatedCompanyAdministrators!.administrators.filter((administrator: SerializedCompanyAdministrator): boolean => {
+                return administrator.user.id !== userId;
+            });
         });
     };
 </script>
@@ -64,6 +64,7 @@
             editable={false}
             createText={m['common.add']()}
             onCreateClick={() => (showDialog = true)}
+            selectable={false}
         />
     </div>
 {/if}

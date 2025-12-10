@@ -118,6 +118,9 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
 
                         await company.useTransaction(trx).delete();
                         await company.address.useTransaction(trx).delete();
+                        if (company.logo) {
+                            await company.logo.useTransaction(trx).delete();
+                        }
 
                         return { isDeleted: true, name: company.name, id };
                     });

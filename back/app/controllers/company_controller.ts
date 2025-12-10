@@ -136,7 +136,7 @@ export default class CompanyController {
             company = await this.updateLogo(company, logo);
         }
 
-        await Promise.all([cache.deleteByTag({ tags: ['companies'] })]);
+        await Promise.all([cache.deleteByTag({ tags: ['companies'] }), company.save()]);
 
         return response.created({
             message: i18n.t('messages.company.create.success', { companyName: company.name }),
