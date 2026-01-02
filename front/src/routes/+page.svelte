@@ -33,6 +33,18 @@
         dark: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
     };
 
+    const categories = $derived(
+        page.data.equipments.map((equipment: SerializedEquipment) => ({
+            label: equipment.name,
+            thumbnailPath: `/assets/equipment-thumbnail/${equipment.id}`,
+            items: equipment.types.map((type: SerializedEquipmentType) => ({
+                value: type.id,
+                label: type.name,
+                category: equipment.name,
+            })),
+        }))
+    );
+
     let showCompanyDialog: boolean = $state(false);
     let showCompanyEquipmentDialog: boolean = $state(false);
     let currentMapTheme: 'light' | 'dark' = $state(mode.current === 'dark' ? 'dark' : 'light');
@@ -167,23 +179,12 @@
 
 <Title title={m['home.title']()} />
 
-<MultiSelectWithTags
-    categories={page.data.equipments.map((equipment: SerializedEquipment) => ({
-        label: equipment.name,
-        thumbnailPath: `/assets/equipment-thumbnail/${equipment.id}`,
-        items: equipment.types.map((type: SerializedEquipmentType) => ({
-            value: type.id,
-            label: type.name,
-            category: equipment.name,
-        })),
-    }))}
-    bind:selectedItems={selectedEquipments}
-/>
+<MultiSelectWithTags {categories} bind:selectedItems={selectedEquipments} />
 
 <MapLibre
     center={[longitude, latitude]}
     style={'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'}
-    class="relative w-full aspect-[9/16] h-[800px] sm:max-h-full sm:aspect-video"
+    class="relative w-full aspect-9/16 h-200 sm:max-h-full sm:aspect-video"
     zoom={7}
     attributionControl={false}
     onload={handleLoad}
@@ -211,7 +212,7 @@
 
 <Dialog bind:open={showCompanyDialog} onOpenChange={handleCloseCompanyDialog}>
     <DialogPortal>
-        <DialogContent class="min-w-[90%] md:min-w-[750px]">
+        <DialogContent class="min-w-[90%] md:min-w-187.5">
             <CompanyDialogContent {handleCompanyEquipmentClicked} {selectedCompany} {reorganizedEquipments} />
         </DialogContent>
     </DialogPortal>
@@ -219,7 +220,7 @@
 
 <Dialog bind:open={showCompanyEquipmentDialog} onOpenChange={handleCloseCompanyEquipmentsDialog}>
     <DialogPortal>
-        <DialogContent class="min-w-[90%] md:min-w-[750px]">
+        <DialogContent class="min-w-[90%] md:min-w-187.5">
             <CompanyEquipmentDialogContent {selectedCompany} {selectedCompanyEquipment} />
         </DialogContent>
     </DialogPortal>

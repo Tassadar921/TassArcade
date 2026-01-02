@@ -39,7 +39,7 @@
             onSearch={getCompanies}
             bind:query
             selectable={false}
-            onPaginationChange={async (page: number, limit: number) => await getCompanies(page, limit)}
+            onPaginationChange={getCompanies}
         />
     </div>
 {/if}

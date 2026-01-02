@@ -1,7 +1,7 @@
 <script lang="ts">
     import { page } from '$app/state';
     import { onMount } from 'svelte';
-    import type { PaginatedCompanyAdministrators, PaginatedSearchCompanyAdministrators, SearchCompanyAdministrator, SerializedCompanyAdministrator } from 'backend/types';
+    import type { PaginatedCompanyAdministrators, PaginatedSearchCompanyAdministrators, SerializedCompanyAdministrator } from 'backend/types';
     import { wrappedFetch } from '#lib/services/requestService';
     import { DataTable } from '#lib/components/ui/data-table';
     import { getCompanyAdministratorsColumns, getSearchCompanyAdministratorsColumns } from './columns';
@@ -44,9 +44,9 @@
 
         await wrappedFetch(`/profile/companies/edit/${page.params.id}/administrators/remove`, { method: 'POST', body: { userId } }, ({ data }): void => {
             showToast(data.message, data.isSuccess, 'success');
-            paginatedCompanyAdministrators!.administrators = paginatedCompanyAdministrators!.administrators.filter((administrator: SerializedCompanyAdministrator): boolean => {
-                return administrator.user.id !== userId;
-            });
+            paginatedCompanyAdministrators!.administrators = paginatedCompanyAdministrators!.administrators.filter(
+                (administrator: SerializedCompanyAdministrator): boolean => administrator.user.id !== userId
+            );
         });
     };
 </script>
@@ -60,7 +60,7 @@
             onSearch={getAdministrators}
             bind:query
             bind:selectedRows={selectedUsers}
-            onPaginationChange={async (page: number, limit: number) => await getAdministrators(page, limit)}
+            onPaginationChange={getAdministrators}
             editable={false}
             createText={m['common.add']()}
             onCreateClick={() => (showDialog = true)}
@@ -71,7 +71,7 @@
 
 <Dialog bind:open={showDialog}>
     <DialogPortal>
-        <DialogContent class="min-w-[90%] md:min-w-[800px]">
+        <DialogContent class="min-w-[90%] md:min-w-200">
             {#if paginatedCompanyAdministrators && paginatedUsers}
                 <AddCompanyAdministrator
                     bind:paginatedUsers

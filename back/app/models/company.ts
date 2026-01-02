@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { afterCreate, BaseModel, beforeFetch, beforeFind, belongsTo, column, hasMany } from '@adonisjs/lucid/orm';
+import { afterCreate, afterUpdate, BaseModel, beforeFetch, beforeFind, belongsTo, column, hasMany } from '@adonisjs/lucid/orm';
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations';
 import Address from '#models/address';
 import CompanyAdministrator from '#models/company_administrator';
@@ -67,6 +67,7 @@ export default class Company extends BaseModel {
     }
 
     @afterCreate()
+    @afterUpdate()
     public static async refresh(company: Company): Promise<void> {
         let promises = [company.load('address'), company.load('equipments')];
         if (company.logoId) {

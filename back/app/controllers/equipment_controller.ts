@@ -5,19 +5,22 @@ import Equipment from '#models/equipment';
 import SerializedEquipment from '#types/serialized/serialized_equipment';
 import cache from '@adonisjs/cache/services/main';
 import PaginatedEquipments from '#types/paginated/paginated_equipments';
-import EquipmentType from '#models/equipment_type';
 import { searchEquipmentsValidator } from '#validators/equipment';
+import EquipmentTypeRepository from '#repositories/equipment_type_repository';
 
 @inject()
 export default class EquipmentController {
-    constructor(private readonly equipmentRepository: EquipmentRepository) {}
+    constructor(
+        private readonly equipmentRepository: EquipmentRepository,
+        private readonly equipmentTypeRepository: EquipmentTypeRepository
+    ) {}
 
     public async getAll({ response, language }: HttpContext): Promise<void> {
         return response.ok(
             await cache.getOrSet({
                 key: 'equipments',
                 tags: ['equipments'],
-                ttl: '1h',
+                ttl: '24h',
                 factory: async (): Promise<SerializedEquipment[]> => {
                     const equipments: Equipment[] = await this.equipmentRepository.all(['types']);
 
@@ -30,18 +33,15 @@ export default class EquipmentController {
     }
 
     public async searchEquipments({ request, response, language }: HttpContext) {
-        const { query, page, limit, sortBy: inputSortBy } = await request.validateUsing(searchEquipmentsValidator);
+        const { query, page, limit } = await request.validateUsing(searchEquipmentsValidator);
 
         return response.ok(
             await cache.getOrSet({
-                key: `company-search-equipments:query:${query.toLowerCase()}:page:${page}:limit:${limit}:sortBy:${inputSortBy}`,
+                key: `company-search-equipments:query:${query.toLowerCase()}:page:${page}:limit:${limit}`,
                 tags: ['company-search-equipments'],
                 ttl: '24h',
                 factory: async (): Promise<PaginatedEquipments> => {
-                    const [field, order] = inputSortBy.split(':');
-                    const sortBy = { field: field as keyof Equipment['$attributes'] | keyof EquipmentType['$attributes'], order: order as 'asc' | 'desc' };
-
-                    return await this.equipmentRepository.getPaginatedEquipments(language, query.toLowerCase(), page, limit, sortBy);
+                    return await this.equipmentTypeRepository.getEquipments(language, query.toLowerCase(), page, limit);
                 },
             })
         );

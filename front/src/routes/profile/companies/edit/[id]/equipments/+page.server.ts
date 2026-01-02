@@ -32,6 +32,7 @@ export const load: PageServerLoad = async (event) => {
         return {
             isSuccess: true,
             company: response.data.company,
+            companyEquipments: response.data.companyEquipments,
             equipments: response.data.equipments,
             ...headers,
         };

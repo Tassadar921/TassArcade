@@ -61,7 +61,7 @@
             onBatchDelete={handleDelete}
             batchDeleteTitle={m['admin.user.delete.title']({ users: selectedUsers })}
             batchDeleteText={m['admin.user.delete.text']({ users: selectedUsers, count: selectedUsers.length })}
-            onPaginationChange={async (page: number, limit: number) => await getUsers(page, limit)}
+            onPaginationChange={getUsers}
         />
     </div>
 {/if}

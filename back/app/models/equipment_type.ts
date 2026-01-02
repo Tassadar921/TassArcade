@@ -5,6 +5,7 @@ import Equipment from '#models/equipment';
 import { translation, Translation } from '@stouder-io/adonis-translatable';
 import Language from '#models/language';
 import SerializedEquipmentType from '#types/serialized/serialized_equipment_type';
+import SerializedEquipmentTypeExtended from '#types/serialized/serialized_equipment_type_extended';
 
 export default class EquipmentType extends BaseModel {
     public static table: string = 'equipment_types';
@@ -34,6 +35,16 @@ export default class EquipmentType extends BaseModel {
         return {
             id: this.id,
             name: this.name.get(language.code) || this.name.get(Language.LANGUAGE_ENGLISH.code) || '',
+            createdAt: this.createdAt?.toString(),
+            updatedAt: this.updatedAt?.toString(),
+        };
+    }
+
+    public apiSerializeExtended(language: Language): SerializedEquipmentTypeExtended {
+        return {
+            id: this.id,
+            name: this.name.get(language.code) || this.name.get(Language.LANGUAGE_ENGLISH.code) || '',
+            equipment: this.equipment.apiSerializeLight(language),
             createdAt: this.createdAt?.toString(),
             updatedAt: this.updatedAt?.toString(),
         };

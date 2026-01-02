@@ -1,6 +1,5 @@
 import vine from '@vinejs/vine';
 import { sortByCompanyEquipmentRule } from '#validators/custom/company_equipment';
-import { sortByEquipmentRule } from '#validators/custom/equipment';
 
 export const companyIdValidator = vine.compile(
     vine.object({
@@ -13,7 +12,6 @@ export const searchCompanyEquipmentsValidator = vine.compile(
         query: vine.string().trim().maxLength(50),
         page: vine.number().positive(),
         limit: vine.number().positive(),
-        sortBy: vine.string().trim().use(sortByCompanyEquipmentRule()),
     })
 );
 
@@ -29,7 +27,8 @@ export const getCompanyEquipmentsValidator = vine.compile(
 
 export const createOrUpdateEquipmentValidator = vine.compile(
     vine.object({
-        equipmentId: vine.string().uuid(),
+        companyEquipmentTypeId: vine.string().uuid().optional(),
+        equipmentTypeId: vine.string().uuid(),
         name: vine
             .object({
                 en: vine.string().maxLength(255).optional(),

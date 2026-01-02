@@ -71,7 +71,7 @@
     let columnVisibility = $state<VisibilityState>({});
 
     let showDialog: boolean = $state(false);
-    const deletable: boolean = $state(!!(batchDeleteTitle && batchDeleteText));
+    const deletable: boolean = $derived(!!(batchDeleteTitle && batchDeleteText));
 
     const table = createSvelteTable({
         get data() {

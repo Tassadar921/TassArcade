@@ -6,24 +6,19 @@ import Company from '#models/company';
 import SerializedCompany from '#types/serialized/serialized_company';
 import CompanyEquipmentTypeRepository from '#repositories/company_equipment_type_repository';
 import { companyIdValidator, createOrUpdateEquipmentValidator, getCompanyEquipmentsValidator, removeEquipmentValidator, searchCompanyEquipmentsValidator } from '#validators/company_equipment';
-import SerializedCompanyEquipmentType from '#types/serialized/serialized_company_equipment_type';
-import EquipmentRepository from '#repositories/equipment_repository';
-import SerializedEquipment from '#types/serialized/serialized_equipment';
 import EquipmentType from '#models/equipment_type';
 import EquipmentTypeRepository from '#repositories/equipment_type_repository';
 import CompanyEquipmentType from '#models/company_equipment_type';
 import { Translation } from '@stouder-io/adonis-translatable';
-import PaginatedCompanyAdministrators from '#types/paginated/paginated_company_administrators';
-import CompanyAdministrator from '#models/company_administrator';
-import User from '#models/user';
+import PaginatedCompanyEquipmentTypes from '#types/paginated/paginated_company_equipment_types';
+import PaginatedEquipmentTypes from '#types/paginated/paginated_equipment_types';
 
 @inject()
 export default class CompanyAdministratorController {
     constructor(
         private readonly companyRepository: CompanyRepository,
         private readonly companyEquipmentTypeRepository: CompanyEquipmentTypeRepository,
-        private readonly equipmentTypeRepository: EquipmentTypeRepository,
-        private readonly equipmentRepository: EquipmentRepository
+        private readonly equipmentTypeRepository: EquipmentTypeRepository
     ) {}
 
     public async init({ request, response, language, user }: HttpContext) {
@@ -40,39 +35,36 @@ export default class CompanyAdministratorController {
                 },
             }),
             companyEquipments: await cache.getOrSet({
-                key: `company-equipment-types:companyId:${companyId}`,
+                key: `company-equipment-types:companyId:${companyId}:query::page:1:limit:10`,
                 tags: [`company:${companyId}`],
                 ttl: '1h',
-                factory: async (): Promise<SerializedCompanyEquipmentType[]> => {
-                    return await this.companyEquipmentTypeRepository.getCompanyEquipments(company, language);
+                factory: async (): Promise<PaginatedCompanyEquipmentTypes> => {
+                    return await this.companyEquipmentTypeRepository.getCompanyEquipments(company, language, '', 1, 10);
                 },
             }),
             equipments: await cache.getOrSet({
-                key: 'equipment-types',
+                key: 'equipment-types:query::page:1:limit:10',
                 tags: ['equipment-types'],
                 ttl: '24h',
-                factory: async (): Promise<SerializedEquipment[]> => {
-                    return await this.equipmentRepository.getEquipments(language);
+                factory: async (): Promise<PaginatedEquipmentTypes> => {
+                    return await this.equipmentTypeRepository.getEquipments(language, '', 1, 10);
                 },
             }),
         });
     }
 
-    public async getAll({ request, response, user }: HttpContext) {
+    public async getAll({ request, response, user, language }: HttpContext) {
         const { companyId } = await companyIdValidator.validate(request.params());
-        const { query, page, limit, sortBy: inputSortBy } = await request.validateUsing(searchCompanyEquipmentsValidator);
+        const { query, page, limit } = await request.validateUsing(searchCompanyEquipmentsValidator);
         const company: Company = await this.companyRepository.getFromUser(companyId, user);
 
         return response.ok(
             await cache.getOrSet({
-                key: `company-administrators:companyId:${companyId}:query:${query.toLowerCase()}:page:${page}:limit:${limit}:sortBy:${inputSortBy}`,
+                key: `company-equipment-types:companyId:${companyId}:query:${query.toLowerCase()}:page:${page}:limit:${limit}`,
                 tags: [`company:${companyId}`],
                 ttl: '1h',
-                factory: async (): Promise<PaginatedCompanyAdministrators> => {
-                    const [field, order] = inputSortBy.split(':');
-                    const sortBy = { field: field as keyof CompanyAdministrator['$attributes'] | `users.${keyof User['$attributes']}`, order: order as 'asc' | 'desc' };
-
-                    return await this.companyAdministratorRepository.getAdministrators(company, query.toLowerCase(), page, limit, sortBy);
+                factory: async (): Promise<PaginatedCompanyEquipmentTypes> => {
+                    return await this.companyEquipmentTypeRepository.getCompanyEquipments(company, language, query.toLowerCase(), page, limit);
                 },
             })
         );
@@ -80,10 +72,10 @@ export default class CompanyAdministratorController {
 
     public async addEquipment({ request, response, user, i18n, language }: HttpContext): Promise<void> {
         const { companyId } = await companyIdValidator.validate(request.params());
-        const { equipmentId, name, description } = await request.validateUsing(createOrUpdateEquipmentValidator);
+        const { equipmentTypeId, name, description } = await request.validateUsing(createOrUpdateEquipmentValidator);
         const company: Company = await this.companyRepository.getFromUser(companyId, user);
 
-        const equipmentType: EquipmentType = await this.equipmentTypeRepository.firstOrFail({ id: equipmentId });
+        const equipmentType: EquipmentType = await this.equipmentTypeRepository.firstOrFail({ id: equipmentTypeId });
 
         const companyEquipment: CompanyEquipmentType = await CompanyEquipmentType.create({
             companyId: company.id,
@@ -102,18 +94,21 @@ export default class CompanyAdministratorController {
 
     public async updateEquipment({ request, response, user, i18n }: HttpContext): Promise<void> {
         const { companyId } = await companyIdValidator.validate(request.params());
-        const { equipmentId, name, description } = await request.validateUsing(createOrUpdateEquipmentValidator);
+        const { companyEquipmentTypeId, equipmentTypeId, name, description } = await request.validateUsing(createOrUpdateEquipmentValidator);
         const company: Company = await this.companyRepository.getFromUser(companyId, user);
 
-        const companyEquipment: CompanyEquipmentType | null = await this.companyEquipmentTypeRepository.findOneBy({ id: equipmentId, companyId: company.id });
+        const companyEquipment: CompanyEquipmentType | null = await this.companyEquipmentTypeRepository.findOneBy({ id: companyEquipmentTypeId, companyId: company.id });
         if (!companyEquipment) {
             return response.notFound({
                 error: i18n.t('messages.equipment.update.error.not-found'),
             });
         }
 
+        await this.equipmentTypeRepository.firstOrFail({ id: equipmentTypeId });
+
         companyEquipment.name = name ? Translation.from({ ...name }) : Translation.from({});
         companyEquipment.description = description ? Translation.from({ ...description }) : Translation.from({});
+        companyEquipment.equipmentTypeId = equipmentTypeId;
 
         await Promise.all([companyEquipment.save(), cache.deleteByTag({ tags: [`company:${companyId}`] })]);
 

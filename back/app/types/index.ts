@@ -7,7 +7,10 @@ export { UserRoleEnum } from './enum/user_role_enum.js';
 export type { PaginatedUsers } from './paginated/paginated_users.js';
 export type { PaginatedCompanyAdministrators } from './paginated/paginated_company_administrators.js';
 export type { PaginatedSearchCompanyAdministrators } from './paginated/paginated_search_company_administrators.js';
+export type { PaginatedCompanyEquipmentTypes } from './paginated/paginated_company_equipment_types.js';
 export type { PaginatedCompanies } from './paginated/paginated_companies.js';
+export type { PaginatedEquipments } from './paginated/paginated_equipments.js';
+export type { PaginatedEquipmentTypes } from './paginated/paginated_equipment_types.js';
 
 export type { SerializedFile } from './serialized/serialized_file.js';
 export type { SerializedLog } from './serialized/serialized_log.js';
