@@ -2,7 +2,7 @@ import vine from '@vinejs/vine';
 import { FieldContext } from '@vinejs/vine/types';
 import Company from '#models/company';
 
-const validSortCompanyFields: string[] = [...Company.$columnsDefinitions.keys()];
+const validSortFields: string[] = [...Company.$columnsDefinitions.keys()];
 
 const sortByCompanyValidator = (value: unknown, _options: any, field: FieldContext): void => {
     if (typeof value !== 'string') return;
@@ -15,12 +15,12 @@ const sortByCompanyValidator = (value: unknown, _options: any, field: FieldConte
     }
 
     if (fieldName.startsWith('companies.')) {
-        if (!validSortCompanyFields.includes(fieldName.replace('companies.', ''))) {
-            field.report(`Invalid user field "${field}". Allowed fields: ${validSortCompanyFields.join(', ')}`, 'sortBy', field);
+        if (!validSortFields.includes(fieldName.replace('companies.', ''))) {
+            field.report(`Invalid company field "${field}". Allowed fields: ${validSortFields.join(', ')}`, 'sortBy', field);
             return;
         }
     } else {
-        field.report(`Invalid field prefix : must start with "companies." be followed by ${validSortCompanyFields.join(', ')}`, 'sortBy', field);
+        field.report(`Invalid field prefix : must start with "companies." be followed by ${validSortFields.join(', ')}`, 'sortBy', field);
         return;
     }
 

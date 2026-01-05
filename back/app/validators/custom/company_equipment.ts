@@ -15,8 +15,13 @@ const sortByCompanyEquipmentValidator = (value: unknown, _options: any, field: F
         return;
     }
 
-    if (!validSortFields.includes(fieldName)) {
-        field.report(`Invalid field "${field}". Allowed fields: ${validSortFields.join(', ')}`, 'sortBy', field);
+    if (fieldName.startsWith('company_equipments.')) {
+        if (!validSortFields.includes(fieldName.replace('company_equipments.', ''))) {
+            field.report(`Invalid company equipment field "${field}". Allowed fields: ${validSortFields.join(', ')}`, 'sortBy', field);
+            return;
+        }
+    } else {
+        field.report(`Invalid field prefix : must start with "company_equipments." be followed by ${validSortFields.join(', ')}`, 'sortBy', field);
         return;
     }
 

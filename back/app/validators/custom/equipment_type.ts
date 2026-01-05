@@ -15,8 +15,13 @@ const sortByEquipmentTypeValidator = (value: unknown, _options: any, field: Fiel
         return;
     }
 
-    if (!validSortFields.includes(fieldName)) {
-        field.report(`Invalid field "${field}". Allowed fields: ${validSortFields.join(', ')}`, 'sortBy', field);
+    if (fieldName.startsWith('equipment_types.')) {
+        if (!validSortFields.includes(fieldName.replace('equipment_types.', ''))) {
+            field.report(`Invalid equipment type field "${field}". Allowed fields: ${validSortFields.join(', ')}`, 'sortBy', field);
+            return;
+        }
+    } else {
+        field.report(`Invalid field prefix : must start with "equipment_types." be followed by ${validSortFields.join(', ')}`, 'sortBy', field);
         return;
     }
 
