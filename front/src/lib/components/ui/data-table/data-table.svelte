@@ -123,6 +123,8 @@
         });
     };
 
+    const handlePaginationChange = (page: number, limit: number) => onPaginationChange(page, limit);
+
     $effect((): void => {
         selectedRows = table.getFilteredSelectedRowModel().rows.map((row: Row<any>): string => row.original.id);
     });
@@ -155,7 +157,7 @@
                         {#each headerGroup.headers as header (header.id)}
                             <TableHead colspan={header.colSpan} class={`w-1/${headerGroup.headers.length}`}>
                                 {#if !header.isPlaceholder}
-                                    <FlexRender content={header.column.columnDef.header} context={header.getContext()} />
+                                    <FlexRender content={header.column.columnDef.header} context={header.getContext()} {editable} />
                                 {/if}
                             </TableHead>
                         {/each}
@@ -188,7 +190,7 @@
         </div>
     {/if}
 
-    <Pagination {paginatedObject} onChange={(page: number, limit: number) => onPaginationChange(page, limit)} />
+    <Pagination {paginatedObject} onChange={handlePaginationChange} />
 
     <div class="w-full flex justify-end gap-5">
         {#if deletable}
@@ -203,7 +205,7 @@
                 </Button>
             {:else}
                 <Button variant="secondary">
-                    <Link href={`${$location}/new`} class="p-0 !no-underline">
+                    <Link href={`${$location}/new`} class="p-0 no-underline!">
                         {createText || m['common.create']()}
                     </Link>
                 </Button>

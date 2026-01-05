@@ -5,24 +5,24 @@ import EquipmentType from '#models/equipment_type';
 
 const validSortFields: string[] = [...Equipment.$columnsDefinitions.keys(), ...EquipmentType.$columnsDefinitions.keys()];
 
-const sortByEquipmentValidator = (value: unknown, _options: any, field: FieldContext): void => {
+const sortByEquipmentTypeValidator = (value: unknown, _options: any, field: FieldContext): void => {
     if (typeof value !== 'string') return;
 
     const [fieldName, direction] = value.split(':');
 
     if (!fieldName || !direction) {
-        field.report('The {{ field }} format must be "fieldName:asc" or "fieldName:desc"', 'sortBy', field);
+        field.report(`The ${field} format must be "fieldName:asc" or "fieldName:desc"`, 'sortBy', field);
         return;
     }
 
     if (!validSortFields.includes(fieldName)) {
-        field.report(`Invalid field "{{ field }}". Allowed fields: ${validSortFields.join(', ')}`, 'sortBy', field);
+        field.report(`Invalid field "${field}". Allowed fields: ${validSortFields.join(', ')}`, 'sortBy', field);
         return;
     }
 
     if (direction !== 'asc' && direction !== 'desc') {
-        field.report(`Invalid sort direction "{{ field }}". Must be "asc" or "desc"`, 'sortBy', field);
+        field.report(`Invalid sort direction "${field}". Must be "asc" or "desc"`, 'sortBy', field);
     }
 };
 
-export const sortByEquipmentRule = vine.createRule(sortByEquipmentValidator);
+export const sortByEquipmentTypeRule = vine.createRule(sortByEquipmentTypeValidator);

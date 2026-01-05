@@ -236,6 +236,12 @@
             },
             "equipments": {
                 "title": "Gérer les équipments",
+                "add": {
+                    "title": "Ajouter un nouvel équipement",
+                    "fields": {
+                        "category": "Catégorie"
+                    }
+                },
                 "meta": {
                     "title": "Modifier les équipements",
                     "description": "Gérez les équipements de votre entreprise. Ajoutez, modifiez ou supprimez des équipements depuis les paramètres de votre société."

@@ -7,6 +7,8 @@
     import { m } from '#lib/paraglide/messages';
     import { showToast } from '#lib/services/toastService';
     import { getCompanyEquipmentsColumns } from './columns';
+    import { Dialog, DialogContent, DialogPortal } from '#lib/components/ui/dialog';
+    import AddCompanyEquipment from '#lib/partials/profile/company/equipments/AddCompanyEquipment.svelte';
 
     let paginatedCompanyEquipments: PaginatedCompanyEquipmentTypes | undefined = $state();
     let paginatedEquipments: PaginatedEquipments | undefined = $state();
@@ -19,6 +21,7 @@
         if (page.data.isSuccess) {
             paginatedCompanyEquipments = page.data.companyEquipments;
             paginatedEquipments = page.data.equipments;
+            console.log(paginatedEquipments.equipments[0]);
         } else {
             await getEquipments();
         }
@@ -64,3 +67,13 @@
         />
     </div>
 {/if}
+
+<Dialog bind:open={showDialog}>
+    <DialogPortal>
+        <DialogContent class="min-w-[90%] md:min-w-200">
+            {#if paginatedCompanyEquipments && paginatedEquipments}
+                <AddCompanyEquipment bind:paginatedEquipments />
+            {/if}
+        </DialogContent>
+    </DialogPortal>
+</Dialog>

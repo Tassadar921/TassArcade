@@ -12,24 +12,29 @@ const sortByCompanyAdministratorValidator = (value: unknown, _options: any, fiel
     const [fieldName, direction] = value.split(':');
 
     if (!fieldName || !direction) {
-        field.report('The {{ field }} format must be "fieldName:asc" or "fieldName:desc"', 'sortBy', field);
+        field.report(`The ${field} format must be "fieldName:asc" or "fieldName:desc"`, 'sortBy', field);
         return;
     }
 
-    if (!validSortCompanyAdministratorFields.includes(fieldName)) {
-        if (fieldName.startsWith('users.')) {
-            if (!validSortUserFields.includes(fieldName.replace('users.', ''))) {
-                field.report(`Invalid user field "{{ field }}". Allowed fields: ${validSortUserFields.join(', ')}`, 'sortBy', field);
-                return;
-            }
-        } else {
-            field.report(`Invalid company administrator field "{{ field }}". Allowed fields: ${validSortCompanyAdministratorFields.join(', ')}`, 'sortBy', field);
+    if (fieldName.startsWith('users.')) {
+        if (!validSortUserFields.includes(fieldName.replace('users.', ''))) {
+            field.report(`Invalid user field "${field}". Allowed fields: ${validSortUserFields.join(', ')}`, 'sortBy', field);
             return;
         }
+    } else if (fieldName.startsWith('company_administrators.')) {
+        field.report(`Invalid company administrator field "${field}". Allowed fields: ${validSortCompanyAdministratorFields.join(', ')}`, 'sortBy', field);
+        return;
+    } else {
+        field.report(
+            `Invalid field prefix : must start with "users." or "company_administrators." and be followed respectively by ${validSortUserFields.join(', ')} or ${validSortCompanyAdministratorFields.join(', ')}`,
+            'sortBy',
+            field
+        );
+        return;
     }
 
     if (direction !== 'asc' && direction !== 'desc') {
-        field.report(`Invalid sort direction "{{ field }}". Must be "asc" or "desc"`, 'sortBy', field);
+        field.report(`Invalid sort direction "${field}". Must be "asc" or "desc"`, 'sortBy', field);
     }
 };
 

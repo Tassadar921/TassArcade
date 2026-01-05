@@ -43,11 +43,11 @@ export default class CompanyAdministratorController {
                 },
             }),
             equipments: await cache.getOrSet({
-                key: 'equipment-types:query::page:1:limit:10',
+                key: 'equipment-types:query::page:1:limit:10:sortBy:name:asc',
                 tags: ['equipment-types'],
                 ttl: '24h',
                 factory: async (): Promise<PaginatedEquipmentTypes> => {
-                    return await this.equipmentTypeRepository.getEquipments(language, '', 1, 10);
+                    return await this.equipmentTypeRepository.getEquipments(language, '', 1, 10, { field: 'equipments.name', order: 'asc' });
                 },
             }),
         });

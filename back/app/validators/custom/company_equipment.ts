@@ -11,17 +11,17 @@ const sortByCompanyEquipmentValidator = (value: unknown, _options: any, field: F
     const [fieldName, direction] = value.split(':');
 
     if (!fieldName || !direction) {
-        field.report('The {{ field }} format must be "fieldName:asc" or "fieldName:desc"', 'sortBy', field);
+        field.report(`The ${field} format must be "fieldName:asc" or "fieldName:desc"`, 'sortBy', field);
         return;
     }
 
     if (!validSortFields.includes(fieldName)) {
-        field.report(`Invalid field "{{ field }}". Allowed fields: ${validSortFields.join(', ')}`, 'sortBy', field);
+        field.report(`Invalid field "${field}". Allowed fields: ${validSortFields.join(', ')}`, 'sortBy', field);
         return;
     }
 
     if (direction !== 'asc' && direction !== 'desc') {
-        field.report(`Invalid sort direction "{{ field }}". Must be "asc" or "desc"`, 'sortBy', field);
+        field.report(`Invalid sort direction "${field}". Must be "asc" or "desc"`, 'sortBy', field);
     }
 };
 

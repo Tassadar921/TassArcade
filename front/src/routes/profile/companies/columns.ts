@@ -14,7 +14,7 @@ export const getCompanyColumns = (onSort: (field: string, order: 'asc' | 'desc')
         header: () =>
             renderComponent(SortableColumn, {
                 title: m['company.fields.name.label'](),
-                field: 'name',
+                field: 'companies.name',
                 onclick: onSort,
             }),
         enableHiding: false,
@@ -28,7 +28,7 @@ export const getCompanyColumns = (onSort: (field: string, order: 'asc' | 'desc')
         header: () =>
             renderComponent(SortableColumn, {
                 title: m['company.fields.siret.label'](),
-                field: 'siret',
+                field: 'companies.siret',
                 onclick: onSort,
             }),
     },
@@ -41,7 +41,7 @@ export const getCompanyColumns = (onSort: (field: string, order: 'asc' | 'desc')
         header: () =>
             renderComponent(SortableColumn, {
                 title: m['company.fields.email.label'](),
-                field: 'email',
+                field: 'companies.email',
                 onclick: onSort,
             }),
     },
@@ -54,7 +54,7 @@ export const getCompanyColumns = (onSort: (field: string, order: 'asc' | 'desc')
         header: () =>
             renderComponent(SortableColumn, {
                 title: m['common.phone-number.label'](),
-                field: 'phoneNumber',
+                field: 'companies.phoneNumber',
                 onclick: onSort,
             }),
     },
@@ -67,7 +67,7 @@ export const getCompanyColumns = (onSort: (field: string, order: 'asc' | 'desc')
         header: () =>
             renderComponent(SortableColumn, {
                 title: m['company.fields.enabled'](),
-                field: 'enabled',
+                field: 'companies.enabled',
                 onclick: onSort,
             }),
     },

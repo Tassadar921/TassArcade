@@ -29,7 +29,7 @@ export const getUserColumns = (onSort: (field: string, order: 'asc' | 'desc') =>
         header: ({ column }) =>
             renderComponent(SortableColumn, {
                 title: m['admin.user.fields.email'](),
-                field: 'email',
+                field: 'users.email',
                 onclick: onSort,
             }),
         enableHiding: false,
@@ -53,7 +53,7 @@ export const getUserColumns = (onSort: (field: string, order: 'asc' | 'desc') =>
         header: ({ column }) =>
             renderComponent(SortableColumn, {
                 title: m['admin.user.fields.username'](),
-                field: 'username',
+                field: 'users.username',
                 onclick: onSort,
             }),
     },
@@ -66,7 +66,7 @@ export const getUserColumns = (onSort: (field: string, order: 'asc' | 'desc') =>
         header: ({ column }) =>
             renderComponent(SortableColumn, {
                 title: m['admin.user.fields.enabled'](),
-                field: 'enabled',
+                field: 'users.enabled',
                 onclick: onSort,
             }),
     },

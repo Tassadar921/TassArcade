@@ -41,7 +41,7 @@ export const getCompanyAdministratorsColumns = (onSort: (field: string, order: '
         header: () =>
             renderComponent(SortableColumn, {
                 title: m['company.edit.administrators.fields.role'](),
-                field: 'role',
+                field: 'company_administrators.role',
                 onclick: onSort,
             }),
     },
@@ -67,7 +67,7 @@ export const getSearchCompanyAdministratorsColumns = (
         header: () =>
             renderComponent(SortableColumn, {
                 title: m['common.username.label'](),
-                field: 'username',
+                field: 'users.username',
                 onclick: onSort,
             }),
         enableHiding: false,
@@ -81,7 +81,7 @@ export const getSearchCompanyAdministratorsColumns = (
         header: () =>
             renderComponent(SortableColumn, {
                 title: m['common.email.label'](),
-                field: 'email',
+                field: 'users.email',
                 onclick: onSort,
             }),
     },

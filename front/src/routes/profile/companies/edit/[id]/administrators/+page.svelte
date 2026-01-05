@@ -4,7 +4,7 @@
     import type { PaginatedCompanyAdministrators, PaginatedSearchCompanyAdministrators, SerializedCompanyAdministrator } from 'backend/types';
     import { wrappedFetch } from '#lib/services/requestService';
     import { DataTable } from '#lib/components/ui/data-table';
-    import { getCompanyAdministratorsColumns, getSearchCompanyAdministratorsColumns } from './columns';
+    import { getCompanyAdministratorsColumns } from './columns';
     import { m } from '#lib/paraglide/messages';
     import { Dialog, DialogContent, DialogPortal } from '#lib/components/ui/dialog';
     import AddCompanyAdministrator from '#lib/partials/profile/company/administrators/AddCompanyAdministrator.svelte';
@@ -73,13 +73,7 @@
     <DialogPortal>
         <DialogContent class="min-w-[90%] md:min-w-200">
             {#if paginatedCompanyAdministrators && paginatedUsers}
-                <AddCompanyAdministrator
-                    bind:paginatedUsers
-                    parentLimit={paginatedCompanyAdministrators.limit}
-                    parentPage={paginatedCompanyAdministrators.currentPage}
-                    {getAdministrators}
-                    searchCompanyAdministratorsColumns={getSearchCompanyAdministratorsColumns}
-                />
+                <AddCompanyAdministrator bind:paginatedUsers parentLimit={paginatedCompanyAdministrators.limit} parentPage={paginatedCompanyAdministrators.currentPage} {getAdministrators} />
             {/if}
         </DialogContent>
     </DialogPortal>

@@ -5,16 +5,16 @@
     import { page } from '$app/state';
     import { showToast } from '#lib/services/toastService';
     import { m } from '#lib/paraglide/messages';
+    import { getSearchCompanyAdministratorsColumns } from '../../../../../routes/profile/companies/edit/[id]/administrators/columns';
 
     type Props = {
         paginatedUsers: PaginatedSearchCompanyAdministrators;
         parentLimit: number;
         parentPage: number;
         getAdministrators: (currentPage: number, limit: number) => void;
-        searchCompanyAdministratorsColumns: any;
     };
 
-    let { paginatedUsers = $bindable(), parentLimit, parentPage, getAdministrators, searchCompanyAdministratorsColumns }: Props = $props();
+    let { paginatedUsers = $bindable(), parentLimit, parentPage, getAdministrators }: Props = $props();
 
     let query: string = $state('');
     let sortBy: string = $state('username:asc');
@@ -59,6 +59,8 @@
             getAdministrators(parentPage, parentLimit);
         });
     };
+
+    const onPaginationChange = async (page: number, limit: number) => await getUsers(page, limit);
 </script>
 
 <h2>{m['company.edit.administrators.add']()}</h2>
@@ -68,11 +70,11 @@
         <DataTable
             paginatedObject={paginatedUsers}
             data={paginatedUsers.users}
-            columns={searchCompanyAdministratorsColumns(handleSort, addAdministrator, removeAdministrator)}
+            columns={getSearchCompanyAdministratorsColumns(handleSort, addAdministrator, removeAdministrator)}
             onSearch={getUsers}
             selectable={false}
             bind:query
-            onPaginationChange={async (page: number, limit: number) => await getUsers(page, limit)}
+            {onPaginationChange}
             editable={false}
             creatable={false}
         />

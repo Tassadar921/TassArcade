@@ -2,7 +2,7 @@ import type { ColumnDef } from '@tanstack/table-core';
 import { m } from '#lib/paraglide/messages';
 import { renderComponent } from '#lib/components/ui/data-table/render-helpers';
 import { SortableColumn } from '#lib/components/ui/data-table';
-import type { SearchCompanyAdministrator, SerializedCompanyEquipmentType } from 'backend/types';
+import type { SerializedCompanyEquipmentType, SerializedEquipment } from 'backend/types';
 
 export const getCompanyEquipmentsColumns = (onSort: (field: string, order: 'asc' | 'desc') => void, removeEquipment: (equipmentId: string) => void): ColumnDef<SerializedCompanyEquipmentType>[] => [
     {
@@ -16,28 +16,28 @@ export const getCompanyEquipmentsColumns = (onSort: (field: string, order: 'asc'
     },
 ];
 
-export const getEquipmentsColumns = (onSort: (field: string, order: 'asc' | 'desc') => void): ColumnDef<SerializedEquipm>[] => [
+export const getEquipmentsColumns = (onSort: (field: string, order: 'asc' | 'desc') => void): ColumnDef<SerializedEquipment>[] => [
     {
-        id: 'username',
-        accessorKey: 'user.username',
+        id: 'name',
+        accessorKey: 'name',
         header: () =>
             renderComponent(SortableColumn, {
-                title: m['common.username.label'](),
-                field: 'username',
+                title: m['common.name'](),
+                field: 'equipment_types.name',
                 onclick: onSort,
             }),
         enableHiding: false,
     },
     {
-        id: 'email',
-        accessorKey: 'user.email',
+        id: 'category',
+        accessorKey: 'equipment.category',
         meta: {
-            headerName: m['common.email.label'](),
+            headerName: m['company.edit.equipments.add.fields.category'](),
         },
         header: () =>
             renderComponent(SortableColumn, {
-                title: m['common.email.label'](),
-                field: 'email',
+                title: m['company.edit.equipments.add.fields.category'](),
+                field: 'equipments.category',
                 onclick: onSort,
             }),
     },

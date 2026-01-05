@@ -35,6 +35,6 @@
     {:else if editable}
         <Link href={`${$location}/edit/${id}`} class="px-3">{result}</Link>
     {:else}
-        <p class="py-2 px-3 text-sm font-medium">{result}</p>
+        <p class="py-2 px-3 text-sm font-medium first-letter:uppercase">{result}</p>
     {/if}
 {/if}
