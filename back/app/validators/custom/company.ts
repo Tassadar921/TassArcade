@@ -20,7 +20,7 @@ const sortByCompanyValidator = (value: unknown, _options: any, field: FieldConte
             return;
         }
     } else {
-        field.report(`Invalid field prefix : must start with "companies." be followed by ${validSortFields.join(', ')}`, 'sortBy', field);
+        field.report(`Invalid field prefix : must start with "companies." and be followed by ${validSortFields.join(', ')}`, 'sortBy', field);
         return;
     }
 

@@ -20,7 +20,7 @@ const sortByUserValidator = (value: unknown, _options: any, field: FieldContext)
             return;
         }
     } else {
-        field.report(`Invalid field prefix : must start with "users." be followed by ${validSortFields.join(', ')}`, 'sortBy', field);
+        field.report(`Invalid field prefix : must start with "users." and be followed by ${validSortFields.join(', ')}`, 'sortBy', field);
         return;
     }
 

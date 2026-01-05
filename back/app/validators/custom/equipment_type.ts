@@ -21,7 +21,7 @@ const sortByEquipmentTypeValidator = (value: unknown, _options: any, field: Fiel
             return;
         }
     } else {
-        field.report(`Invalid field prefix : must start with "equipment_types." be followed by ${validSortFields.join(', ')}`, 'sortBy', field);
+        field.report(`Invalid field prefix : must start with "equipment_types." and be followed by ${validSortFields.join(', ')}`, 'sortBy', field);
         return;
     }
 
