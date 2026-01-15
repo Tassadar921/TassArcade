@@ -2,21 +2,17 @@ import { afterCreate, BaseModel, beforeFetch, beforeFind, belongsTo, column, has
 import { DateTime } from 'luxon';
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations';
 import File from '#models/file';
-import { translation, Translation } from '@stouder-io/adonis-translatable';
-import Language from '#models/language';
 import EquipmentType from '#models/equipment_type';
 import SerializedEquipmentType from '#types/serialized/serialized_equipment_type';
 import SerializedEquipment from '#types/serialized/serialized_equipment';
 import SerializedEquipmentLight from '#types/serialized/serialized_equipment_light';
+import EquipmentTranslation from '#models/equipment_translation';
 
 export default class Equipment extends BaseModel {
     public static table: string = 'equipments';
 
     @column({ isPrimary: true })
     declare id: string;
-
-    @translation()
-    declare name: Translation;
 
     @column()
     declare category: string;
@@ -31,6 +27,9 @@ export default class Equipment extends BaseModel {
 
     @hasMany((): typeof EquipmentType => EquipmentType)
     declare types: HasMany<typeof EquipmentType>;
+
+    @hasMany((): typeof EquipmentTranslation => EquipmentTranslation)
+    declare translations: HasMany<typeof EquipmentTranslation>;
 
     @column.dateTime({ autoCreate: true })
     declare createdAt: DateTime;
@@ -50,24 +49,24 @@ export default class Equipment extends BaseModel {
         await equipment.refresh();
     }
 
-    public apiSerialize(language: Language): SerializedEquipment {
+    public apiSerialize(): SerializedEquipment {
         return {
             id: this.id,
-            name: this.name.get(language.code) || this.name.get(Language.LANGUAGE_ENGLISH.code) || '',
+            name: this.translations?.length ? this.translations[0].name : '',
             category: this.category,
             thumbnail: this.thumbnail.apiSerialize(),
             types: this.types
-                .map((type: EquipmentType): SerializedEquipmentType => type.apiSerialize(language))
+                .map((type: EquipmentType): SerializedEquipmentType => type.apiSerialize())
                 .sort((a: SerializedEquipmentType, b: SerializedEquipmentType): number => a.name.localeCompare(b.name)),
             createdAt: this.createdAt?.toString(),
             updatedAt: this.updatedAt?.toString(),
         };
     }
 
-    public apiSerializeLight(language: Language): SerializedEquipmentLight {
+    public apiSerializeLight(): SerializedEquipmentLight {
         return {
             id: this.id,
-            name: this.name.get(language.code) || this.name.get(Language.LANGUAGE_ENGLISH.code) || '',
+            name: this.translations?.length ? this.translations[0].name : '',
             category: this.category,
             thumbnail: this.thumbnail.apiSerialize(),
             createdAt: this.createdAt?.toString(),

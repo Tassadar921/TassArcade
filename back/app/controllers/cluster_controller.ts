@@ -32,7 +32,7 @@ export default class ClusterController {
 
         return response.ok({
             clusters: await this.companyRepository.getClusters(minLat, maxLat, minLng, maxLng, precision, language, equipmentIds ?? []),
-            company: company?.apiSerialize(language),
+            company: company?.apiSerialize(),
         });
     }
 }

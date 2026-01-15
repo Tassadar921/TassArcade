@@ -1,6 +1,6 @@
 <script lang="ts">
     import { UserRoundPlus, UserRoundMinus } from '@lucide/svelte';
-    import type { SearchCompanyAdministrator } from 'backend/types';
+    import { CompanyAdministratorRoleEnum, type SearchCompanyAdministrator } from 'backend/types';
     import { m } from '#lib/paraglide/messages';
     import { Button } from '#lib/components/ui/button';
 
@@ -14,7 +14,7 @@
 </script>
 
 {#if user.isAdministrator}
-    <Button variant="outline" onclick={() => removeAdministrator(user.user.id)}>
+    <Button variant="outline" disabled={user.role === CompanyAdministratorRoleEnum.CEO} onclick={() => removeAdministrator(user.user.id)}>
         <UserRoundMinus />
         {m['common.remove']()}
     </Button>

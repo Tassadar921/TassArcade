@@ -12,7 +12,7 @@
     let paginatedUsers: PaginatedUsers | undefined = $state();
     let selectedUsers: string[] = $state([]);
     let query: string = $state('');
-    let sortBy: string = $state('username:asc');
+    let sortBy: string = $state('users.username:asc');
 
     onMount(async (): Promise<void> => {
         if (page.data.isSuccess) {

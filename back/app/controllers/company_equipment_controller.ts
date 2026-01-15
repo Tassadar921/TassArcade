@@ -9,7 +9,6 @@ import { companyIdValidator, createOrUpdateEquipmentValidator, getCompanyEquipme
 import EquipmentType from '#models/equipment_type';
 import EquipmentTypeRepository from '#repositories/equipment_type_repository';
 import CompanyEquipmentType from '#models/company_equipment_type';
-import { Translation } from '@stouder-io/adonis-translatable';
 import PaginatedCompanyEquipmentTypes from '#types/paginated/paginated_company_equipment_types';
 import PaginatedEquipmentTypes from '#types/paginated/paginated_equipment_types';
 
@@ -31,7 +30,7 @@ export default class CompanyAdministratorController {
                 tags: [`company:${company.id}`],
                 ttl: '1h',
                 factory: (): SerializedCompany => {
-                    return company.apiSerialize(language);
+                    return company.apiSerialize();
                 },
             }),
             companyEquipments: await cache.getOrSet({
@@ -47,7 +46,7 @@ export default class CompanyAdministratorController {
                 tags: ['equipment-types'],
                 ttl: '24h',
                 factory: async (): Promise<PaginatedEquipmentTypes> => {
-                    return await this.equipmentTypeRepository.getEquipments(language, '', 1, 10, { field: 'equipments.name', order: 'asc' });
+                    return await this.equipmentTypeRepository.getEquipments(language, '', 1, 10, { field: 'equipment_type_translations.name', order: 'asc' });
                 },
             }),
         });
@@ -75,20 +74,20 @@ export default class CompanyAdministratorController {
         const { equipmentTypeId, name, description } = await request.validateUsing(createOrUpdateEquipmentValidator);
         const company: Company = await this.companyRepository.getFromUser(companyId, user);
 
-        const equipmentType: EquipmentType = await this.equipmentTypeRepository.firstOrFail({ id: equipmentTypeId });
+        const equipmentType: EquipmentType = await this.equipmentTypeRepository.getOneAndTranslation(equipmentTypeId, language);
 
         const companyEquipment: CompanyEquipmentType = await CompanyEquipmentType.create({
             companyId: company.id,
             equipmentTypeId: equipmentType.id,
-            name: name ? Translation.from({ ...name }) : undefined,
-            description: description ? Translation.from({ ...description }) : undefined,
+            name: name,
+            description: description,
         });
 
         await Promise.all([cache.deleteByTag({ tags: [`company:${companyId}`] })]);
 
         return response.ok({
-            message: i18n.t('messages.equipment.add.success', { name: companyEquipment.name?.get(language.code) || '' }),
-            companyEquipment: companyEquipment.apiSerialize(language),
+            message: i18n.t('messages.equipment.add.success', { name: companyEquipment.name || equipmentType.translations[0].name || '' }),
+            companyEquipment: companyEquipment.apiSerialize(),
         });
     }
 
@@ -106,8 +105,8 @@ export default class CompanyAdministratorController {
 
         await this.equipmentTypeRepository.firstOrFail({ id: equipmentTypeId });
 
-        companyEquipment.name = name ? Translation.from({ ...name }) : Translation.from({});
-        companyEquipment.description = description ? Translation.from({ ...description }) : Translation.from({});
+        companyEquipment.name = name;
+        companyEquipment.description = description;
         companyEquipment.equipmentTypeId = equipmentTypeId;
 
         await Promise.all([companyEquipment.save(), cache.deleteByTag({ tags: [`company:${companyId}`] })]);

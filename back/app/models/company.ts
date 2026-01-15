@@ -4,12 +4,12 @@ import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations';
 import Address from '#models/address';
 import CompanyAdministrator from '#models/company_administrator';
 import CompanyEquipmentType from '#models/company_equipment_type';
-import Language from '#models/language';
 import SerializedCompanyLight from '#types/serialized/serialized_company_light';
 import File from '#models/file';
 import SerializedCompanyEquipmentType from '#types/serialized/serialized_company_equipment_type';
 import SerializedCompany from '#types/serialized/serialized_company';
 import type { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model';
+import SerializedCompanySuperLight from '#types/serialized/serialized_company_super_light';
 
 export default class Company extends BaseModel {
     public static table: string = 'companies';
@@ -78,21 +78,32 @@ export default class Company extends BaseModel {
         await company.refresh();
     }
 
-    public apiSerializeLight(language: Language): SerializedCompanyLight {
+    public apiSerializeSuperLight(): SerializedCompanySuperLight {
+        return {
+            id: this.id,
+            name: this.name,
+            logo: this.logo?.apiSerialize(),
+            address: this.address.apiSerialize(),
+            createdAt: this.createdAt.toString(),
+            updatedAt: this.updatedAt.toString(),
+        };
+    }
+
+    public apiSerializeLight(): SerializedCompanyLight {
         return {
             id: this.id,
             name: this.name,
             logo: this.logo?.apiSerialize(),
             address: this.address.apiSerialize(),
             equipments: this.equipments
-                .map((equipmentType: CompanyEquipmentType): SerializedCompanyEquipmentType => equipmentType.apiSerialize(language))
-                .sort((a: SerializedCompanyEquipmentType, b: SerializedCompanyEquipmentType): number => a.name.localeCompare(b.name)),
+                .map((equipmentType: CompanyEquipmentType): SerializedCompanyEquipmentType => equipmentType.apiSerialize())
+                .sort((a: SerializedCompanyEquipmentType, b: SerializedCompanyEquipmentType): number => (a.name ?? '').localeCompare(b.name ?? '')),
             createdAt: this.createdAt.toString(),
             updatedAt: this.updatedAt.toString(),
         };
     }
 
-    public apiSerialize(language: Language): SerializedCompany {
+    public apiSerialize(): SerializedCompany {
         return {
             id: this.id,
             siret: this.siret,
@@ -103,8 +114,8 @@ export default class Company extends BaseModel {
             logo: this.logo?.apiSerialize(),
             address: this.address.apiSerialize(),
             equipments: this.equipments
-                .map((equipmentType: CompanyEquipmentType): SerializedCompanyEquipmentType => equipmentType.apiSerialize(language))
-                .sort((a: SerializedCompanyEquipmentType, b: SerializedCompanyEquipmentType): number => a.name.localeCompare(b.name)),
+                .map((equipmentType: CompanyEquipmentType): SerializedCompanyEquipmentType => equipmentType.apiSerialize())
+                .sort((a: SerializedCompanyEquipmentType, b: SerializedCompanyEquipmentType): number => (a.name ?? '').localeCompare(b.name ?? '')),
             createdAt: this.createdAt.toString(),
             updatedAt: this.updatedAt.toString(),
         };

@@ -23,10 +23,10 @@ export default class EquipmentController {
                 tags: ['equipments'],
                 ttl: '24h',
                 factory: async (): Promise<SerializedEquipment[]> => {
-                    const equipments: Equipment[] = await this.equipmentRepository.all(['types']);
+                    const equipments: Equipment[] = await this.equipmentRepository.getAll(language);
 
                     return equipments
-                        .map((equipment: Equipment): SerializedEquipment => equipment.apiSerialize(language))
+                        .map((equipment: Equipment): SerializedEquipment => equipment.apiSerialize())
                         .sort((a: SerializedEquipment, b: SerializedEquipment): number => a.name.localeCompare(b.name));
                 },
             })

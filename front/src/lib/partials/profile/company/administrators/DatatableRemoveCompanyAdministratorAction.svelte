@@ -1,6 +1,6 @@
 <script lang="ts">
     import { UserRoundMinus } from '@lucide/svelte';
-    import type { SerializedCompanyAdministrator } from 'backend/types';
+    import { CompanyAdministratorRoleEnum, type SerializedCompanyAdministrator } from 'backend/types';
     import { m } from '#lib/paraglide/messages';
     import { Button } from '#lib/components/ui/button';
 
@@ -12,7 +12,7 @@
     let { administrator, removeAdministrator }: Props = $props();
 </script>
 
-<Button variant="outline" onclick={() => removeAdministrator(administrator.user.id)}>
+<Button disabled={administrator.role === CompanyAdministratorRoleEnum.CEO} variant="outline" onclick={() => removeAdministrator(administrator.user.id)}>
     <UserRoundMinus />
     {m['common.remove']()}
 </Button>

@@ -3,8 +3,6 @@ import { afterCreate, afterUpdate, BaseModel, beforeFetch, beforeFind, belongsTo
 import type { BelongsTo } from '@adonisjs/lucid/types/relations';
 import Company from '#models/company';
 import EquipmentType from '#models/equipment_type';
-import { Translation, translation } from '@stouder-io/adonis-translatable';
-import Language from '#models/language';
 import { SerializedCompanyEquipmentType } from '#types/serialized/serialized_company_equipment_type';
 
 export default class CompanyEquipmentType extends BaseModel {
@@ -13,11 +11,11 @@ export default class CompanyEquipmentType extends BaseModel {
     @column({ isPrimary: true })
     declare id: string;
 
-    @translation()
-    declare name: Translation;
+    @column()
+    declare name: string | undefined;
 
-    @translation()
-    declare description: Translation;
+    @column()
+    declare description: string | undefined;
 
     @column()
     declare companyId: string;
@@ -54,13 +52,13 @@ export default class CompanyEquipmentType extends BaseModel {
         await companyEquipment.refresh();
     }
 
-    public apiSerialize(language: Language): SerializedCompanyEquipmentType {
+    public apiSerialize(): SerializedCompanyEquipmentType {
         return {
             id: this.id,
-            category: this.equipmentType.equipment.apiSerializeLight(language),
-            type: this.equipmentType.apiSerialize(language),
-            name: this.name?.get(language.code) || this.name?.get(Language.LANGUAGE_ENGLISH.code) || '',
-            description: this.description?.get(language.code) || this.description?.get(Language.LANGUAGE_ENGLISH.code) || undefined,
+            category: this.equipmentType.equipment.apiSerializeLight(),
+            type: this.equipmentType.apiSerialize(),
+            name: this.name,
+            description: this.description,
             createdAt: this.createdAt?.toString(),
             updatedAt: this.updatedAt?.toString(),
         };

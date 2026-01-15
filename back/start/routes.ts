@@ -151,7 +151,8 @@ router
             })
             .use([middleware.auth()]);
 
-        router.get('/equipments', [EquipmentController, 'getAll']);
+        router.get('/equipments/all', [EquipmentController, 'getAll']);
+        router.get('/equipments', [EquipmentController, 'searchEquipments']);
         router.get('/countries', [CountryController, 'getAll']);
         router.post('/clusters', [ClusterController, 'get']);
 

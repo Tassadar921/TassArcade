@@ -13,7 +13,7 @@
     let { paginatedEquipments = $bindable() }: Props = $props();
 
     let query: string = $state('');
-    let sortBy: string = $state('name:asc');
+    let sortBy: string = $state('equipment_type_translations.name:asc');
 
     const handleSort = (field: string, order: 'asc' | 'desc'): void => {
         sortBy = `${field}:${order}`;
@@ -21,7 +21,7 @@
     };
 
     const getEquipments = async (currentPage: number = 1, limit: number = 10): Promise<void> => {
-        await wrappedFetch(`/profile/companies/edit/${page.params.id}/equipments/search?page=${currentPage}&limit=${limit}&query=${query}&sortBy=${sortBy}`, { method: 'GET' }, ({ data }): void => {
+        await wrappedFetch(`/equipments?page=${currentPage}&limit=${limit}&query=${query}&sortBy=${sortBy}`, { method: 'GET' }, ({ data }): void => {
             paginatedEquipments = data;
         });
     };

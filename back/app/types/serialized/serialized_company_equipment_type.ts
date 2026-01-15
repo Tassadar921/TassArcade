@@ -5,7 +5,7 @@ export type SerializedCompanyEquipmentType = {
     id: string;
     category: SerializedEquipmentLight;
     type: SerializedEquipmentType;
-    name: string;
+    name?: string;
     description?: string;
     updatedAt?: string;
     createdAt?: string;

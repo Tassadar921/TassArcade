@@ -3,7 +3,7 @@ import { m } from '#lib/paraglide/messages';
 
 export const GET: RequestHandler = async ({ locals }): Promise<Response> => {
     try {
-        const response = await locals.client.get('/api/equipments');
+        const response = await locals.client.get('/api/equipments/all');
 
         if (response.status < 200 || response.status >= 300) {
             throw response;

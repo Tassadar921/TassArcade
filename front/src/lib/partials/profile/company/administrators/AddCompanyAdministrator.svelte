@@ -17,7 +17,7 @@
     let { paginatedUsers = $bindable(), parentLimit, parentPage, getAdministrators }: Props = $props();
 
     let query: string = $state('');
-    let sortBy: string = $state('username:asc');
+    let sortBy: string = $state('users.username:asc');
 
     const handleSort = (field: string, order: 'asc' | 'desc'): void => {
         sortBy = `${field}:${order}`;

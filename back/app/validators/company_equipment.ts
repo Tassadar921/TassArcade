@@ -22,18 +22,8 @@ export const getCompanyEquipmentsValidator = vine.create({
 export const createOrUpdateEquipmentValidator = vine.create({
     companyEquipmentTypeId: vine.string().uuid().optional(),
     equipmentTypeId: vine.string().uuid(),
-    name: vine
-        .object({
-            en: vine.string().maxLength(255).optional(),
-            fr: vine.string().maxLength(255).optional(),
-        })
-        .optional(),
-    description: vine
-        .object({
-            en: vine.string().maxLength(1024).optional(),
-            fr: vine.string().maxLength(1024).optional(),
-        })
-        .optional(),
+    name: vine.string().optional(),
+    description: vine.string().optional(),
 });
 
 export const removeEquipmentValidator = vine.create({

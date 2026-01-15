@@ -79,7 +79,7 @@ export default class UserRepository extends BaseRepository<typeof User> {
         sortBy: { field: keyof User['$attributes']; order: 'asc' | 'desc' }
     ): Promise<PaginatedSearchCompanyAdministrators> {
         const paginator: ModelPaginatorContract<User> = await this.Model.query()
-            .select('users.*', 'company_administrators.id as admin_id')
+            .select('users.*', 'company_administrators.id as adminId', 'company_administrators.role as administratorRole')
             .leftJoin('company_administrators', (join): void => {
                 join.on('users.id', '=', 'company_administrators.user_id').onVal('company_administrators.company_id', company.id);
             })
@@ -97,7 +97,8 @@ export default class UserRepository extends BaseRepository<typeof User> {
             users: paginator.all().map(
                 (user: User): SearchCompanyAdministrator => ({
                     user: user.apiSerialize(),
-                    isAdministrator: user.$extras.admin_id !== null,
+                    isAdministrator: user.$extras.adminId !== null,
+                    role: user.$extras.administratorRole,
                 })
             ),
             firstPage: paginator.firstPage,

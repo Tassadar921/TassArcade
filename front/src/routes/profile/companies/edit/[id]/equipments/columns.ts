@@ -23,7 +23,7 @@ export const getEquipmentsColumns = (onSort: (field: string, order: 'asc' | 'des
         header: () =>
             renderComponent(SortableColumn, {
                 title: m['common.name'](),
-                field: 'equipment_types.name',
+                field: 'equipment_type_translations.name',
                 onclick: onSort,
             }),
         enableHiding: false,

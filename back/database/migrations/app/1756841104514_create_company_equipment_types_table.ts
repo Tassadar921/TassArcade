@@ -2,13 +2,15 @@ import { BaseSchema } from '@adonisjs/lucid/schema';
 import { Knex } from 'knex';
 
 export default class extends BaseSchema {
-    protected tableName: string = 'equipments';
+    protected tableName: string = 'company_equipment_types';
 
     async up(): Promise<void> {
         this.schema.createTable(this.tableName, (table: Knex.CreateTableBuilder): void => {
             table.uuid('id').primary().defaultTo(this.raw('uuid_generate_v4()'));
-            table.string('category', 100).notNullable().unique();
-            table.uuid('thumbnail_id').notNullable().references('id').inTable('files');
+            table.string('name').nullable();
+            table.string('description').nullable();
+            table.uuid('company_id').notNullable().references('id').inTable('companies').onDelete('CASCADE');
+            table.uuid('equipment_type_id').notNullable().references('id').inTable('equipment_types');
             table.timestamp('created_at');
             table.timestamp('updated_at');
         });

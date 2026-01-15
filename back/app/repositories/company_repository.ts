@@ -47,14 +47,32 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
         const clusters: Cluster[] = [];
 
         for (const row of result.rows) {
-            const companies: Company[] = await this.Model.query().whereIn('address_id', row.address_ids);
+            const companies: Company[] = await this.Model.query()
+                .whereIn('address_id', row.address_ids)
+                .preload('equipments', (equipmentQuery): void => {
+                    equipmentQuery.preload('equipmentType', (equipmentTypeQuery): void => {
+                        equipmentTypeQuery
+                            .preload('translations', (equipmentTypeTranslationQuery): void => {
+                                equipmentTypeTranslationQuery.preload('language', (languageQuery): void => {
+                                    languageQuery.where('code', language.code);
+                                });
+                            })
+                            .preload('equipment', (equipmentQuery): void => {
+                                equipmentQuery.preload('translations', (equipmentTranslationQuery): void => {
+                                    equipmentTranslationQuery.preload('language', (languageQuery): void => {
+                                        languageQuery.where('code', language.code);
+                                    });
+                                });
+                            });
+                    });
+                });
 
             clusters.push({
                 id: row.cluster,
                 lat: row.lat,
                 lng: row.lng,
                 isCluster: row.isCluster,
-                companies: companies.map((company: Company): SerializedCompanyLight => company.apiSerializeLight(language)),
+                companies: companies.map((company: Company): SerializedCompanyLight => company.apiSerializeLight()),
             });
         }
 
@@ -89,12 +107,28 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
                 queryBuilder.orderBy('companies.name', 'asc');
             })
             .preload('address')
-            .preload('equipments')
+            .preload('equipments', (equipmentQuery): void => {
+                equipmentQuery.preload('equipmentType', (equipmentTypeQuery): void => {
+                    equipmentTypeQuery
+                        .preload('translations', (equipmentTypeTranslationQuery): void => {
+                            equipmentTypeTranslationQuery.preload('language', (languageQuery): void => {
+                                languageQuery.where('code', language.code);
+                            });
+                        })
+                        .preload('equipment', (equipmentQuery): void => {
+                            equipmentQuery.preload('translations', (equipmentTranslationQuery): void => {
+                                equipmentTranslationQuery.preload('language', (languageQuery): void => {
+                                    languageQuery.where('code', language.code);
+                                });
+                            });
+                        });
+                });
+            })
             .preload('administrators')
             .paginate(page, limit);
 
         return {
-            companies: paginator.all().map((company: Company): SerializedCompany => company.apiSerialize(language)),
+            companies: paginator.all().map((company: Company): SerializedCompany => company.apiSerialize()),
             firstPage: paginator.firstPage,
             lastPage: paginator.lastPage,
             limit,

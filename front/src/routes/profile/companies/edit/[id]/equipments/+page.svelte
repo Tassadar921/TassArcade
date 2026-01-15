@@ -14,14 +14,13 @@
     let paginatedEquipments: PaginatedEquipments | undefined = $state();
     let selectedUsers: string[] = $state([]);
     let query: string = $state('');
-    let sortBy: string = $state('users.username:asc');
+    let sortBy: string = $state('equipment_type_translations.name:asc');
     let showDialog: boolean = $state(false);
 
     onMount(async (): Promise<void> => {
         if (page.data.isSuccess) {
             paginatedCompanyEquipments = page.data.companyEquipments;
             paginatedEquipments = page.data.equipments;
-            console.log(paginatedEquipments.equipments[0]);
         } else {
             await getEquipments();
         }

@@ -8,7 +8,7 @@
 
     let paginatedCompanies: PaginatedCompanies | undefined = $state();
     let query: string = $state('');
-    let sortBy: string = $state('name:asc');
+    let sortBy: string = $state('companies.name:asc');
 
     onMount(async (): Promise<void> => {
         if (page.data.isSuccess) {

@@ -10,8 +10,8 @@ import UserRepository from '#repositories/user_repository';
 import PaginatedSearchCompanyAdministrators from '#types/paginated/paginated_search_company_administrators';
 import User from '#models/user';
 import CompanyAdministrator from '#models/company_administrator';
-import SerializedCompany from '#types/serialized/serialized_company';
 import CompanyAdministratorRoleEnum from '#types/enum/company_administrator_role_enum';
+import SerializedCompanySuperLight from '#types/serialized/serialized_company_super_light';
 
 @inject()
 export default class CompanyAdministratorController {
@@ -21,7 +21,7 @@ export default class CompanyAdministratorController {
         private readonly userRepository: UserRepository
     ) {}
 
-    public async init({ request, response, language, user }: HttpContext) {
+    public async init({ request, response, user }: HttpContext) {
         const { companyId } = await companyIdValidator.validate(request.params());
         const company: Company = await this.companyRepository.getFromUser(companyId, user);
 
@@ -32,8 +32,8 @@ export default class CompanyAdministratorController {
                 key: `company:${company.id}`,
                 tags: [`company:${companyId}`],
                 ttl: '1h',
-                factory: (): SerializedCompany => {
-                    return company.apiSerialize(language);
+                factory: (): SerializedCompanySuperLight => {
+                    return company.apiSerializeSuperLight();
                 },
             }),
             administrators: await cache.getOrSet({
