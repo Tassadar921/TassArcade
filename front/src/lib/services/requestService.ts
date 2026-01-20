@@ -37,20 +37,25 @@ export const wrappedFetch = async (
     }
 
     try {
-        const data: any = await response.json();
+        const parsedResponse: any = await response.json();
 
-        if (data.message) {
-            showToast(data.message, data.isSuccess ? 'success' : 'error');
+        console.log(parsedResponse);
+        if (parsedResponse.data.message) {
+            showToast(parsedResponse.data.message, 'success');
+        } else if (parsedResponse.data.error) {
+            showToast(parsedResponse.data.error, 'error');
         }
 
-        if (data.isSuccess) {
-            await onSuccess?.(data);
+        if (parsedResponse.isSuccess) {
+            console.log('là');
+            await onSuccess?.(parsedResponse);
         } else {
-            await onError?.(data);
+            await onError?.(parsedResponse);
         }
 
-        return data;
+        return parsedResponse;
     } catch (error: any) {
+        console.error(error);
         return undefined;
     }
 };

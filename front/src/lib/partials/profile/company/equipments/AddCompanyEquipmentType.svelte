@@ -8,9 +8,12 @@
 
     type Props = {
         paginatedEquipments: PaginatedEquipments;
+        parentLimit: number;
+        parentPage: number;
+        getCompanyEquipments: (currentPage: number, limit: number) => void;
     };
 
-    let { paginatedEquipments = $bindable() }: Props = $props();
+    let { paginatedEquipments = $bindable(), parentLimit, parentPage, getCompanyEquipments }: Props = $props();
 
     let query: string = $state('');
     let sortBy: string = $state('equipment_type_translations.name:asc');
@@ -21,12 +24,16 @@
     };
 
     const getEquipments = async (currentPage: number = 1, limit: number = 10): Promise<void> => {
-        await wrappedFetch(`/equipments?page=${currentPage}&limit=${limit}&query=${query}&sortBy=${sortBy}`, { method: 'GET' }, ({ data }): void => {
+        await wrappedFetch(`/profile/companies/edit/${page.params.id}/equipments?page=${currentPage}&limit=${limit}&query=${query}&sortBy=${sortBy}`, { method: 'GET' }, ({ data }): void => {
             paginatedEquipments = data;
         });
     };
 
-    const equipmentClicked = async (equipmentId: string): Promise<void> => {};
+    const handleAddEquipment = async (equipmentTypeId: string): Promise<void> => {
+        await wrappedFetch(`/profile/companies/edit/${page.params.id}/equipments/add`, { method: 'POST', body: { equipmentTypeId } }, (): void => {
+            getCompanyEquipments(parentPage, parentLimit);
+        });
+    };
 
     const onPaginationChange = async (page: number, limit: number) => await getEquipments(page, limit);
 </script>
@@ -38,7 +45,7 @@
         <DataTable
             paginatedObject={paginatedEquipments}
             data={paginatedEquipments.equipments}
-            columns={getEquipmentsColumns(handleSort)}
+            columns={getEquipmentsColumns(handleSort, handleAddEquipment)}
             onSearch={getEquipments}
             selectable={false}
             bind:query

@@ -3,7 +3,6 @@
     import { DataTable } from '#lib/components/ui/data-table';
     import { wrappedFetch } from '#lib/services/requestService';
     import { page } from '$app/state';
-    import { showToast } from '#lib/services/toastService';
     import { m } from '#lib/paraglide/messages';
     import { getSearchCompanyAdministratorsColumns } from '../../../../../routes/profile/companies/edit/[id]/administrators/columns';
 
@@ -40,8 +39,7 @@
             return;
         }
 
-        await wrappedFetch(`/profile/companies/edit/${page.params.id}/administrators/add`, { method: 'POST', body: { userId } }, ({ data }): void => {
-            showToast(data.message, 'success');
+        await wrappedFetch(`/profile/companies/edit/${page.params.id}/administrators/add`, { method: 'POST', body: { userId } }, (): void => {
             paginatedUsers.users = paginatedUsers.users.map((user: SearchCompanyAdministrator, i: number): SearchCompanyAdministrator => (i === index ? { ...user, isAdministrator: true } : user));
             getAdministrators(parentPage, parentLimit);
         });
@@ -53,8 +51,7 @@
             return;
         }
 
-        await wrappedFetch(`/profile/companies/edit/${page.params.id}/administrators/remove`, { method: 'POST', body: { userId } }, ({ data }): void => {
-            showToast(data.message, data.isSuccess, 'success');
+        await wrappedFetch(`/profile/companies/edit/${page.params.id}/administrators/remove`, { method: 'POST', body: { userId } }, (): void => {
             paginatedUsers.users = paginatedUsers.users.map((user: SearchCompanyAdministrator, i: number): SearchCompanyAdministrator => (i === index ? { ...user, isAdministrator: false } : user));
             getAdministrators(parentPage, parentLimit);
         });

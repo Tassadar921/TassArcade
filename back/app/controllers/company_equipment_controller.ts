@@ -5,12 +5,15 @@ import cache from '@adonisjs/cache/services/main';
 import Company from '#models/company';
 import SerializedCompany from '#types/serialized/serialized_company';
 import CompanyEquipmentTypeRepository from '#repositories/company_equipment_type_repository';
-import { companyIdValidator, createOrUpdateEquipmentValidator, getCompanyEquipmentsValidator, removeEquipmentValidator, searchCompanyEquipmentsValidator } from '#validators/company_equipment';
+import { companyIdValidator, createOrUpdateEquipmentValidator, getCompanyEquipmentsValidator, removeEquipmentValidator } from '#validators/company_equipment';
 import EquipmentType from '#models/equipment_type';
 import EquipmentTypeRepository from '#repositories/equipment_type_repository';
 import CompanyEquipmentType from '#models/company_equipment_type';
 import PaginatedCompanyEquipmentTypes from '#types/paginated/paginated_company_equipment_types';
 import PaginatedEquipmentTypes from '#types/paginated/paginated_equipment_types';
+import Equipment from '#models/equipment';
+import EquipmentTranslation from '#models/equipment_translation';
+import EquipmentTypeTranslation from '#models/equipment_type_translation';
 
 @inject()
 export default class CompanyAdministratorController {
@@ -21,7 +24,7 @@ export default class CompanyAdministratorController {
     ) {}
 
     public async init({ request, response, language, user }: HttpContext) {
-        const { companyId } = await getCompanyEquipmentsValidator.validate(request.params());
+        const { companyId } = await companyIdValidator.validate(request.params());
         const company: Company = await this.companyRepository.getFromUser(companyId, user);
 
         return response.ok({
@@ -34,11 +37,11 @@ export default class CompanyAdministratorController {
                 },
             }),
             companyEquipments: await cache.getOrSet({
-                key: `company-equipment-types:companyId:${companyId}:query::page:1:limit:10`,
+                key: `company-equipment-types:companyId:${companyId}:query::page:1:limit:10:sortBy:company_equipment_types.name:asc`,
                 tags: [`company:${companyId}`],
                 ttl: '1h',
                 factory: async (): Promise<PaginatedCompanyEquipmentTypes> => {
-                    return await this.companyEquipmentTypeRepository.getCompanyEquipments(company, language, '', 1, 10);
+                    return await this.companyEquipmentTypeRepository.getCompanyEquipments(company, language, '', 1, 10, { field: 'company_equipment_types.name', order: 'asc' });
                 },
             }),
             equipments: await cache.getOrSet({
@@ -54,16 +57,27 @@ export default class CompanyAdministratorController {
 
     public async getAll({ request, response, user, language }: HttpContext) {
         const { companyId } = await companyIdValidator.validate(request.params());
-        const { query, page, limit } = await request.validateUsing(searchCompanyEquipmentsValidator);
+        const { query, page, limit, sortBy: inputSortBy } = await request.validateUsing(getCompanyEquipmentsValidator);
         const company: Company = await this.companyRepository.getFromUser(companyId, user);
 
         return response.ok(
             await cache.getOrSet({
-                key: `company-equipment-types:companyId:${companyId}:query:${query.toLowerCase()}:page:${page}:limit:${limit}`,
+                key: `company-equipment-types:companyId:${companyId}:query:${query.toLowerCase()}:page:${page}:limit:${limit}:sortBy:${inputSortBy}`,
                 tags: [`company:${companyId}`],
                 ttl: '1h',
                 factory: async (): Promise<PaginatedCompanyEquipmentTypes> => {
-                    return await this.companyEquipmentTypeRepository.getCompanyEquipments(company, language, query.toLowerCase(), page, limit);
+                    const [field, order] = inputSortBy.split(':');
+                    const sortBy = {
+                        field: field as
+                            | `company_equipment_types.${keyof CompanyEquipmentType['$attributes']}`
+                            | `equipments.${keyof Equipment['$attributes']}`
+                            | `equipment_translations.${keyof EquipmentTranslation['$attributes']}`
+                            | `equipment_types.${keyof EquipmentType['$attributes']}`
+                            | `equipment_type_translations.${keyof EquipmentTypeTranslation['$attributes']}`,
+                        order: order as 'asc' | 'desc',
+                    };
+
+                    return await this.companyEquipmentTypeRepository.getCompanyEquipments(company, language, query.toLowerCase(), page, limit, sortBy);
                 },
             })
         );
@@ -71,7 +85,7 @@ export default class CompanyAdministratorController {
 
     public async addEquipment({ request, response, user, i18n, language }: HttpContext): Promise<void> {
         const { companyId } = await companyIdValidator.validate(request.params());
-        const { equipmentTypeId, name, description } = await request.validateUsing(createOrUpdateEquipmentValidator);
+        const { equipmentTypeId } = await request.validateUsing(createOrUpdateEquipmentValidator);
         const company: Company = await this.companyRepository.getFromUser(companyId, user);
 
         const equipmentType: EquipmentType = await this.equipmentTypeRepository.getOneAndTranslation(equipmentTypeId, language);
@@ -79,15 +93,12 @@ export default class CompanyAdministratorController {
         const companyEquipment: CompanyEquipmentType = await CompanyEquipmentType.create({
             companyId: company.id,
             equipmentTypeId: equipmentType.id,
-            name: name,
-            description: description,
         });
 
         await Promise.all([cache.deleteByTag({ tags: [`company:${companyId}`] })]);
 
         return response.ok({
-            message: i18n.t('messages.equipment.add.success', { name: companyEquipment.name || equipmentType.translations[0].name || '' }),
-            companyEquipment: companyEquipment.apiSerialize(),
+            message: i18n.t('messages.company.equipment.add.success', { name: companyEquipment.name || equipmentType.translations[0].name || '' }),
         });
     }
 
@@ -99,7 +110,7 @@ export default class CompanyAdministratorController {
         const companyEquipment: CompanyEquipmentType | null = await this.companyEquipmentTypeRepository.findOneBy({ id: companyEquipmentTypeId, companyId: company.id });
         if (!companyEquipment) {
             return response.notFound({
-                error: i18n.t('messages.equipment.update.error.not-found'),
+                error: i18n.t('messages.company.equipment.update.error.not-found'),
             });
         }
 
@@ -111,7 +122,7 @@ export default class CompanyAdministratorController {
 
         await Promise.all([companyEquipment.save(), cache.deleteByTag({ tags: [`company:${companyId}`] })]);
 
-        return response.ok({ message: i18n.t('messages.equipment.remove.success') });
+        return response.ok({ message: i18n.t('messages.company.equipment.remove.success') });
     }
 
     public async removeEquipment({ request, response, user, i18n }: HttpContext): Promise<void> {
@@ -122,12 +133,12 @@ export default class CompanyAdministratorController {
         const companyEquipment: CompanyEquipmentType | null = await this.companyEquipmentTypeRepository.findOneBy({ id: equipmentId, companyId: company.id });
         if (!companyEquipment) {
             return response.notFound({
-                error: i18n.t('messages.equipment.remove.error.not-found'),
+                error: i18n.t('messages.company.equipment.remove.error.not-found'),
             });
         }
 
         await Promise.all([companyEquipment.delete(), cache.deleteByTag({ tags: [`company:${companyId}`] })]);
 
-        return response.ok({ message: i18n.t('messages.equipment.remove.success') });
+        return response.ok({ message: i18n.t('messages.company.equipment.remove.success') });
     }
 }

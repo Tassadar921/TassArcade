@@ -5,13 +5,32 @@ import SerializedCompanyEquipmentType from '#types/serialized/serialized_company
 import Language from '#models/language';
 import { ModelPaginatorContract, ModelQueryBuilderContract } from '@adonisjs/lucid/types/model';
 import PaginatedCompanyEquipmentTypes from '#types/paginated/paginated_company_equipment_types';
+import Equipment from '#models/equipment';
+import EquipmentTranslation from '#models/equipment_translation';
+import EquipmentType from '#models/equipment_type';
+import EquipmentTypeTranslation from '#models/equipment_type_translation';
 
 export default class CompanyEquipmentTypeRepository extends BaseRepository<typeof CompanyEquipmentType> {
     constructor() {
         super(CompanyEquipmentType);
     }
 
-    public async getCompanyEquipments(company: Company, language: Language, query: string, page: number, limit: number): Promise<PaginatedCompanyEquipmentTypes> {
+    public async getCompanyEquipments(
+        company: Company,
+        language: Language,
+        query: string,
+        page: number,
+        limit: number,
+        sortBy: {
+            field:
+                | `company_equipment_types.${keyof CompanyEquipmentType['$attributes']}`
+                | `equipments.${keyof Equipment['$attributes']}`
+                | `equipment_translations.${keyof EquipmentTranslation['$attributes']}`
+                | `equipment_types.${keyof EquipmentType['$attributes']}`
+                | `equipment_type_translations.${keyof EquipmentTypeTranslation['$attributes']}`;
+            order: 'asc' | 'desc';
+        }
+    ): Promise<PaginatedCompanyEquipmentTypes> {
         const paginator: ModelPaginatorContract<CompanyEquipmentType> = await this.Model.query()
             .select('company_equipment_types.*')
             .leftJoin('equipment_types', 'company_equipment_types.equipment_type_id', 'equipment_types.id')
@@ -28,6 +47,9 @@ export default class CompanyEquipmentTypeRepository extends BaseRepository<typeo
                         .orWhere('equipment_type_translations.name', 'ILIKE', `%${query}%`)
                         .orWhere('equipment_types.code', 'ILIKE', `%${query}%`);
                 });
+            })
+            .if(sortBy, (queryBuilder: ModelQueryBuilderContract<typeof CompanyEquipmentType>): void => {
+                queryBuilder.orderBy(sortBy.field, sortBy.order);
             })
             .preload('equipmentType', (equipmentTypeQuery): void => {
                 equipmentTypeQuery

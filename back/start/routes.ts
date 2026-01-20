@@ -123,7 +123,6 @@ router
                                             .group((): void => {
                                                 router.get('/init', [CompanyEquipmentsController, 'init']);
                                                 router.get('/', [CompanyEquipmentsController, 'getAll']);
-                                                // router.get('/search', [CompanyEquipmentsController, 'sea']);
                                                 router.post('/add', [CompanyEquipmentsController, 'addEquipment']);
                                                 router.post('/update', [CompanyEquipmentsController, 'updateEquipment']);
                                                 router.post('/remove', [CompanyEquipmentsController, 'removeEquipment']);

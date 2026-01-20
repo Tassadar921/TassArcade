@@ -103,7 +103,7 @@ export default class CompanyAdministratorController {
         const existingAdministrator: CompanyAdministrator | null = await this.companyAdministratorRepository.findOneBy({ companyId: company.id, userId });
         if (existingAdministrator) {
             return response.badRequest({
-                error: i18n.t('messages.administrator.add.error.already-exists', { username: existingAdministrator.user.username }),
+                error: i18n.t('messages.company.administrator.add.error.already-exists', { username: existingAdministrator.user.username }),
             });
         }
 
@@ -111,7 +111,7 @@ export default class CompanyAdministratorController {
         await Promise.all([cache.deleteByTag({ tags: [`company:${companyId}`] })]);
 
         return response.ok({
-            message: i18n.t('messages.administrator.add.success', { username: administrator.user.username }),
+            message: i18n.t('messages.company.administrator.add.success', { username: administrator.user.username }),
             administrator: administrator.apiSerialize(),
         });
     }
@@ -124,16 +124,16 @@ export default class CompanyAdministratorController {
         const administrator: CompanyAdministrator | null = await this.companyAdministratorRepository.findOneBy({ companyId: company.id, userId });
         if (!administrator) {
             return response.notFound({
-                error: i18n.t('messages.administrator.remove.error.not-found'),
+                error: i18n.t('messages.company.administrator.remove.error.not-found'),
             });
         } else if (administrator.role === CompanyAdministratorRoleEnum.CEO) {
             return response.badRequest({
-                error: i18n.t('messages.administrator.remove.error.ceo'),
+                error: i18n.t('messages.company.administrator.remove.error.ceo'),
             });
         }
 
         await Promise.all([administrator.delete(), cache.deleteByTag({ tags: [`company:${companyId}`] })]);
 
-        return response.ok({ message: i18n.t('messages.administrator.remove.success', { username: administrator.user.username }) });
+        return response.ok({ message: i18n.t('messages.company.administrator.remove.success', { username: administrator.user.username }) });
     }
 }

@@ -164,20 +164,36 @@
                 "openai-error": "An error occurred while verifying the document",
                 "openai-mismatch": "The document does not match the provided data"
             }
-        }
-    },
-    "administrator": {
-        "add": {
-            "success": "Added {username} to administrators",
-            "error": {
-                "already-exists": "{username} is already administrator"
+        },
+        "equipment": {
+            "add": {
+                "success": "Equipment {name} successfully added"
+            },
+            "update": {
+                "error": {
+                    "not-found": "Equipment not found"
+                }
+            },
+            "remove": {
+                "success": "Equipment successfully removed",
+                "error": {
+                    "not-found": "Equipment not found"
+                }
             }
         },
-        "remove": {
-            "success": "Removed {username} from administrators",
-            "error": {
-                "not-found": "Administrator not found",
-                "ceo": "You cannot remove the CEO of this company"
+        "administrator": {
+            "add": {
+                "success": "Added {username} to administrators",
+                "error": {
+                    "already-exists": "{username} is already administrator"
+                }
+            },
+            "remove": {
+                "success": "Removed {username} from administrators",
+                "error": {
+                    "not-found": "Administrator not found",
+                    "ceo": "You cannot remove the CEO of this company"
+                }
             }
         }
     }

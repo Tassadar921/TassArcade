@@ -8,7 +8,6 @@
     import { m } from '#lib/paraglide/messages';
     import { Dialog, DialogContent, DialogPortal } from '#lib/components/ui/dialog';
     import AddCompanyAdministrator from '#lib/partials/profile/company/administrators/AddCompanyAdministrator.svelte';
-    import { showToast } from '#lib/services/toastService';
 
     let paginatedCompanyAdministrators: PaginatedCompanyAdministrators | undefined = $state();
     let paginatedUsers: PaginatedSearchCompanyAdministrators | undefined = $state();
@@ -42,8 +41,7 @@
             return;
         }
 
-        await wrappedFetch(`/profile/companies/edit/${page.params.id}/administrators/remove`, { method: 'POST', body: { userId } }, ({ data }): void => {
-            showToast(data.message, data.isSuccess, 'success');
+        await wrappedFetch(`/profile/companies/edit/${page.params.id}/administrators/remove`, { method: 'POST', body: { userId } }, (): void => {
             paginatedCompanyAdministrators!.administrators = paginatedCompanyAdministrators!.administrators.filter(
                 (administrator: SerializedCompanyAdministrator): boolean => administrator.user.id !== userId
             );

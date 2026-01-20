@@ -8,7 +8,7 @@
     import { showToast } from '#lib/services/toastService';
     import { getCompanyEquipmentsColumns } from './columns';
     import { Dialog, DialogContent, DialogPortal } from '#lib/components/ui/dialog';
-    import AddCompanyEquipment from '#lib/partials/profile/company/equipments/AddCompanyEquipment.svelte';
+    import AddCompanyEquipmentType from '#lib/partials/profile/company/equipments/AddCompanyEquipmentType.svelte';
 
     let paginatedCompanyEquipments: PaginatedCompanyEquipmentTypes | undefined = $state();
     let paginatedEquipments: PaginatedEquipments | undefined = $state();
@@ -21,17 +21,18 @@
         if (page.data.isSuccess) {
             paginatedCompanyEquipments = page.data.companyEquipments;
             paginatedEquipments = page.data.equipments;
+            console.log(paginatedCompanyEquipments?.equipmentTypes[0]);
         } else {
-            await getEquipments();
+            await getCompanyEquipments();
         }
     });
 
     const handleSort = (field: string, order: 'asc' | 'desc'): void => {
         sortBy = `${field}:${order}`;
-        getEquipments();
+        getCompanyEquipments();
     };
 
-    const getEquipments = async (currentPage: number = 1, limit: number = 10): Promise<void> => {
+    const getCompanyEquipments = async (currentPage: number = 1, limit: number = 10): Promise<void> => {
         await wrappedFetch(`/profile/companies/edit/${page.params.id}/equipments?page=${currentPage}&limit=${limit}&query=${query}&sortBy=${sortBy}`, { method: 'GET' }, ({ data }): void => {
             paginatedCompanyEquipments = data;
         });
@@ -43,7 +44,6 @@
         }
 
         await wrappedFetch(`/profile/companies/edit/${page.params.id}/equipments/remove`, { method: 'POST', body: { equipmentId } }, ({ data }): void => {
-            showToast(data.message, data.isSuccess, 'success');
             paginatedCompanyEquipments!.equipmentTypes = paginatedCompanyEquipments!.equipmentTypes.filter((equipment: SerializedCompanyEquipmentType): boolean => equipment.id !== equipmentId);
         });
     };
@@ -55,10 +55,10 @@
             paginatedObject={paginatedCompanyEquipments}
             data={paginatedCompanyEquipments.equipmentTypes}
             columns={getCompanyEquipmentsColumns(handleSort, removeEquipment)}
-            onSearch={getEquipments}
+            onSearch={getCompanyEquipments}
             bind:query
             bind:selectedRows={selectedUsers}
-            onPaginationChange={getEquipments}
+            onPaginationChange={getCompanyEquipments}
             editable={false}
             createText={m['common.add']()}
             onCreateClick={() => (showDialog = true)}
@@ -71,7 +71,7 @@
     <DialogPortal>
         <DialogContent class="min-w-[90%] md:min-w-200">
             {#if paginatedCompanyEquipments && paginatedEquipments}
-                <AddCompanyEquipment bind:paginatedEquipments />
+                <AddCompanyEquipmentType bind:paginatedEquipments parentLimit={paginatedCompanyEquipments.limit} parentPage={paginatedCompanyEquipments.currentPage} {getCompanyEquipments} />
             {/if}
         </DialogContent>
     </DialogPortal>
