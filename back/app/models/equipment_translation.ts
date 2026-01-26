@@ -1,4 +1,4 @@
-import { afterCreate, BaseModel, beforeFetch, beforeFind, belongsTo, column } from '@adonisjs/lucid/orm';
+import { afterCreate, afterUpdate, BaseModel, belongsTo, column } from '@adonisjs/lucid/orm';
 import { DateTime } from 'luxon';
 import type { BelongsTo } from '@adonisjs/lucid/types/relations';
 import Equipment from '#models/equipment';
@@ -35,15 +35,9 @@ export default class EquipmentTranslation extends BaseModel {
     @column.dateTime({ autoCreate: true, autoUpdate: true })
     declare updatedAt: DateTime;
 
-    @beforeFind()
-    @beforeFetch()
-    public static preloadDefaults(equipmentTranslationQuery: any): void {
-        equipmentTranslationQuery.preload('equipment');
-    }
-
     @afterCreate()
+    @afterUpdate()
     public static async refresh(equipmentTranslation: EquipmentTranslation): Promise<void> {
-        await equipmentTranslation.load('equipment');
         await equipmentTranslation.refresh();
     }
 }

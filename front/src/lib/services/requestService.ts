@@ -39,15 +39,13 @@ export const wrappedFetch = async (
     try {
         const parsedResponse: any = await response.json();
 
-        console.log(parsedResponse);
-        if (parsedResponse.data.message) {
+        if (parsedResponse.data?.message) {
             showToast(parsedResponse.data.message, 'success');
-        } else if (parsedResponse.data.error) {
+        } else if (parsedResponse.data?.error) {
             showToast(parsedResponse.data.error, 'error');
         }
 
         if (parsedResponse.isSuccess) {
-            console.log('là');
             await onSuccess?.(parsedResponse);
         } else {
             await onError?.(parsedResponse);

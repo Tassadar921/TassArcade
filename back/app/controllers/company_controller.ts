@@ -21,7 +21,6 @@ import NominatimService from '#services/nominatim_service';
 import { parsePhoneNumberFromString, PhoneNumber } from 'libphonenumber-js';
 import cache from '@adonisjs/cache/services/main';
 import PaginatedCompanies from '#types/paginated/paginated_companies';
-import SerializedCompany from '#types/serialized/serialized_company';
 import CountryService from '#services/country_service';
 import FileService from '#services/file_service';
 import OpenAiApiService from '#services/open_ai_service';
@@ -32,6 +31,8 @@ import File from '#models/file';
 import path from 'node:path';
 import FileTypeEnum from '#types/enum/file_type_enum';
 import SlugifyService from '#services/slugify_service';
+import SerializedCompanySuperLight from '#types/serialized/serialized_company_super_light';
+import StringService from '#services/string_service';
 
 @inject()
 export default class CompanyController {
@@ -41,7 +42,8 @@ export default class CompanyController {
         private readonly countryService: CountryService,
         private readonly fileService: FileService,
         private readonly openAiApiService: OpenAiApiService,
-        private readonly slugifyService: SlugifyService
+        private readonly slugifyService: SlugifyService,
+        private readonly stringService: StringService
     ) {}
 
     public async getFromSiret({ request, response, i18n }: HttpContext): Promise<void> {
@@ -72,7 +74,7 @@ export default class CompanyController {
         }
     }
 
-    public async create({ request, response, user, language, i18n }: HttpContext): Promise<void> {
+    public async create({ request, response, user, i18n }: HttpContext): Promise<void> {
         const { siret, name, address: inputAddress, postalCode, city, complement, countryCode, email, phoneNumber: inputPhoneNumber, logo } = await request.validateUsing(createCompanyValidator);
 
         let company: Company | null = await this.companyRepository.findOneBy({ siret });
@@ -136,11 +138,11 @@ export default class CompanyController {
             company = await this.updateLogo(company, logo);
         }
 
-        await Promise.all([cache.deleteByTag({ tags: ['companies'] }), company.save()]);
+        await Promise.all([cache.deleteByTag({ tags: [`companies:administrator:${user.id}`] }), company.save()]);
 
         return response.created({
             message: i18n.t('messages.company.create.success', { companyName: company.name }),
-            company: company.apiSerializeLight(language),
+            company: company.apiSerializeLight(),
         });
     }
 
@@ -150,11 +152,11 @@ export default class CompanyController {
         return response.ok(
             await cache.getOrSet({
                 key: `companies:${user.id}:query:${query.toLowerCase()}:page:${page}:limit:${limit}:sortBy:${inputSortBy}`,
-                tags: ['companies'],
+                tags: [`companies:administrator:${user.id}`],
                 ttl: '1h',
                 factory: async (): Promise<PaginatedCompanies> => {
                     const [field, order] = inputSortBy.split(':');
-                    const sortBy = { field: field as keyof Company['$attributes'], order: order as 'asc' | 'desc' };
+                    const sortBy = { field: this.stringService.toSnakeCase(field) as keyof Company['$attributes'], order: order as 'asc' | 'desc' };
 
                     return await this.companyRepository.getProfileCompanies(user, language, query.toLowerCase(), page, limit, sortBy);
                 },
@@ -169,14 +171,14 @@ export default class CompanyController {
         const status: { isDeleted: boolean; name?: string; id: string } = statuses[0];
 
         if (status.isDeleted) {
-            await cache.deleteByTag({ tags: ['companies', `company:${status.id}`] });
+            await cache.deleteByTag({ tags: [`companies:administrator:${user.id}`, `company:${status.id}`] });
             return response.ok({ messages: [{ message: i18n.t(`messages.company.delete.success`, { name: status.name }), isSuccess: true }] });
         } else {
             return response.ok({ messages: [{ message: i18n.t(`messages.company.delete.error.default`, { id: status.id }), isSuccess: false }] });
         }
     }
 
-    public async update({ request, response, i18n, language, user }: HttpContext) {
+    public async update({ request, response, i18n, user }: HttpContext) {
         const { companyId, name, address: inputAddress, postalCode, city, complement, countryCode, email, phoneNumber: inputPhoneNumber, logo } = await request.validateUsing(updateCompanyValidator);
 
         const country: Country | undefined = CountryList.default.findOneByCountryCode(countryCode);
@@ -228,21 +230,21 @@ export default class CompanyController {
         await Promise.all([
             company.save(),
             company.address.save(),
-            cache.deleteByTag({ tags: ['companies'] }),
+            cache.deleteByTag({ tags: [`companies:administrator:${user.id}`] }),
             cache.set({
                 key: `company:${company.id}`,
                 tags: [`company:${company.id}`],
                 ttl: '1h',
-                value: company.apiSerialize(language),
+                value: company.apiSerialize(),
             }),
         ]);
 
-        return response.ok({ company: company.apiSerializeLight(language), message: i18n.t('messages.company.update.success', { name }) });
+        return response.ok({ company: company.apiSerializeLight(), message: i18n.t('messages.company.update.success', { name }) });
     }
 
-    public async get({ request, response, i18n, language }: HttpContext): Promise<void> {
+    public async get({ request, response, i18n, user }: HttpContext): Promise<void> {
         const { companyId } = await getCompanyValidator.validate(request.params());
-        const company: Company | null = await this.companyRepository.findOneBy({ id: companyId }, ['administrators']);
+        const company: Company | null = await this.companyRepository.getFromUser(companyId, user);
         if (!company) {
             return response.notFound({ error: i18n.t('messages.company.get.error.not-found') });
         }
@@ -252,8 +254,8 @@ export default class CompanyController {
                 key: `company:${company.id}`,
                 tags: [`company:${company.id}`],
                 ttl: '1h',
-                factory: (): SerializedCompany => {
-                    return company.apiSerialize(language);
+                factory: (): SerializedCompanySuperLight => {
+                    return company.apiSerializeSuperLight();
                 },
             }),
             countries: await cache.getOrSet({
@@ -267,7 +269,7 @@ export default class CompanyController {
         });
     }
 
-    public async confirm({ request, response, user, i18n, language }: HttpContext): Promise<void> {
+    public async confirm({ request, response, user, i18n }: HttpContext): Promise<void> {
         const { companyId, document } = await request.validateUsing(confirmCompanyValidator);
         if (!document.tmpPath) {
             return response.badRequest({ error: i18n.t('messages.company.confirm.error.no-document') });
@@ -302,18 +304,18 @@ export default class CompanyController {
 
         await Promise.all([
             company.save(),
-            cache.deleteByTag({ tags: ['companies'] }),
+            cache.deleteByTag({ tags: [`companies:administrator:${user.id}`] }),
             cache.set({
                 key: `company:${company.id}`,
                 tags: [`company:${company.id}`],
                 ttl: '1h',
-                value: company.apiSerialize(language),
+                value: company.apiSerialize(),
             }),
         ]);
 
         return response.ok({
             message: i18n.t('messages.company.confirm.success', { name: company.name }),
-            company: company.apiSerialize(language),
+            company: company.apiSerialize(),
         });
     }
 

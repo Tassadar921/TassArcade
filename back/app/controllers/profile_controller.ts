@@ -35,7 +35,8 @@ export default class ProfileController {
                 key: `user:${user.id}`,
                 tags: [`user:${user.id}`],
                 ttl: '1h',
-                factory: (): SerializedUser => {
+                factory: async (): Promise<SerializedUser> => {
+                    await user.load('profilePicture');
                     return user.apiSerialize();
                 },
             }),
@@ -138,6 +139,7 @@ export default class ProfileController {
         }
 
         await user.save();
+        await user.load('profilePicture');
 
         return response.ok({
             message: i18n.t('messages.profile.update-profile.success'),

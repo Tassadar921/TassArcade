@@ -26,6 +26,7 @@ export default class UserRepository extends BaseRepository<typeof User> {
             .if(sortBy, (queryBuilder: ModelQueryBuilderContract<typeof User>): void => {
                 queryBuilder.orderBy(sortBy.field as string, sortBy.order);
             })
+            .preload('profilePicture')
             .paginate(page, limit);
 
         return {
@@ -91,6 +92,7 @@ export default class UserRepository extends BaseRepository<typeof User> {
             .if(sortBy, (queryBuilder: ModelQueryBuilderContract<typeof User>): void => {
                 queryBuilder.orderBy(sortBy.field as string, sortBy.order);
             })
+            .preload('profilePicture')
             .paginate(page, limit);
 
         return {

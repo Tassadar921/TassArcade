@@ -5,7 +5,6 @@
     import { wrappedFetch } from '#lib/services/requestService';
     import { DataTable } from '#lib/components/ui/data-table';
     import { m } from '#lib/paraglide/messages';
-    import { showToast } from '#lib/services/toastService';
     import { getCompanyEquipmentsColumns } from './columns';
     import { Dialog, DialogContent, DialogPortal } from '#lib/components/ui/dialog';
     import AddCompanyEquipmentType from '#lib/partials/profile/company/equipments/AddCompanyEquipmentType.svelte';
@@ -43,7 +42,7 @@
             return;
         }
 
-        await wrappedFetch(`/profile/companies/edit/${page.params.id}/equipments/remove`, { method: 'POST', body: { equipmentId } }, ({ data }): void => {
+        await wrappedFetch(`/profile/companies/edit/${page.params.id}/equipments/remove`, { method: 'POST', body: { equipmentId } }, (): void => {
             paginatedCompanyEquipments!.equipmentTypes = paginatedCompanyEquipments!.equipmentTypes.filter((equipment: SerializedCompanyEquipmentType): boolean => equipment.id !== equipmentId);
         });
     };

@@ -236,15 +236,16 @@
             },
             "equipments": {
                 "title": "Manage equipments",
-                "add": {
-                    "title": "Add new equipment",
-                    "fields": {
-                        "category": "Category"
-                    }
-                },
                 "meta": {
                     "title": "Edit Equipments",
                     "description": "Manage your company's equipments. Add, edit, or remove equipments directly from your company settings."
+                },
+                "add": {
+                    "title": "Add new equipment"
+                },
+                "fields": {
+                    "category": "Category",
+                    "type": "Type"
                 }
             }
         },

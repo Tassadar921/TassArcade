@@ -87,7 +87,7 @@ export default class OauthController {
         const user: User = oauthToken.user;
         const token: AccessToken = await User.accessTokens.create(user);
 
-        await oauthToken.delete();
+        await Promise.all([oauthToken.delete(), user.load('profilePicture')]);
 
         return response.ok({
             message: i18n.t('messages.oauth.confirm.success', { provider: this.stringService.capitalize(provider) }),

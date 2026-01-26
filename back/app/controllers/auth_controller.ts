@@ -28,6 +28,7 @@ export default class AuthController {
             const user: User = await User.verifyCredentials(email, password);
 
             const token: AccessToken = await User.accessTokens.create(user);
+            await user.load('profilePicture');
 
             return response.ok({
                 message: i18n.t('messages.auth.login.success'),
@@ -115,6 +116,7 @@ export default class AuthController {
         await token.delete();
 
         const accessToken: AccessToken = await User.accessTokens.create(user);
+        await user.load('profilePicture');
 
         return response.created({
             message: i18n.t('messages.auth.confirm-account-creation.success'),

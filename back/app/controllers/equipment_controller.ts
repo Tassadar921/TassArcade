@@ -8,12 +8,14 @@ import { searchEquipmentsValidator } from '#validators/equipment';
 import EquipmentTypeRepository from '#repositories/equipment_type_repository';
 import PaginatedEquipmentTypes from '#types/paginated/paginated_equipment_types';
 import EquipmentType from '#models/equipment_type';
+import StringService from '#services/string_service';
 
 @inject()
 export default class EquipmentController {
     constructor(
         private readonly equipmentRepository: EquipmentRepository,
-        private readonly equipmentTypeRepository: EquipmentTypeRepository
+        private readonly equipmentTypeRepository: EquipmentTypeRepository,
+        private readonly stringService: StringService
     ) {}
 
     public async getAll({ response, language }: HttpContext): Promise<void> {
@@ -43,7 +45,10 @@ export default class EquipmentController {
                 ttl: '24h',
                 factory: async (): Promise<PaginatedEquipmentTypes> => {
                     const [field, order] = inputSortBy.split(':');
-                    const sortBy = { field: field as `equipments.${keyof Equipment['$attributes']}` | `equipment_types.${keyof EquipmentType['$attributes']}`, order: order as 'asc' | 'desc' };
+                    const sortBy = {
+                        field: this.stringService.toSnakeCase(field) as `equipments.${keyof Equipment['$attributes']}` | `equipment_types.${keyof EquipmentType['$attributes']}`,
+                        order: order as 'asc' | 'desc',
+                    };
 
                     return await this.equipmentTypeRepository.getEquipments(language, query.toLowerCase(), page, limit, sortBy);
                 },

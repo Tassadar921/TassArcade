@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { afterCreate, afterUpdate, BaseModel, beforeFetch, beforeFind, belongsTo, column, hasMany } from '@adonisjs/lucid/orm';
+import { afterCreate, afterUpdate, BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm';
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations';
 import Address from '#models/address';
 import CompanyAdministrator from '#models/company_administrator';
@@ -8,7 +8,6 @@ import SerializedCompanyLight from '#types/serialized/serialized_company_light';
 import File from '#models/file';
 import SerializedCompanyEquipmentType from '#types/serialized/serialized_company_equipment_type';
 import SerializedCompany from '#types/serialized/serialized_company';
-import type { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model';
 import SerializedCompanySuperLight from '#types/serialized/serialized_company_super_light';
 
 export default class Company extends BaseModel {
@@ -58,23 +57,9 @@ export default class Company extends BaseModel {
     @column.dateTime({ autoCreate: true, autoUpdate: true })
     declare updatedAt: DateTime;
 
-    @beforeFind()
-    @beforeFetch()
-    public static preloadDefaults(companyQuery: ModelQueryBuilderContract<typeof this>): void {
-        companyQuery.preload('address');
-        companyQuery.preload('equipments');
-        companyQuery.preload('logo');
-    }
-
     @afterCreate()
     @afterUpdate()
     public static async refresh(company: Company): Promise<void> {
-        let promises = [company.load('address'), company.load('equipments')];
-        if (company.logoId) {
-            promises.push(company.load('logo'));
-        }
-
-        await Promise.all(promises);
         await company.refresh();
     }
 
@@ -114,7 +99,7 @@ export default class Company extends BaseModel {
             logo: this.logo?.apiSerialize(),
             address: this.address.apiSerialize(),
             equipments: this.equipments
-                .map((equipmentType: CompanyEquipmentType): SerializedCompanyEquipmentType => equipmentType.apiSerialize())
+                .map((companyEquipmentType: CompanyEquipmentType): SerializedCompanyEquipmentType => companyEquipmentType.apiSerialize())
                 .sort((a: SerializedCompanyEquipmentType, b: SerializedCompanyEquipmentType): number => (a.name ?? '').localeCompare(b.name ?? '')),
             createdAt: this.createdAt.toString(),
             updatedAt: this.updatedAt.toString(),

@@ -14,13 +14,15 @@ import { cuid } from '@adonisjs/core/helpers';
 import SlugifyService from '#services/slugify_service';
 import PaginatedUsers from '#types/paginated/paginated_users';
 import SerializedUser from '#types/serialized/serialized_user';
+import StringService from '#services/string_service';
 
 @inject()
 export default class AdminUserController {
     constructor(
         private readonly userRepository: UserRepository,
         private readonly fileService: FileService,
-        private readonly slugifyService: SlugifyService
+        private readonly slugifyService: SlugifyService,
+        private readonly stringService: StringService
     ) {}
 
     public async getAll({ request, response }: HttpContext): Promise<void> {
@@ -33,7 +35,7 @@ export default class AdminUserController {
                 ttl: '1h',
                 factory: async (): Promise<PaginatedUsers> => {
                     const [field, order] = inputSortBy.split(':');
-                    const sortBy = { field: field as keyof User['$attributes'], order: order as 'asc' | 'desc' };
+                    const sortBy = { field: this.stringService.toSnakeCase(field) as keyof User['$attributes'], order: order as 'asc' | 'desc' };
 
                     return await this.userRepository.getAdminUsers(query.toLowerCase(), page, limit, sortBy);
                 },
@@ -84,7 +86,7 @@ export default class AdminUserController {
             password: cuid(),
         });
 
-        await Promise.all([cache.deleteByTag({ tags: ['admin-users'] })]);
+        await Promise.all([user.load('profilePicture'), cache.deleteByTag({ tags: ['admin-users'] })]);
 
         return response.created({ user: user.apiSerialize(), message: i18n.t('messages.admin.user.create.success', { email, username }) });
     }
@@ -92,7 +94,7 @@ export default class AdminUserController {
     public async update({ request, response, i18n }: HttpContext) {
         const { username, email, profilePicture: inputProfilePicture } = await request.validateUsing(updateUserValidator);
 
-        const user: User = await this.userRepository.firstOrFail({ email });
+        const user: User = await this.userRepository.firstOrFail({ email }, ['profilePicture']);
 
         user.username = username;
 
@@ -102,7 +104,15 @@ export default class AdminUserController {
             }
             const profilePicture: File = await this.processInputProfilePicture(inputProfilePicture);
             user.profilePictureId = profilePicture.id;
-            await cache.delete({ key: `user-profile-picture:${user.id}` });
+            await Promise.all([
+                user.load('profilePicture'),
+                cache.set({
+                    key: `user-profile-picture:${user.id}`,
+                    tags: [`user:${user.id}`],
+                    ttl: '1h',
+                    value: app.makePath(profilePicture.path),
+                }),
+            ]);
         }
 
         await user.save();

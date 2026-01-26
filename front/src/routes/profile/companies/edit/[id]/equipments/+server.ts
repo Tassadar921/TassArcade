@@ -9,7 +9,7 @@ export const GET: RequestHandler = async ({ url, locals, params }): Promise<Resp
         const query: string = url.searchParams.get('query') || '';
         const sortBy: string = url.searchParams.get('sortBy') || 'company_equipment_types.name:asc';
 
-        const response = await locals.client.get(`/api/profile/company/${params.id}/equipments`, {
+        const response = await locals.client.get(`/api/equipments`, {
             params: { page, limit, query, sortBy },
         });
 

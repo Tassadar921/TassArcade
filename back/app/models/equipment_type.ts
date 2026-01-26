@@ -1,4 +1,4 @@
-import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm';
+import { afterCreate, afterUpdate, BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm';
 import { DateTime } from 'luxon';
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations';
 import Equipment from '#models/equipment';
@@ -29,6 +29,12 @@ export default class EquipmentType extends BaseModel {
 
     @column.dateTime({ autoCreate: true, autoUpdate: true })
     declare updatedAt: DateTime;
+
+    @afterCreate()
+    @afterUpdate()
+    public static async refresh(equipmentType: EquipmentType): Promise<void> {
+        await equipmentType.refresh();
+    }
 
     public apiSerialize(): SerializedEquipmentType {
         return {

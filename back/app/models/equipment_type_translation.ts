@@ -1,4 +1,4 @@
-import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm';
+import { afterCreate, afterUpdate, BaseModel, belongsTo, column } from '@adonisjs/lucid/orm';
 import { DateTime } from 'luxon';
 import type { BelongsTo } from '@adonisjs/lucid/types/relations';
 import Language from '#models/language';
@@ -34,4 +34,10 @@ export default class EquipmentTypeTranslation extends BaseModel {
 
     @column.dateTime({ autoCreate: true, autoUpdate: true })
     declare updatedAt: DateTime;
+
+    @afterCreate()
+    @afterUpdate()
+    public static async refresh(equipmentTypeTranslation: EquipmentTypeTranslation): Promise<void> {
+        await equipmentTypeTranslation.refresh();
+    }
 }

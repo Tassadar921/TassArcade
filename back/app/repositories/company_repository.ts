@@ -53,19 +53,26 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
                     equipmentQuery.preload('equipmentType', (equipmentTypeQuery): void => {
                         equipmentTypeQuery
                             .preload('translations', (equipmentTypeTranslationQuery): void => {
-                                equipmentTypeTranslationQuery.preload('language', (languageQuery): void => {
-                                    languageQuery.where('code', language.code);
-                                });
+                                equipmentTypeTranslationQuery
+                                    .whereHas('language', (languageQuery): void => {
+                                        languageQuery.where('code', language.code);
+                                    })
+                                    .preload('language');
                             })
                             .preload('equipment', (equipmentQuery): void => {
-                                equipmentQuery.preload('translations', (equipmentTranslationQuery): void => {
-                                    equipmentTranslationQuery.preload('language', (languageQuery): void => {
-                                        languageQuery.where('code', language.code);
-                                    });
-                                });
+                                equipmentQuery
+                                    .preload('translations', (equipmentTranslationQuery): void => {
+                                        equipmentTranslationQuery
+                                            .whereHas('language', (languageQuery): void => {
+                                                languageQuery.where('code', language.code);
+                                            })
+                                            .preload('language');
+                                    })
+                                    .preload('thumbnail');
                             });
                     });
-                });
+                })
+                .preload('address');
 
             clusters.push({
                 id: row.cluster,
@@ -111,20 +118,27 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
                 equipmentQuery.preload('equipmentType', (equipmentTypeQuery): void => {
                     equipmentTypeQuery
                         .preload('translations', (equipmentTypeTranslationQuery): void => {
-                            equipmentTypeTranslationQuery.preload('language', (languageQuery): void => {
-                                languageQuery.where('code', language.code);
-                            });
+                            equipmentTypeTranslationQuery
+                                .whereHas('language', (languageQuery): void => {
+                                    languageQuery.where('code', language.code);
+                                })
+                                .preload('language');
                         })
                         .preload('equipment', (equipmentQuery): void => {
-                            equipmentQuery.preload('translations', (equipmentTranslationQuery): void => {
-                                equipmentTranslationQuery.preload('language', (languageQuery): void => {
-                                    languageQuery.where('code', language.code);
-                                });
-                            });
+                            equipmentQuery
+                                .preload('translations', (equipmentTranslationQuery): void => {
+                                    equipmentTranslationQuery
+                                        .whereHas('language', (languageQuery): void => {
+                                            languageQuery.where('code', language.code);
+                                        })
+                                        .preload('language');
+                                })
+                                .preload('thumbnail');
                         });
                 });
             })
             .preload('administrators')
+            .preload('logo')
             .paginate(page, limit);
 
         return {
@@ -171,6 +185,15 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
             .innerJoin('company_administrators', 'company_administrators.company_id', 'companies.id')
             .where('companies.id', companyId)
             .andWhere('company_administrators.user_id', user.id)
+            .preload('equipments', (companyEquipmentsQuery): void => {
+                companyEquipmentsQuery.preload('equipmentType', (equipmentTypeQuery): void => {
+                    equipmentTypeQuery.preload('equipment', (equipmentQuery): void => {
+                        equipmentQuery.preload('thumbnail');
+                    });
+                });
+            })
+            .preload('address')
+            .preload('logo')
             .firstOrFail();
     }
 }

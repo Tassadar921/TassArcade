@@ -27,7 +27,7 @@ export default class FileController {
                 tags: [`user:${userId}`],
                 ttl: '1h',
                 factory: async (): Promise<string> => {
-                    const user: User = await this.userRepository.firstOrFail({ id: userId });
+                    const user: User = await this.userRepository.firstOrFail({ id: userId }, ['profilePicture']);
                     if (!user.profilePicture) {
                         throw new Error('NO_FILE');
                     }
@@ -55,7 +55,7 @@ export default class FileController {
                 tags: [`equipment-thumbnail:${equipmentId}`],
                 ttl: '1h',
                 factory: async (): Promise<string> => {
-                    const equipment: Equipment = await this.equipmentRepository.firstOrFail({ id: equipmentId });
+                    const equipment: Equipment = await this.equipmentRepository.firstOrFail({ id: equipmentId }, ['thumbnail']);
                     if (!equipment.thumbnail) {
                         throw new Error('NO_FILE');
                     }
@@ -83,7 +83,7 @@ export default class FileController {
                 tags: [`company-logo:${companyId}`],
                 ttl: '1h',
                 factory: async (): Promise<string> => {
-                    const company: Company = await this.companyRepository.firstOrFail({ id: companyId });
+                    const company: Company = await this.companyRepository.firstOrFail({ id: companyId }, ['logo']);
                     if (!company.logo) {
                         throw new Error('NO_FILE');
                     }

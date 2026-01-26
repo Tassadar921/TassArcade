@@ -22,8 +22,10 @@ const sortByCompanyAdministratorValidator = (value: unknown, _options: any, fiel
             return;
         }
     } else if (fieldName.startsWith('company_administrators.')) {
-        field.report(`Invalid company administrator field "${field}". Allowed fields: ${validSortCompanyAdministratorFields.join(', ')}`, 'sortBy', field);
-        return;
+        if (!validSortCompanyAdministratorFields.includes(fieldName.replace('company_administrators.', ''))) {
+            field.report(`Invalid company administrator field "${field}". Allowed fields: ${validSortCompanyAdministratorFields.join(', ')}`, 'sortBy', field);
+            return;
+        }
     } else {
         field.report(
             `Invalid field prefix : must start with "users." or "company_administrators." and be followed respectively by ${validSortUserFields.join(', ')} or ${validSortCompanyAdministratorFields.join(', ')}`,

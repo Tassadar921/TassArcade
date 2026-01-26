@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { afterCreate, afterUpdate, BaseModel, beforeFetch, beforeFind, belongsTo, column } from '@adonisjs/lucid/orm';
+import { afterCreate, afterUpdate, BaseModel, belongsTo, column } from '@adonisjs/lucid/orm';
 import type { BelongsTo } from '@adonisjs/lucid/types/relations';
 import Company from '#models/company';
 import EquipmentType from '#models/equipment_type';
@@ -35,20 +35,9 @@ export default class CompanyEquipmentType extends BaseModel {
     @column.dateTime({ autoCreate: true, autoUpdate: true })
     declare updatedAt: DateTime;
 
-    @beforeFind()
-    @beforeFetch()
-    public static preloadDefaults(companyEquipmentTypeQuery: any): void {
-        companyEquipmentTypeQuery.preload('equipmentType', (equipmentTypeQuery: any): void => {
-            equipmentTypeQuery.preload('equipment');
-        });
-    }
-
     @afterCreate()
     @afterUpdate()
     public static async refresh(companyEquipment: CompanyEquipmentType): Promise<void> {
-        await companyEquipment.load('equipmentType', (equipmentTypeQuery: any): void => {
-            equipmentTypeQuery.preload('equipment');
-        });
         await companyEquipment.refresh();
     }
 

@@ -39,38 +39,49 @@ export default class EquipmentTypeRepository extends BaseRepository<typeof Equip
         }
     ): Promise<PaginatedEquipmentTypes> {
         const paginator: ModelPaginatorContract<EquipmentType> = await this.Model.query()
-            .select('equipment_types.*')
+            .leftJoin('equipment_type_translations', 'equipment_type_translations.equipment_type_id', 'equipment_types.id')
             .leftJoin('equipments', 'equipment_types.equipment_id', 'equipments.id')
-            .leftJoin('equipment_type_translations', 'equipment_types.id', 'equipment_type_translations.equipment_type_id')
-            .leftJoin('equipment_translations', 'equipments.id', 'equipment_translations.equipment_id')
-            .leftJoin('languages as et_languages', 'equipment_translations.language_id', 'et_languages.id')
-            .leftJoin('languages as ett_languages', 'equipment_type_translations.language_id', 'ett_languages.id')
-            .if(query, (queryBuilder: ModelQueryBuilderContract<typeof EquipmentType>): void => {
-                queryBuilder.where((subQuery: ModelQueryBuilderContract<typeof EquipmentType>): void => {
-                    subQuery
-                        .where('equipments.category', 'ILIKE', `%${query}%`)
-                        .orWhere('equipment_translations.name', 'ILIKE', `%${query}%`)
-                        .orWhere('equipment_type_translations.name', 'ILIKE', `%${query}%`)
-                        .orWhere('equipment_types.code', 'ILIKE', `%${query}%`);
+            .leftJoin('equipment_translations', 'equipment_translations.equipment_id', 'equipments.id')
+            .if(query, (qb): void => {
+                qb.where((subQb): void => {
+                    subQb
+                        .where('code', 'ILIKE', `%${query}%`)
+
+                        .orWhereHas('translations', (ettQb): void => {
+                            ettQb.where('name', 'ILIKE', `%${query}%`);
+                        })
+
+                        .orWhereHas('equipment', (equipmentQb): void => {
+                            equipmentQb
+                                .where('category', 'ILIKE', `%${query}%`)
+
+                                .orWhereHas('translations', (etQb): void => {
+                                    etQb.where('name', 'ILIKE', `%${query}%`);
+                                });
+                        });
                 });
             })
             .if(sortBy, (queryBuilder: ModelQueryBuilderContract<typeof EquipmentType>): void => {
                 queryBuilder.orderBy(sortBy.field, sortBy.order);
             })
             .preload('equipment', (equipmentQuery): void => {
-                equipmentQuery.preload('translations', (equipmentTranslationQuery): void => {
-                    equipmentTranslationQuery.preload('language', (languageQuery): void => {
-                        languageQuery.where('code', language.code);
-                    });
-                });
+                equipmentQuery
+                    .preload('translations', (equipmentTranslationQuery): void => {
+                        equipmentTranslationQuery
+                            .whereHas('language', (languageQuery): void => {
+                                languageQuery.where('code', language.code);
+                            })
+                            .preload('language');
+                    })
+                    .preload('thumbnail');
             })
             .preload('translations', (equipmentTypeTranslationQuery): void => {
-                equipmentTypeTranslationQuery.preload('language', (languageQuery): void => {
-                    languageQuery.where('code', language.code);
-                });
+                equipmentTypeTranslationQuery
+                    .whereHas('language', (languageQuery): void => {
+                        languageQuery.where('code', language.code);
+                    })
+                    .preload('language');
             })
-            .where('et_languages.code', language.code)
-            .andWhere('ett_languages.code', language.code)
             .paginate(page, limit);
 
         return {

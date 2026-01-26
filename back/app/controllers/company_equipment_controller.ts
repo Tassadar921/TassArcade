@@ -14,18 +14,22 @@ import PaginatedEquipmentTypes from '#types/paginated/paginated_equipment_types'
 import Equipment from '#models/equipment';
 import EquipmentTranslation from '#models/equipment_translation';
 import EquipmentTypeTranslation from '#models/equipment_type_translation';
+import StringService from '#services/string_service';
 
 @inject()
 export default class CompanyAdministratorController {
     constructor(
         private readonly companyRepository: CompanyRepository,
         private readonly companyEquipmentTypeRepository: CompanyEquipmentTypeRepository,
-        private readonly equipmentTypeRepository: EquipmentTypeRepository
+        private readonly equipmentTypeRepository: EquipmentTypeRepository,
+        private readonly stringService: StringService
     ) {}
 
     public async init({ request, response, language, user }: HttpContext) {
         const { companyId } = await companyIdValidator.validate(request.params());
         const company: Company = await this.companyRepository.getFromUser(companyId, user);
+
+        await cache.deleteByTag({ tags: [`company:${companyId}`] });
 
         return response.ok({
             company: await cache.getOrSet({
@@ -68,7 +72,7 @@ export default class CompanyAdministratorController {
                 factory: async (): Promise<PaginatedCompanyEquipmentTypes> => {
                     const [field, order] = inputSortBy.split(':');
                     const sortBy = {
-                        field: field as
+                        field: this.stringService.toSnakeCase(field) as
                             | `company_equipment_types.${keyof CompanyEquipmentType['$attributes']}`
                             | `equipments.${keyof Equipment['$attributes']}`
                             | `equipment_translations.${keyof EquipmentTranslation['$attributes']}`

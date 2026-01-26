@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm';
+import { afterCreate, afterUpdate, BaseModel, belongsTo, column } from '@adonisjs/lucid/orm';
 import File from '#models/file';
 import type { BelongsTo } from '@adonisjs/lucid/types/relations';
 
@@ -48,4 +48,10 @@ export default class Language extends BaseModel {
 
     @column.dateTime({ autoCreate: true, autoUpdate: true })
     declare updatedAt: DateTime;
+
+    @afterCreate()
+    @afterUpdate()
+    public static async refresh(language: Language): Promise<void> {
+        await language.refresh();
+    }
 }

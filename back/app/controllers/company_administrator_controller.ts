@@ -12,13 +12,15 @@ import User from '#models/user';
 import CompanyAdministrator from '#models/company_administrator';
 import CompanyAdministratorRoleEnum from '#types/enum/company_administrator_role_enum';
 import SerializedCompanySuperLight from '#types/serialized/serialized_company_super_light';
+import StringService from '#services/string_service';
 
 @inject()
 export default class CompanyAdministratorController {
     constructor(
         private readonly companyRepository: CompanyRepository,
         private readonly companyAdministratorRepository: CompanyAdministratorRepository,
-        private readonly userRepository: UserRepository
+        private readonly userRepository: UserRepository,
+        private readonly stringService: StringService
     ) {}
 
     public async init({ request, response, user }: HttpContext) {
@@ -67,7 +69,7 @@ export default class CompanyAdministratorController {
                 ttl: '1h',
                 factory: async (): Promise<PaginatedCompanyAdministrators> => {
                     const [field, order] = inputSortBy.split(':');
-                    const sortBy = { field: field as keyof CompanyAdministrator['$attributes'] | `users.${keyof User['$attributes']}`, order: order as 'asc' | 'desc' };
+                    const sortBy = { field: this.stringService.toSnakeCase(field) as keyof CompanyAdministrator['$attributes'] | `users.${keyof User['$attributes']}`, order: order as 'asc' | 'desc' };
 
                     return await this.companyAdministratorRepository.getAdministrators(company, query.toLowerCase(), page, limit, sortBy);
                 },
@@ -87,7 +89,7 @@ export default class CompanyAdministratorController {
                 ttl: '1h',
                 factory: async (): Promise<PaginatedSearchCompanyAdministrators> => {
                     const [field, order] = inputSortBy.split(':');
-                    const sortBy = { field: field as keyof User['$attributes'], order: order as 'asc' | 'desc' };
+                    const sortBy = { field: this.stringService.toSnakeCase(field) as keyof User['$attributes'], order: order as 'asc' | 'desc' };
 
                     return await this.userRepository.getSearchCompanyAdministrators(company, query.toLowerCase(), page, limit, sortBy);
                 },

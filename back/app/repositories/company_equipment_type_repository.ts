@@ -32,20 +32,22 @@ export default class CompanyEquipmentTypeRepository extends BaseRepository<typeo
         }
     ): Promise<PaginatedCompanyEquipmentTypes> {
         const paginator: ModelPaginatorContract<CompanyEquipmentType> = await this.Model.query()
-            .select('company_equipment_types.*')
-            .leftJoin('equipment_types', 'company_equipment_types.equipment_type_id', 'equipment_types.id')
-            .leftJoin('equipments', 'equipment_types.equipment_id', 'equipments.id')
-            .leftJoin('equipment_type_translations', 'equipment_types.id', 'equipment_type_translations.equipment_type_id')
-            .leftJoin('equipment_translations', 'equipments.id', 'equipment_translations.equipment_id')
-            .leftJoin('languages as et_languages', 'equipment_translations.language_id', 'et_languages.id')
-            .leftJoin('languages as ett_languages', 'equipment_type_translations.language_id', 'ett_languages.id')
-            .if(query, (queryBuilder: ModelQueryBuilderContract<typeof CompanyEquipmentType>): void => {
-                queryBuilder.where((subQuery: ModelQueryBuilderContract<typeof CompanyEquipmentType>): void => {
-                    subQuery
-                        .where('equipments.category', 'ILIKE', `%${query}%`)
-                        .orWhere('equipment_translations.name', 'ILIKE', `%${query}%`)
-                        .orWhere('equipment_type_translations.name', 'ILIKE', `%${query}%`)
-                        .orWhere('equipment_types.code', 'ILIKE', `%${query}%`);
+            .if(query, (qb): void => {
+                qb.whereHas('equipmentType', (equipmentTypeQuery): void => {
+                    equipmentTypeQuery
+                        .where('code', 'ILIKE', `%${query}%`)
+                        .orWhereHas('translations', (equipmentTypeTranslationQuery): void => {
+                            equipmentTypeTranslationQuery.where('name', 'ILIKE', `%${query}%`).whereHas('language', (languageQuery): void => {
+                                languageQuery.where('code', language.code);
+                            });
+                        })
+                        .orWhereHas('equipment', (equipmentQuery): void => {
+                            equipmentQuery.where('category', 'ILIKE', `%${query}%`).orWhereHas('translations', (equipmentTranslationQuery): void => {
+                                equipmentTranslationQuery.where('name', 'ILIKE', `%${query}%`).whereHas('language', (languageQuery): void => {
+                                    languageQuery.where('code', language.code);
+                                });
+                            });
+                        });
                 });
             })
             .if(sortBy, (queryBuilder: ModelQueryBuilderContract<typeof CompanyEquipmentType>): void => {
@@ -53,22 +55,26 @@ export default class CompanyEquipmentTypeRepository extends BaseRepository<typeo
             })
             .preload('equipmentType', (equipmentTypeQuery): void => {
                 equipmentTypeQuery
-                    .preload('equipment', (equipmentQuery): void => {
-                        equipmentQuery.preload('translations', (equipmentTranslationQuery): void => {
-                            equipmentTranslationQuery.preload('language', (languageQuery): void => {
-                                languageQuery.where('code', language.code);
-                            });
-                        });
-                    })
                     .preload('translations', (equipmentTypeTranslationQuery): void => {
-                        equipmentTypeTranslationQuery.preload('language', (languageQuery): void => {
-                            languageQuery.where('code', language.code);
-                        });
+                        equipmentTypeTranslationQuery
+                            .whereHas('language', (languageQuery): void => {
+                                languageQuery.where('code', language.code);
+                            })
+                            .preload('language');
+                    })
+                    .preload('equipment', (equipmentQuery): void => {
+                        equipmentQuery
+                            .preload('translations', (equipmentTranslationQuery): void => {
+                                equipmentTranslationQuery
+                                    .whereHas('language', (languageQuery): void => {
+                                        languageQuery.where('code', language.code);
+                                    })
+                                    .preload('language');
+                            })
+                            .preload('thumbnail');
                     });
             })
             .where('company_equipment_types.company_id', company.id)
-            .andWhere('et_languages.code', language.code)
-            .andWhere('ett_languages.code', language.code)
             .paginate(page, limit);
 
         return {

@@ -19,14 +19,27 @@ export const getCompanyEquipmentsColumns = (onSort: (field: string, order: 'asc'
     },
     {
         id: 'category',
-        accessorKey: 'category.category',
+        accessorKey: 'category.name',
         meta: {
-            headerName: m['common.yes'](),
+            headerName: m['company.edit.equipments.fields.category'](),
         },
         header: () =>
             renderComponent(SortableColumn, {
-                title: m['common.yes'](),
-                field: 'equipment.category',
+                title: m['company.edit.equipments.fields.category'](),
+                field: 'equipment_translations.name',
+                onclick: onSort,
+            }),
+    },
+    {
+        id: 'type',
+        accessorKey: 'type.name',
+        meta: {
+            headerName: m['company.edit.equipments.fields.type'](),
+        },
+        header: () =>
+            renderComponent(SortableColumn, {
+                title: m['company.edit.equipments.fields.type'](),
+                field: 'equipment_type_translations.name',
                 onclick: onSort,
             }),
     },
@@ -48,11 +61,11 @@ export const getEquipmentsColumns = (onSort: (field: string, order: 'asc' | 'des
         id: 'category',
         accessorKey: 'equipment.category',
         meta: {
-            headerName: m['company.edit.equipments.add.fields.category'](),
+            headerName: m['company.edit.equipments.fields.category'](),
         },
         header: () =>
             renderComponent(SortableColumn, {
-                title: m['company.edit.equipments.add.fields.category'](),
+                title: m['company.edit.equipments.fields.category'](),
                 field: 'equipments.category',
                 onclick: onSort,
             }),
