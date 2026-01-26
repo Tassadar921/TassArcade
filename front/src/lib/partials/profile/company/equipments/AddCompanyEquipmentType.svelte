@@ -24,7 +24,7 @@
     };
 
     const getEquipments = async (currentPage: number = 1, limit: number = 10): Promise<void> => {
-        await wrappedFetch(`/profile/companies/edit/${page.params.id}/equipments?page=${currentPage}&limit=${limit}&query=${query}&sortBy=${sortBy}`, { method: 'GET' }, ({ data }): void => {
+        await wrappedFetch(`/equipments?page=${currentPage}&limit=${limit}&query=${query}&sortBy=${sortBy}`, { method: 'GET' }, ({ data }): void => {
             paginatedEquipments = data;
         });
     };

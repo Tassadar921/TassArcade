@@ -29,8 +29,6 @@ export default class CompanyAdministratorController {
         const { companyId } = await companyIdValidator.validate(request.params());
         const company: Company = await this.companyRepository.getFromUser(companyId, user);
 
-        await cache.deleteByTag({ tags: [`company:${companyId}`] });
-
         return response.ok({
             company: await cache.getOrSet({
                 key: `company:${company.id}`,
@@ -90,6 +88,7 @@ export default class CompanyAdministratorController {
     public async addEquipment({ request, response, user, i18n, language }: HttpContext): Promise<void> {
         const { companyId } = await companyIdValidator.validate(request.params());
         const { equipmentTypeId } = await request.validateUsing(createOrUpdateEquipmentValidator);
+
         const company: Company = await this.companyRepository.getFromUser(companyId, user);
 
         const equipmentType: EquipmentType = await this.equipmentTypeRepository.getOneAndTranslation(equipmentTypeId, language);

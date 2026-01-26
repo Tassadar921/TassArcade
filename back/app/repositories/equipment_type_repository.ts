@@ -39,6 +39,7 @@ export default class EquipmentTypeRepository extends BaseRepository<typeof Equip
         }
     ): Promise<PaginatedEquipmentTypes> {
         const paginator: ModelPaginatorContract<EquipmentType> = await this.Model.query()
+            .select('equipment_types.*')
             .leftJoin('equipment_type_translations', 'equipment_type_translations.equipment_type_id', 'equipment_types.id')
             .leftJoin('equipments', 'equipment_types.equipment_id', 'equipments.id')
             .leftJoin('equipment_translations', 'equipment_translations.equipment_id', 'equipments.id')

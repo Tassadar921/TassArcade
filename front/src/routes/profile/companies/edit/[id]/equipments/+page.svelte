@@ -20,7 +20,6 @@
         if (page.data.isSuccess) {
             paginatedCompanyEquipments = page.data.companyEquipments;
             paginatedEquipments = page.data.equipments;
-            console.log(paginatedCompanyEquipments?.equipmentTypes[0]);
         } else {
             await getCompanyEquipments();
         }

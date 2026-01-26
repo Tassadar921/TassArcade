@@ -32,6 +32,11 @@ export default class CompanyEquipmentTypeRepository extends BaseRepository<typeo
         }
     ): Promise<PaginatedCompanyEquipmentTypes> {
         const paginator: ModelPaginatorContract<CompanyEquipmentType> = await this.Model.query()
+            .select('company_equipment_types.*')
+            .leftJoin('equipment_types', 'company_equipment_types.equipment_type_id', 'equipment_types.id')
+            .leftJoin('equipment_type_translations', 'equipment_type_translations.equipment_type_id', 'equipment_types.id')
+            .leftJoin('equipments', 'equipment_types.equipment_id', 'equipments.id')
+            .leftJoin('equipment_translations', 'equipment_translations.equipment_id', 'equipments.id')
             .if(query, (qb): void => {
                 qb.whereHas('equipmentType', (equipmentTypeQuery): void => {
                     equipmentTypeQuery
