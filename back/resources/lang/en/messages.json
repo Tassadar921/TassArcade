@@ -175,9 +175,10 @@
                 }
             },
             "remove": {
-                "success": "Equipment successfully removed",
+                "success": "{name} successfully removed",
                 "error": {
-                    "not-found": "Equipment not found"
+                    "default": "Error while deleting {name}",
+                    "not-found": "Company equipment with identifier {id} not found"
                 }
             }
         },
@@ -188,7 +189,7 @@
                     "already-exists": "{username} is already administrator"
                 }
             },
-            "remove": {
+            "delete": {
                 "success": "Removed {username} from administrators",
                 "error": {
                     "not-found": "Administrator not found",

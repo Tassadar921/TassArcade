@@ -1,7 +1,7 @@
 import BaseRepository from '#repositories/base/base_repository';
 import CompanyAdministrator from '#models/company_administrator';
 import User from '#models/user';
-import { ModelPaginatorContract, ModelQueryBuilderContract } from '@adonisjs/lucid/types/model';
+import { ModelPaginatorContract } from '@adonisjs/lucid/types/model';
 import PaginatedCompanyAdministrators from '#types/paginated/paginated_company_administrators';
 import SerializedCompanyAdministrator from '#types/serialized/serialized_company_administrator';
 import Company from '#models/company';
@@ -16,26 +16,36 @@ export default class CompanyAdministratorRepository extends BaseRepository<typeo
         query: string,
         page: number,
         limit: number,
-        sortBy: { field: keyof CompanyAdministrator['$attributes'] | `users.${keyof User['$attributes']}`; order: 'asc' | 'desc' }
+        sortBy: {
+            field: keyof CompanyAdministrator['$attributes'] | `users.${keyof User['$attributes']}`;
+            order: 'asc' | 'desc';
+        }
     ): Promise<PaginatedCompanyAdministrators> {
-        const paginator: ModelPaginatorContract<CompanyAdministrator> = await this.Model.query()
-            .select('company_administrators.*', 'users.username', 'users.email', 'companies.name')
-            .leftJoin('users', 'company_administrators.user_id', 'users.id')
-            .leftJoin('companies', 'company_administrators.company_id', 'companies.id')
-            .if(query, (queryBuilder: ModelQueryBuilderContract<typeof CompanyAdministrator>): void => {
-                queryBuilder.where((subQuery: ModelQueryBuilderContract<typeof CompanyAdministrator>): void => {
-                    subQuery.where('users.username', 'ILIKE', `%${query}%`).orWhere('users.email', 'ILIKE', `%${query}%`);
+        const baseQuery = this.Model.query()
+            .select('company_administrators.*')
+            .leftJoin('companies', 'companies.id', 'company_administrators.company_id')
+            .leftJoin('users', 'users.id', 'company_administrators.user_id')
+            .where('company_administrators.company_id', company.id);
+
+        if (query) {
+            baseQuery.where((root): void => {
+                root.whereHas('user', (userQuery): void => {
+                    userQuery.where('username', 'ILIKE', `%${query}%`).orWhere('email', 'ILIKE', `%${query}%`);
                 });
-            })
-            .if(sortBy, (queryBuilder: ModelQueryBuilderContract<typeof CompanyAdministrator>): void => {
-                queryBuilder.orderBy(sortBy.field as string, sortBy.order);
-            })
-            .where('company_administrators.company_id', company.id)
-            .preload('user')
-            .paginate(page, limit);
+            });
+        }
+
+        if (sortBy) {
+            const [table, column] = sortBy.field.toString().split('.');
+            baseQuery.orderByRaw(`"${table}"."${column}" ${sortBy.order.toUpperCase()}`);
+        }
+
+        baseQuery.preload('user');
+
+        const paginator: ModelPaginatorContract<CompanyAdministrator> = await baseQuery.paginate(page, limit);
 
         return {
-            administrators: paginator.all().map((administrator: CompanyAdministrator): SerializedCompanyAdministrator => administrator.apiSerialize()),
+            administrators: paginator.all().map((admin: CompanyAdministrator): SerializedCompanyAdministrator => admin.apiSerialize()),
             firstPage: paginator.firstPage,
             lastPage: paginator.lastPage,
             limit,

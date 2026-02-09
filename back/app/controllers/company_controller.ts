@@ -46,7 +46,7 @@ export default class CompanyController {
         private readonly stringService: StringService
     ) {}
 
-    public async getFromSiret({ request, response, i18n }: HttpContext): Promise<void> {
+    public async getFromSiret({ request, response, i18n }: HttpContext) {
         const { siret } = await getCompanyFromSiretValidator.validate(request.params());
 
         try {
@@ -74,7 +74,7 @@ export default class CompanyController {
         }
     }
 
-    public async create({ request, response, user, i18n }: HttpContext): Promise<void> {
+    public async create({ request, response, user, i18n }: HttpContext) {
         const { siret, name, address: inputAddress, postalCode, city, complement, countryCode, email, phoneNumber: inputPhoneNumber, logo } = await request.validateUsing(createCompanyValidator);
 
         let company: Company | null = await this.companyRepository.findOneBy({ siret });
@@ -139,14 +139,15 @@ export default class CompanyController {
         }
 
         await Promise.all([cache.deleteByTag({ tags: [`companies:administrator:${user.id}`] }), company.save()]);
+        await Promise.all([company.load('address'), company.load('logo')]);
 
         return response.created({
             message: i18n.t('messages.company.create.success', { companyName: company.name }),
-            company: company.apiSerializeLight(),
+            company: company.apiSerializeSuperLight(),
         });
     }
 
-    public async getAll({ request, response, user, language }: HttpContext): Promise<void> {
+    public async getAll({ request, response, user, language }: HttpContext) {
         const { query, page, limit, sortBy: inputSortBy } = await request.validateUsing(searchCompaniesValidator);
 
         return response.ok(
@@ -164,7 +165,7 @@ export default class CompanyController {
         );
     }
 
-    public async delete({ request, response, i18n, user }: HttpContext): Promise<void> {
+    public async delete({ request, response, i18n, user }: HttpContext) {
         const { companyId } = await request.validateUsing(deleteCompanyValidator);
 
         const statuses: { isDeleted: boolean; name?: string; id: string }[] = await this.companyRepository.delete([companyId], user);
@@ -242,7 +243,7 @@ export default class CompanyController {
         return response.ok({ company: company.apiSerializeLight(), message: i18n.t('messages.company.update.success', { name }) });
     }
 
-    public async get({ request, response, i18n, user }: HttpContext): Promise<void> {
+    public async get({ request, response, i18n, user }: HttpContext) {
         const { companyId } = await getCompanyValidator.validate(request.params());
         const company: Company | null = await this.companyRepository.getFromUser(companyId, user);
         if (!company) {
@@ -269,7 +270,7 @@ export default class CompanyController {
         });
     }
 
-    public async confirm({ request, response, user, i18n }: HttpContext): Promise<void> {
+    public async confirm({ request, response, user, i18n }: HttpContext) {
         const { companyId, document } = await request.validateUsing(confirmCompanyValidator);
         if (!document.tmpPath) {
             return response.badRequest({ error: i18n.t('messages.company.confirm.error.no-document') });

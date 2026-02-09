@@ -36,13 +36,15 @@
         });
     };
 
-    const removeEquipment = async (equipmentId: string): Promise<void> => {
+    const removeEquipment = async (equipmentIds: string[]): Promise<void> => {
         if (!paginatedCompanyEquipments) {
             return;
         }
 
-        await wrappedFetch(`/profile/companies/edit/${page.params.id}/equipments/remove`, { method: 'POST', body: { equipmentId } }, (): void => {
-            paginatedCompanyEquipments!.equipmentTypes = paginatedCompanyEquipments!.equipmentTypes.filter((equipment: SerializedCompanyEquipmentType): boolean => equipment.id !== equipmentId);
+        await wrappedFetch(`/profile/companies/edit/${page.params.id}/equipments/remove`, { method: 'POST', body: { equipmentIds } }, (): void => {
+            equipmentIds.forEach((equipmentId: string): void => {
+                paginatedCompanyEquipments!.equipmentTypes = paginatedCompanyEquipments!.equipmentTypes.filter((equipment: SerializedCompanyEquipmentType): boolean => equipment.id !== equipmentId);
+            });
         });
     };
 </script>
@@ -57,10 +59,8 @@
             bind:query
             bind:selectedRows={selectedUsers}
             onPaginationChange={getCompanyEquipments}
-            editable={false}
             createText={m['common.add']()}
             onCreateClick={() => (showDialog = true)}
-            selectable={false}
         />
     </div>
 {/if}

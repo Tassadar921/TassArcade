@@ -7,7 +7,7 @@ import SerializedLog from '#types/serialized/serialized_log';
 
 export default class LogUser extends BaseModel {
     public static table: string = 'log_users';
-    static connection: string = 'logs';
+    public static connection: string = 'logs';
 
     @column({ isPrimary: true })
     declare id: string;

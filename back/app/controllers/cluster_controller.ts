@@ -8,7 +8,7 @@ import Company from '#models/company';
 export default class ClusterController {
     constructor(private readonly companyRepository: CompanyRepository) {}
 
-    public async get({ request, response, language }: HttpContext): Promise<void> {
+    public async get({ request, response, language }: HttpContext) {
         const { minLat, maxLat, minLng, maxLng, zoom, equipments: equipmentIds, company: companyId } = await request.validateUsing(getClustersValidator);
 
         let precision: number = 2;

@@ -243,6 +243,20 @@
                 "add": {
                     "title": "Ajouter un nouvel équipement"
                 },
+                "delete": {
+                    "title": "Supprimer {equipments}",
+                    "text": [
+                        {
+                            "declarations": ["input equipments", "input count", "local countPlural = count: plural"],
+                            "selectors": ["countPlural"],
+                            "match": {
+                                "countPlural=zero": "Êtes-vous sûr de vouloir supprimer {equipments} ? Cette action est irréversible et supprimera définitivement les équipements ainsi que toutes les données associées.",
+                                "countPlural=one": "Êtes-vous sûr de vouloir supprimer {equipments} ? Cette action est irréversible et supprimera définitivement l'équipement ainsi que toutes les données associées.",
+                                "countPlural=other": "Êtes-vous sûr de vouloir supprimer {equipments} ? Cette action est irréversible et supprimera définitivement les équipements ainsi que toutes les données associées."
+                            }
+                        }
+                    ]
+                },
                 "fields": {
                     "category": "Catégorie",
                     "type": "Type"
@@ -255,7 +269,7 @@
         },
         "fields": {
             "siret": {
-                "placeholder": "732 829 320 00074",
+                "placeholder": "73282932000074",
                 "label": "SIRET",
                 "popover": {
                     "content": "En cliquant sur ce bouton, cela remplira le formulaire à partir des données publiques officielles de l'entreprise"

@@ -175,9 +175,10 @@
                 }
             },
             "remove": {
-                "success": "Équipement supprimé avec succès",
+                "success": "{name} supprimé avec succès",
                 "error": {
-                    "not-found": "Équipement non trouvé"
+                    "not-found": "{name} non trouvé",
+                    "default": "Erreur lors de la suppression de l’équipement avec l’identifiant {id}"
                 }
             }
         },
@@ -188,7 +189,7 @@
                     "already-exists": "{username} est déjà administrateur"
                 }
             },
-            "remove": {
+            "delete": {
                 "success": "{username} retiré des administrateurs",
                 "error": {
                     "not-found": "Administrateurs non trouvé",

@@ -20,6 +20,9 @@ upgrade:
 list-routes:
 	cd back && node ace list:routes
 
+clear-cache:
+	docker exec -it redis redis-cli FLUSHALL
+
 db-fresh:
 	./compose-env.sh exec -T backend node ace migration:fresh
 	./compose-env.sh exec -T backend node ace migration:fresh --connection=logs

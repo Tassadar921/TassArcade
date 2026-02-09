@@ -18,7 +18,7 @@ export default class FileController {
         private readonly companyRepository: CompanyRepository
     ) {}
 
-    public async serveStaticProfilePictureFile({ request, response, i18n }: HttpContext): Promise<void> {
+    public async serveStaticProfilePictureFile({ request, response, i18n }: HttpContext) {
         const { userId } = await serveStaticProfilePictureFileValidator.validate(request.params());
 
         try {
@@ -46,7 +46,7 @@ export default class FileController {
         }
     }
 
-    public async serveStaticEquipmentThumbnailFile({ request, response, i18n }: HttpContext): Promise<void> {
+    public async serveStaticEquipmentThumbnailFile({ request, response, i18n }: HttpContext) {
         const { equipmentId } = await serveStaticEquipmentThumbnailFileValidator.validate(request.params());
 
         try {
@@ -74,7 +74,7 @@ export default class FileController {
         }
     }
 
-    public async serveStaticCompanyLogoFile({ request, response, i18n }: HttpContext): Promise<void> {
+    public async serveStaticCompanyLogoFile({ request, response, i18n }: HttpContext) {
         const { companyId } = await serveStaticCompanyLogoFileValidator.validate(request.params());
 
         try {

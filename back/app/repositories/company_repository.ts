@@ -5,7 +5,7 @@ import type { Cluster } from '#types/cluster';
 import db from '@adonisjs/lucid/services/db';
 import SerializedCompany from '#types/serialized/serialized_company';
 import User from '#models/user';
-import { ModelPaginatorContract, ModelQueryBuilderContract } from '@adonisjs/lucid/types/model';
+import { ModelPaginatorContract } from '@adonisjs/lucid/types/model';
 import PaginatedCompanies from '#types/paginated/paginated_companies';
 import CompanyAdministratorRoleEnum from '#types/enum/company_administrator_role_enum';
 import SerializedCompanyLight from '#types/serialized/serialized_company_light';
@@ -53,20 +53,16 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
                     equipmentQuery.preload('equipmentType', (equipmentTypeQuery): void => {
                         equipmentTypeQuery
                             .preload('translations', (equipmentTypeTranslationQuery): void => {
-                                equipmentTypeTranslationQuery
-                                    .whereHas('language', (languageQuery): void => {
-                                        languageQuery.where('code', language.code);
-                                    })
-                                    .preload('language');
+                                equipmentTypeTranslationQuery.whereHas('language', (languageQuery): void => {
+                                    languageQuery.where('code', language.code);
+                                });
                             })
                             .preload('equipment', (equipmentQuery): void => {
                                 equipmentQuery
                                     .preload('translations', (equipmentTranslationQuery): void => {
-                                        equipmentTranslationQuery
-                                            .whereHas('language', (languageQuery): void => {
-                                                languageQuery.where('code', language.code);
-                                            })
-                                            .preload('language');
+                                        equipmentTranslationQuery.whereHas('language', (languageQuery): void => {
+                                            languageQuery.where('code', language.code);
+                                        });
                                     })
                                     .preload('thumbnail');
                             });
@@ -94,52 +90,47 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
         limit: number,
         sortBy: { field: keyof Company['$attributes']; order: 'asc' | 'desc' }
     ): Promise<PaginatedCompanies> {
-        const paginator: ModelPaginatorContract<Company> = await this.Model.query()
+        const baseQuery = this.Model.query()
             .select('companies.*')
             .innerJoin('company_administrators', 'company_administrators.company_id', 'companies.id')
-            .where('company_administrators.user_id', user.id)
-            .if(query, (queryBuilder: ModelQueryBuilderContract<typeof Company>): void => {
-                queryBuilder.where((subQuery): void => {
-                    subQuery
-                        .where('companies.name', 'ILIKE', `%${query}%`)
-                        .orWhere('companies.siret', 'ILIKE', `%${query}%`)
-                        .orWhere('companies.email', 'ILIKE', `%${query}%`)
-                        .orWhere('companies.phone_number', 'ILIKE', `%${query}%`);
-                });
-            })
-            .if(sortBy, (queryBuilder: ModelQueryBuilderContract<typeof Company>): void => {
-                queryBuilder.orderBy(sortBy.field as string, sortBy.order);
-            })
-            .if(!sortBy, (queryBuilder: ModelQueryBuilderContract<typeof Company>): void => {
-                queryBuilder.orderBy('companies.name', 'asc');
-            })
+            .where('company_administrators.user_id', user.id);
+
+        if (query) {
+            baseQuery.where((root): void => {
+                root.where('companies.name', 'ILIKE', `%${query}%`)
+                    .orWhere('companies.siret', 'ILIKE', `%${query}%`)
+                    .orWhere('companies.email', 'ILIKE', `%${query}%`)
+                    .orWhere('companies.phone_number', 'ILIKE', `%${query}%`);
+            });
+        }
+
+        if (sortBy) {
+            baseQuery.orderBy(`${sortBy.field}`, sortBy.order);
+        }
+
+        baseQuery
             .preload('address')
             .preload('equipments', (equipmentQuery): void => {
                 equipmentQuery.preload('equipmentType', (equipmentTypeQuery): void => {
                     equipmentTypeQuery
-                        .preload('translations', (equipmentTypeTranslationQuery): void => {
-                            equipmentTypeTranslationQuery
-                                .whereHas('language', (languageQuery): void => {
-                                    languageQuery.where('code', language.code);
-                                })
-                                .preload('language');
+                        .preload('translations', (ett): void => {
+                            ett.whereHas('language', (l): void => {
+                                l.where('code', language.code);
+                            });
                         })
-                        .preload('equipment', (equipmentQuery): void => {
-                            equipmentQuery
-                                .preload('translations', (equipmentTranslationQuery): void => {
-                                    equipmentTranslationQuery
-                                        .whereHas('language', (languageQuery): void => {
-                                            languageQuery.where('code', language.code);
-                                        })
-                                        .preload('language');
-                                })
-                                .preload('thumbnail');
+                        .preload('equipment', (eq): void => {
+                            eq.preload('translations', (etr): void => {
+                                etr.whereHas('language', (l): void => {
+                                    l.where('code', language.code);
+                                });
+                            }).preload('thumbnail');
                         });
                 });
             })
             .preload('administrators')
-            .preload('logo')
-            .paginate(page, limit);
+            .preload('logo');
+
+        const paginator: ModelPaginatorContract<Company> = await baseQuery.paginate(page, limit);
 
         return {
             companies: paginator.all().map((company: Company): SerializedCompany => company.apiSerialize()),
@@ -162,6 +153,8 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
                             .where('companies.id', id)
                             .andWhere('company_administrators.user_id', user.id)
                             .andWhere('company_administrators.role', CompanyAdministratorRoleEnum.CEO)
+                            .preload('address')
+                            .preload('logo')
                             .firstOrFail();
 
                         await company.useTransaction(trx).delete();
@@ -172,7 +165,8 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
 
                         return { isDeleted: true, name: company.name, id };
                     });
-                } catch {
+                } catch (e) {
+                    console.log(e);
                     return { isDeleted: false, id };
                 }
             })

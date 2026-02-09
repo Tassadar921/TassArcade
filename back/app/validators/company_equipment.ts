@@ -20,5 +20,5 @@ export const createOrUpdateEquipmentValidator = vine.create({
 });
 
 export const removeEquipmentValidator = vine.create({
-    equipmentId: vine.string().uuid(),
+    equipmentIds: vine.array(vine.string().uuid()),
 });

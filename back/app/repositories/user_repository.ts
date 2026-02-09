@@ -1,6 +1,6 @@
 import BaseRepository from '#repositories/base/base_repository';
 import User from '#models/user';
-import { ModelPaginatorContract, ModelQueryBuilderContract } from '@adonisjs/lucid/types/model';
+import { ModelPaginatorContract } from '@adonisjs/lucid/types/model';
 import PaginatedUsers from '#types/paginated/paginated_users';
 import SerializedUser from '#types/serialized/serialized_user';
 import { inject } from '@adonisjs/core';
@@ -19,15 +19,22 @@ export default class UserRepository extends BaseRepository<typeof User> {
     }
 
     public async getAdminUsers(query: string, page: number, limit: number, sortBy: { field: keyof User['$attributes']; order: 'asc' | 'desc' }): Promise<PaginatedUsers> {
-        const paginator: ModelPaginatorContract<User> = await this.Model.query()
-            .if(query, (queryBuilder: ModelQueryBuilderContract<typeof User>): void => {
-                queryBuilder.where('username', 'ILIKE', `%${query}%`).orWhere('email', 'ILIKE', `%${query}%`);
-            })
-            .if(sortBy, (queryBuilder: ModelQueryBuilderContract<typeof User>): void => {
-                queryBuilder.orderBy(sortBy.field as string, sortBy.order);
-            })
-            .preload('profilePicture')
-            .paginate(page, limit);
+        const baseQuery = this.Model.query();
+
+        if (query) {
+            baseQuery.where((root): void => {
+                root.where('username', 'ILIKE', `%${query}%`).orWhere('email', 'ILIKE', `%${query}%`);
+            });
+        }
+
+        if (sortBy) {
+            const [table, column] = sortBy.field.toString().split('.');
+            baseQuery.orderByRaw(`"${table}"."${column}" ${sortBy.order.toUpperCase()}`);
+        }
+
+        baseQuery.preload('profilePicture');
+
+        const paginator: ModelPaginatorContract<User> = await baseQuery.paginate(page, limit);
 
         return {
             users: paginator.all().map((user: User): SerializedUser => user.apiSerialize()),
@@ -43,7 +50,9 @@ export default class UserRepository extends BaseRepository<typeof User> {
         return Promise.all(
             ids.map(async (id: string): Promise<DeleteUserResult> => {
                 try {
+                    console.log('là');
                     const user: User = await User.query().where('id', id).firstOrFail();
+                    console.log('ici');
 
                     if (user.id === currentUser.id) {
                         return {
@@ -54,10 +63,12 @@ export default class UserRepository extends BaseRepository<typeof User> {
                         };
                     }
 
-                    return await db.transaction(async (trx: TransactionClientContract): Promise<DeleteUserResult> => {
-                        await user.useTransaction(trx).delete();
+                    return await db.transaction(async (appTrx: TransactionClientContract): Promise<DeleteUserResult> => {
+                        await db.connection('logs').transaction(async (logsTrx: TransactionClientContract): Promise<void> => {
+                            await this.logUserRepository.deleteByUser(user, logsTrx);
 
-                        await this.logUserRepository.deleteByUser(user, trx);
+                            await this.Model.query({ client: appTrx }).where('email', user.email).delete();
+                        });
 
                         return {
                             isDeleted: true,
@@ -66,6 +77,7 @@ export default class UserRepository extends BaseRepository<typeof User> {
                         };
                     });
                 } catch (error) {
+                    console.log(error);
                     return { isDeleted: false, id };
                 }
             })
@@ -79,21 +91,26 @@ export default class UserRepository extends BaseRepository<typeof User> {
         limit: number,
         sortBy: { field: keyof User['$attributes']; order: 'asc' | 'desc' }
     ): Promise<PaginatedSearchCompanyAdministrators> {
-        const paginator: ModelPaginatorContract<User> = await this.Model.query()
+        const baseQuery = this.Model.query()
             .select('users.*', 'company_administrators.id as adminId', 'company_administrators.role as administratorRole')
             .leftJoin('company_administrators', (join): void => {
                 join.on('users.id', '=', 'company_administrators.user_id').onVal('company_administrators.company_id', company.id);
-            })
-            .if(query, (queryBuilder: ModelQueryBuilderContract<typeof User>): void => {
-                queryBuilder.where((subQuery: ModelQueryBuilderContract<typeof User>): void => {
-                    subQuery.where('users.username', 'ILIKE', `%${query}%`).orWhere('users.email', 'ILIKE', `%${query}%`);
-                });
-            })
-            .if(sortBy, (queryBuilder: ModelQueryBuilderContract<typeof User>): void => {
-                queryBuilder.orderBy(sortBy.field as string, sortBy.order);
-            })
-            .preload('profilePicture')
-            .paginate(page, limit);
+            });
+
+        if (query) {
+            baseQuery.where((root): void => {
+                root.where('users.username', 'ILIKE', `%${query}%`).orWhere('users.email', 'ILIKE', `%${query}%`);
+            });
+        }
+
+        if (sortBy) {
+            const [table, column] = sortBy.field.toString().split('.');
+            baseQuery.orderByRaw(`"${table}"."${column}" ${sortBy.order.toUpperCase()}`);
+        }
+
+        baseQuery.preload('profilePicture');
+
+        const paginator: ModelPaginatorContract<User> = await baseQuery.paginate(page, limit);
 
         return {
             users: paginator.all().map(

@@ -15,6 +15,7 @@ import Equipment from '#models/equipment';
 import EquipmentTranslation from '#models/equipment_translation';
 import EquipmentTypeTranslation from '#models/equipment_type_translation';
 import StringService from '#services/string_service';
+import { DeleteCompanyEquipmentTypeResult } from '#types/delete_company_equipment_type_result';
 
 @inject()
 export default class CompanyAdministratorController {
@@ -85,7 +86,7 @@ export default class CompanyAdministratorController {
         );
     }
 
-    public async addEquipment({ request, response, user, i18n, language }: HttpContext): Promise<void> {
+    public async addEquipment({ request, response, user, i18n, language }: HttpContext) {
         const { companyId } = await companyIdValidator.validate(request.params());
         const { equipmentTypeId } = await request.validateUsing(createOrUpdateEquipmentValidator);
 
@@ -105,7 +106,7 @@ export default class CompanyAdministratorController {
         });
     }
 
-    public async updateEquipment({ request, response, user, i18n }: HttpContext): Promise<void> {
+    public async updateEquipment({ request, response, user, i18n }: HttpContext) {
         const { companyId } = await companyIdValidator.validate(request.params());
         const { companyEquipmentTypeId, equipmentTypeId, name, description } = await request.validateUsing(createOrUpdateEquipmentValidator);
         const company: Company = await this.companyRepository.getFromUser(companyId, user);
@@ -125,23 +126,31 @@ export default class CompanyAdministratorController {
 
         await Promise.all([companyEquipment.save(), cache.deleteByTag({ tags: [`company:${companyId}`] })]);
 
-        return response.ok({ message: i18n.t('messages.company.equipment.remove.success') });
+        return response.ok({ message: i18n.t('messages.company.equipment.delete.success') });
     }
 
-    public async removeEquipment({ request, response, user, i18n }: HttpContext): Promise<void> {
+    public async removeEquipment({ request, response, user, i18n, language }: HttpContext) {
         const { companyId } = await companyIdValidator.validate(request.params());
-        const { equipmentId } = await request.validateUsing(removeEquipmentValidator);
+        const { equipmentIds } = await request.validateUsing(removeEquipmentValidator);
         const company: Company = await this.companyRepository.getFromUser(companyId, user);
 
-        const companyEquipment: CompanyEquipmentType | null = await this.companyEquipmentTypeRepository.findOneBy({ id: equipmentId, companyId: company.id });
-        if (!companyEquipment) {
-            return response.notFound({
-                error: i18n.t('messages.company.equipment.remove.error.not-found'),
-            });
-        }
+        const statuses: DeleteCompanyEquipmentTypeResult[] = await this.companyEquipmentTypeRepository.delete(equipmentIds, company, language);
 
-        await Promise.all([companyEquipment.delete(), cache.deleteByTag({ tags: [`company:${companyId}`] })]);
-
-        return response.ok({ message: i18n.t('messages.company.equipment.remove.success') });
+        return response.ok({
+            messages: await Promise.all(
+                statuses.map(async (status: DeleteCompanyEquipmentTypeResult): Promise<{ id: string; message: string; isSuccess: boolean }> => {
+                    if (status.isDeleted) {
+                        await cache.deleteByTag({ tags: [`company:${companyId}`] });
+                        return { id: status.id, message: i18n.t(`messages.company.equipment.remove.success`, { name: status.name }), isSuccess: true };
+                    } else {
+                        if (status.isFound) {
+                            return { id: status.id, message: i18n.t(`messages.company.equipment.remove.error.default`, { name: status.name }), isSuccess: false };
+                        } else {
+                            return { id: status.id, message: i18n.t(`messages.company.equipment.remove.error.not-found`, { id: status.id }), isSuccess: false };
+                        }
+                    }
+                })
+            ),
+        });
     }
 }

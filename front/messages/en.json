@@ -243,6 +243,20 @@
                 "add": {
                     "title": "Add new equipment"
                 },
+                "delete": {
+                    "title": "Delete {equipments}",
+                    "text": [
+                        {
+                            "declarations": ["input equipments", "input count", "local countPlural = count: plural"],
+                            "selectors": ["countPlural"],
+                            "match": {
+                                "countPlural=zero": "Are you sure you want to delete {equipments} ? This action cannot be undone and will permanently remove the equipments and all related data.",
+                                "countPlural=one": "Are you sure you want to delete {equipments} ? This action cannot be undone and will permanently remove the equipment and all related data.",
+                                "countPlural=other": "Are you sure you want to delete {equipments} ? This action cannot be undone and will permanently remove the equipments and all related data."
+                            }
+                        }
+                    ]
+                },
                 "fields": {
                     "category": "Category",
                     "type": "Type"
@@ -255,7 +269,7 @@
         },
         "fields": {
             "siret": {
-                "placeholder": "732 829 320 00074",
+                "placeholder": "73282932000074",
                 "label": "SIRET",
                 "popover": {
                     "content": "By clicking this button, this will fill the form from public official company data"

@@ -15,6 +15,7 @@ import SlugifyService from '#services/slugify_service';
 import PaginatedUsers from '#types/paginated/paginated_users';
 import SerializedUser from '#types/serialized/serialized_user';
 import StringService from '#services/string_service';
+import { DeleteUserResult } from '#types/delete_user_result';
 
 @inject()
 export default class AdminUserController {
@@ -25,8 +26,10 @@ export default class AdminUserController {
         private readonly stringService: StringService
     ) {}
 
-    public async getAll({ request, response }: HttpContext): Promise<void> {
+    public async getAll({ request, response }: HttpContext) {
         const { query, page, limit, sortBy: inputSortBy } = await request.validateUsing(searchAdminUsersValidator);
+
+        await cache.deleteByTag({ tags: ['admin-users'] });
 
         return response.ok(
             await cache.getOrSet({
@@ -43,14 +46,16 @@ export default class AdminUserController {
         );
     }
 
-    public async delete({ request, response, i18n, user }: HttpContext): Promise<void> {
+    public async delete({ request, response, i18n, user }: HttpContext) {
         const { users } = await request.validateUsing(deleteUsersValidator);
 
-        const statuses: { isDeleted: boolean; isCurrentUser?: boolean; username?: string; id: string }[] = await this.userRepository.delete(users, user);
+        console.log('ici');
+        const statuses: DeleteUserResult[] = await this.userRepository.delete(users, user);
+        console.log('là');
 
         return response.ok({
             messages: await Promise.all(
-                statuses.map(async (status: { isDeleted: boolean; isCurrentUser?: boolean; username?: string; id: string }): Promise<{ id: string; message: string; isSuccess: boolean }> => {
+                statuses.map(async (status: DeleteUserResult): Promise<{ id: string; message: string; isSuccess: boolean }> => {
                     if (status.isDeleted) {
                         await cache.deleteByTag({ tags: ['admin-users', `admin-user:${status.id}`] });
                         return { id: status.id, message: i18n.t(`messages.admin.user.delete.success`, { username: status.username }), isSuccess: true };
@@ -66,7 +71,7 @@ export default class AdminUserController {
         });
     }
 
-    public async create({ request, response, i18n }: HttpContext): Promise<void> {
+    public async create({ request, response, i18n }: HttpContext) {
         const { username, email, profilePicture: inputProfilePicture } = await request.validateUsing(createUserValidator);
 
         let user: User | null = await this.userRepository.findOneBy({ email });
@@ -126,7 +131,7 @@ export default class AdminUserController {
         return response.ok({ user: user.apiSerialize(), message: i18n.t('messages.admin.user.update.success', { username }) });
     }
 
-    public async get({ request, response, i18n }: HttpContext): Promise<void> {
+    public async get({ request, response, i18n }: HttpContext) {
         const { id } = await getAdminUserValidator.validate(request.params());
         const user: User | null = await this.userRepository.findOneBy({ id });
         if (!user) {

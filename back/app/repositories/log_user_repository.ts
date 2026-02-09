@@ -19,7 +19,7 @@ export default class LogUserRepository extends BaseRepository<typeof LogUser> {
             return;
         }
 
-        await db.transaction(async (localTrx: TransactionClientContract): Promise<void> => {
+        await db.connection('logs').transaction(async (localTrx: TransactionClientContract): Promise<void> => {
             await this.logRepository.deleteByUser(user, localTrx);
             await this.Model.query({ client: localTrx }).where('email', user.email).delete();
         });

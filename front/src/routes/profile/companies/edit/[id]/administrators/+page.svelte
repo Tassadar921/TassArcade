@@ -1,7 +1,7 @@
 <script lang="ts">
     import { page } from '$app/state';
     import { onMount } from 'svelte';
-    import type { PaginatedCompanyAdministrators, PaginatedSearchCompanyAdministrators, SerializedCompanyAdministrator } from 'backend/types';
+    import type { PaginatedCompanyAdministrators, PaginatedSearchCompanyAdministrators, SearchCompanyAdministrator, SerializedCompanyAdministrator } from 'backend/types';
     import { wrappedFetch } from '#lib/services/requestService';
     import { DataTable } from '#lib/components/ui/data-table';
     import { getCompanyAdministratorsColumns } from './columns';
@@ -45,6 +45,13 @@
             paginatedCompanyAdministrators!.administrators = paginatedCompanyAdministrators!.administrators.filter(
                 (administrator: SerializedCompanyAdministrator): boolean => administrator.user.id !== userId
             );
+            paginatedUsers!.users = paginatedUsers!.users.map((user: SearchCompanyAdministrator) => {
+                if (user.user.id == userId) {
+                    return { ...user, isAdministrator: false };
+                }
+
+                return user;
+            });
         });
     };
 </script>

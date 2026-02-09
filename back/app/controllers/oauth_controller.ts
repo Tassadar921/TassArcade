@@ -31,11 +31,11 @@ export default class OauthController {
         private readonly stringService: StringService
     ) {}
 
-    public async github({ ally }: HttpContext): Promise<void> {
+    public async github({ ally }: HttpContext) {
         return ally.use('github').redirect();
     }
 
-    public async githubCallback({ ally, response, i18n }: HttpContext): Promise<void> {
+    public async githubCallback({ ally, response, i18n }: HttpContext) {
         const client: GithubDriver = ally.use('github');
         const { error, token } = await this.handleCallback(client, i18n);
         if (error) {
@@ -45,11 +45,11 @@ export default class OauthController {
         return response.redirect(`${env.get('FRONT_URI')}/en/oauth?token=${token}&provider=github`);
     }
 
-    public async discord({ ally }: HttpContext): Promise<void> {
+    public async discord({ ally }: HttpContext) {
         return ally.use('discord').redirect();
     }
 
-    public async discordCallback({ ally, response, i18n }: HttpContext): Promise<void> {
+    public async discordCallback({ ally, response, i18n }: HttpContext) {
         const client: DiscordDriver = ally.use('discord');
         const { error, token } = await this.handleCallback(client, i18n);
         if (error) {
@@ -59,11 +59,11 @@ export default class OauthController {
         return response.redirect(`${env.get('FRONT_URI')}/en/oauth?token=${token}&provider=discord`);
     }
 
-    public async google({ ally }: HttpContext): Promise<void> {
+    public async google({ ally }: HttpContext) {
         return ally.use('google').redirect();
     }
 
-    public async googleCallback({ ally, response, i18n }: HttpContext): Promise<void> {
+    public async googleCallback({ ally, response, i18n }: HttpContext) {
         const client: GoogleDriver = ally.use('google');
         const { error, token } = await this.handleCallback(client, i18n);
         if (error) {
@@ -73,7 +73,7 @@ export default class OauthController {
         return response.redirect(`${env.get('FRONT_URI')}/en/oauth?token=${token}&provider=google`);
     }
 
-    public async confirmOauthConnection({ request, response, i18n }: HttpContext): Promise<void> {
+    public async confirmOauthConnection({ request, response, i18n }: HttpContext) {
         const { provider, token: creationToken } = await confirmOauthConnectionValidator.validate(request.params());
 
         const oauthToken: UserToken | null = await this.userTokenRepository.findOneBy({ token: creationToken, type: UserTokenTypeEnum.OAUTH }, ['user']);

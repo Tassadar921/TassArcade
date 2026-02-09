@@ -3,7 +3,7 @@
     import { m } from '#lib/paraglide/messages';
     import { page } from '$app/state';
     import { onMount } from 'svelte';
-    import type { PaginatedUsers, SerializedUser } from 'backend/types';
+    import type { PaginatedUsers } from 'backend/types';
     import { wrappedFetch } from '#lib/services/requestService';
     import { DataTable } from '#lib/components/ui/data-table';
     import { getUserColumns } from './columns';
@@ -27,15 +27,12 @@
         getUsers();
     };
 
-    const handleDelete = (ids: string[]): void => {
+    const handleDelete = async (): Promise<void> => {
         if (!paginatedUsers) {
             return;
         }
 
-        ids.forEach((id: string): void => {
-            paginatedUsers!.users = paginatedUsers!.users.filter((user: SerializedUser): boolean => user.id !== id);
-            paginatedUsers!.total = paginatedUsers!.total - 1;
-        });
+        await getUsers();
     };
 
     const getUsers = async (page: number = 1, limit: number = 10): Promise<void> => {

@@ -8,7 +8,7 @@ import { Country } from 'country-list-with-dial-code-and-flag';
 export default class CountryController {
     constructor(private readonly countryService: CountryService) {}
 
-    public async getAll({ response }: HttpContext): Promise<void> {
+    public async getAll({ response }: HttpContext) {
         return response.ok(
             await cache.getOrSet({
                 key: 'countries',

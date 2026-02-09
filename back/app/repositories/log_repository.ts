@@ -11,12 +11,12 @@ export default class LogRepository extends BaseRepository<typeof Log> {
 
     public async deleteByUser(user: User, trx?: TransactionClientContract): Promise<void> {
         if (trx) {
-            await this.Model.query({ client: trx }).select('logs.*').leftJoin('log_users', 'log_users.log_id', 'logs.id').where('log_users.email', user.email).delete();
+            await this.Model.query({ client: trx }).from('logs').join('log_users', 'logs.user_id', 'log_users.id').where('log_users.email', user.email).delete();
             return;
         }
 
-        await db.transaction(async (localTrx: TransactionClientContract): Promise<void> => {
-            await this.Model.query({ client: localTrx }).select('logs.*').leftJoin('log_users', 'log_users.log_id', 'logs.id').where('log_users.email', user.email).delete();
+        await db.connection('logs').transaction(async (localTrx: TransactionClientContract): Promise<void> => {
+            await this.Model.query({ client: localTrx }).from('logs').join('log_users', 'logs.user_id', 'log_users.id').where('log_users.email', user.email).delete();
         });
     }
 }

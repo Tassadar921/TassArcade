@@ -27,8 +27,6 @@ export default class CompanyAdministratorController {
         const { companyId } = await companyIdValidator.validate(request.params());
         const company: Company = await this.companyRepository.getFromUser(companyId, user);
 
-        await cache.deleteByTag({ tags: [`company:${companyId}`] });
-
         return response.ok({
             company: await cache.getOrSet({
                 key: `company:${company.id}`,
@@ -43,7 +41,7 @@ export default class CompanyAdministratorController {
                 tags: [`company:${companyId}`],
                 ttl: '1h',
                 factory: async (): Promise<PaginatedCompanyAdministrators> => {
-                    return await this.companyAdministratorRepository.getAdministrators(company, '', 1, 10, { field: 'username', order: 'asc' });
+                    return await this.companyAdministratorRepository.getAdministrators(company, '', 1, 10, { field: 'users.username', order: 'asc' });
                 },
             }),
             users: await cache.getOrSet({
@@ -51,7 +49,7 @@ export default class CompanyAdministratorController {
                 tags: [`company:${companyId}`],
                 ttl: '1h',
                 factory: async (): Promise<PaginatedSearchCompanyAdministrators> => {
-                    return await this.userRepository.getSearchCompanyAdministrators(company, '', 1, 10, { field: 'username', order: 'asc' });
+                    return await this.userRepository.getSearchCompanyAdministrators(company, '', 1, 10, { field: 'users.username', order: 'asc' });
                 },
             }),
         });
@@ -126,16 +124,16 @@ export default class CompanyAdministratorController {
         const administrator: CompanyAdministrator | null = await this.companyAdministratorRepository.findOneBy({ companyId: company.id, userId });
         if (!administrator) {
             return response.notFound({
-                error: i18n.t('messages.company.administrator.remove.error.not-found'),
+                error: i18n.t('messages.company.administrator.delete.error.not-found'),
             });
         } else if (administrator.role === CompanyAdministratorRoleEnum.CEO) {
             return response.badRequest({
-                error: i18n.t('messages.company.administrator.remove.error.ceo'),
+                error: i18n.t('messages.company.administrator.delete.error.ceo'),
             });
         }
 
         await Promise.all([administrator.delete(), cache.deleteByTag({ tags: [`company:${companyId}`] })]);
 
-        return response.ok({ message: i18n.t('messages.company.administrator.remove.success', { username: administrator.user.username }) });
+        return response.ok({ message: i18n.t('messages.company.administrator.delete.success', { username: administrator.user.username }) });
     }
 }

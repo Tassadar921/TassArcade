@@ -20,7 +20,7 @@ const ClusterController = () => import('#controllers/cluster_controller');
 const CountryController = () => import('#controllers/country_controller');
 const CompanyController = () => import('#controllers/company_controller');
 const CompanyAdministratorController = () => import('#controllers/company_administrator_controller');
-const CompanyEquipmentsController = () => import('#controllers/company_equipment_controller');
+const CompanyEquipmentTypeController = () => import('#controllers/company_equipment_type_controller');
 
 router.get('healthcheck', [HealthCheckController]);
 
@@ -121,11 +121,11 @@ router
 
                                         router
                                             .group((): void => {
-                                                router.get('/init', [CompanyEquipmentsController, 'init']);
-                                                router.get('/', [CompanyEquipmentsController, 'getAll']);
-                                                router.post('/add', [CompanyEquipmentsController, 'addEquipment']);
-                                                router.post('/update', [CompanyEquipmentsController, 'updateEquipment']);
-                                                router.post('/remove', [CompanyEquipmentsController, 'removeEquipment']);
+                                                router.get('/init', [CompanyEquipmentTypeController, 'init']);
+                                                router.get('/', [CompanyEquipmentTypeController, 'getAll']);
+                                                router.post('/add', [CompanyEquipmentTypeController, 'addEquipment']);
+                                                router.post('/update', [CompanyEquipmentTypeController, 'updateEquipment']);
+                                                router.post('/remove', [CompanyEquipmentTypeController, 'removeEquipment']);
                                             })
                                             .prefix('equipments');
                                     })

@@ -11,19 +11,15 @@ export default class EquipmentRepository extends BaseRepository<typeof Equipment
         return Equipment.query()
             .preload('thumbnail')
             .preload('translations', (equipmentTranslationQuery): void => {
-                equipmentTranslationQuery
-                    .whereHas('language', (languageQuery): void => {
-                        languageQuery.where('code', language.code);
-                    })
-                    .preload('language');
+                equipmentTranslationQuery.whereHas('language', (languageQuery): void => {
+                    languageQuery.where('code', language.code);
+                });
             })
             .preload('types', (equipmentTypeQuery): void => {
                 equipmentTypeQuery.preload('translations', (equipmentTranslationQuery): void => {
-                    equipmentTranslationQuery
-                        .whereHas('language', (languageQuery): void => {
-                            languageQuery.where('code', language.code);
-                        })
-                        .preload('language');
+                    equipmentTranslationQuery.whereHas('language', (languageQuery): void => {
+                        languageQuery.where('code', language.code);
+                    });
                 });
             });
     }

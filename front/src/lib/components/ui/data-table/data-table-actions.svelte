@@ -4,7 +4,7 @@
     import { EllipsisIcon, Trash, Pencil } from '@lucide/svelte';
     import { m } from '#lib/paraglide/messages';
     import { Link } from '#lib/components/ui/link/index.js';
-    import { location, navigate } from '#lib/stores/locationStore';
+    import { location } from '#lib/stores/locationStore';
     import {
         AlertDialog,
         AlertDialogAction,
@@ -28,7 +28,7 @@
     let { id, onDelete, deleteTitle, deleteText }: Props = $props();
 
     let showDialog: boolean = $state(false);
-    const deletable: boolean = $state(!!(deleteTitle && deleteText));
+    const deletable: boolean = $derived(!!(deleteTitle && deleteText));
 
     const handleDelete = async (): Promise<void> => {
         showDialog = false;
@@ -37,6 +37,7 @@
         }
 
         await wrappedFetch(`${$location}/delete`, { method: 'POST', body: { data: [id] } }, (data) => {
+            console.log(data);
             const isSuccess: boolean = data.messages.map((status: { isSuccess: boolean; message: string; code: string }) => {
                 showToast(status.message, status.isSuccess ? 'success' : 'error');
                 return status.isSuccess;
@@ -59,7 +60,7 @@
     </DropdownMenuTrigger>
     <DropdownMenuContent>
         <DropdownMenuItem>
-            <Link href={`${$location}/edit/${id}`} class="flex gap-1 justify-start !p-0 w-full">
+            <Link href={`${$location}/edit/${id}`} class="flex gap-1 justify-start p-0! w-full">
                 <Pencil class="size-4" />
                 {m['common.edit']()}
             </Link>

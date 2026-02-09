@@ -18,7 +18,7 @@ export default class EquipmentController {
         private readonly stringService: StringService
     ) {}
 
-    public async getAll({ response, language }: HttpContext): Promise<void> {
+    public async getAll({ response, language }: HttpContext) {
         return response.ok(
             await cache.getOrSet({
                 key: 'equipments',
