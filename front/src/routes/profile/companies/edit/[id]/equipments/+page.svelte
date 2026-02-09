@@ -1,7 +1,7 @@
 <script lang="ts">
     import { page } from '$app/state';
     import { onMount } from 'svelte';
-    import type { PaginatedCompanyEquipmentTypes, PaginatedEquipments, SerializedCompanyEquipmentType } from 'backend/types';
+    import type { PaginatedCompanyEquipmentTypes, PaginatedEquipments } from 'backend/types';
     import { wrappedFetch } from '#lib/services/requestService';
     import { DataTable } from '#lib/components/ui/data-table';
     import { m } from '#lib/paraglide/messages';
@@ -11,7 +11,7 @@
 
     let paginatedCompanyEquipments: PaginatedCompanyEquipmentTypes | undefined = $state();
     let paginatedEquipments: PaginatedEquipments | undefined = $state();
-    let selectedUsers: string[] = $state([]);
+    let selectedCompanyEquipments: { id: string; label: string }[] = $state([]);
     let query: string = $state('');
     let sortBy: string = $state('equipment_type_translations.name:asc');
     let showDialog: boolean = $state(false);
@@ -36,16 +36,12 @@
         });
     };
 
-    const removeEquipment = async (equipmentIds: string[]): Promise<void> => {
+    const removeEquipment = async (): Promise<void> => {
         if (!paginatedCompanyEquipments) {
             return;
         }
 
-        await wrappedFetch(`/profile/companies/edit/${page.params.id}/equipments/remove`, { method: 'POST', body: { equipmentIds } }, (): void => {
-            equipmentIds.forEach((equipmentId: string): void => {
-                paginatedCompanyEquipments!.equipmentTypes = paginatedCompanyEquipments!.equipmentTypes.filter((equipment: SerializedCompanyEquipmentType): boolean => equipment.id !== equipmentId);
-            });
-        });
+        await getCompanyEquipments(paginatedCompanyEquipments.currentPage, paginatedCompanyEquipments.limit);
     };
 </script>
 
@@ -57,10 +53,16 @@
             columns={getCompanyEquipmentsColumns(handleSort, removeEquipment)}
             onSearch={getCompanyEquipments}
             bind:query
-            bind:selectedRows={selectedUsers}
+            bind:selectedRows={selectedCompanyEquipments}
             onPaginationChange={getCompanyEquipments}
             createText={m['common.add']()}
             onCreateClick={() => (showDialog = true)}
+            batchDeleteTitle={m['company.edit.equipments.delete.title']({ equipments: selectedCompanyEquipments.map((companyEquipment) => companyEquipment.label).join(', ') })}
+            batchDeleteText={m['company.edit.equipments.delete.text']({
+                equipments: selectedCompanyEquipments.map((companyEquipment) => companyEquipment.label).join(', '),
+                count: selectedCompanyEquipments.length,
+            })}
+            batchDeleteKey="name"
         />
     </div>
 {/if}

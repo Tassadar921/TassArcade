@@ -10,7 +10,7 @@
     import { Breadcrumb } from '#lib/components/ui/breadcrumb';
 
     let paginatedUsers: PaginatedUsers | undefined = $state();
-    let selectedUsers: string[] = $state([]);
+    let selectedUsers: { id: string; label: string }[] = $state([]);
     let query: string = $state('');
     let sortBy: string = $state('users.username:asc');
 
@@ -32,7 +32,7 @@
             return;
         }
 
-        await getUsers();
+        await getUsers(paginatedUsers.currentPage, paginatedUsers.limit);
     };
 
     const getUsers = async (page: number = 1, limit: number = 10): Promise<void> => {
@@ -56,9 +56,10 @@
             bind:query
             bind:selectedRows={selectedUsers}
             onBatchDelete={handleDelete}
-            batchDeleteTitle={m['admin.user.delete.title']({ users: selectedUsers })}
-            batchDeleteText={m['admin.user.delete.text']({ users: selectedUsers, count: selectedUsers.length })}
+            batchDeleteTitle={m['admin.user.delete.title']({ users: selectedUsers.map((user) => user.label).join(', ') })}
+            batchDeleteText={m['admin.user.delete.text']({ users: selectedUsers.map((user) => user.label).join(', '), count: selectedUsers.length })}
             onPaginationChange={getUsers}
+            batchDeleteKey="username"
         />
     </div>
 {/if}

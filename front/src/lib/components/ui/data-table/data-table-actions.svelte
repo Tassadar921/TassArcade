@@ -37,7 +37,6 @@
         }
 
         await wrappedFetch(`${$location}/delete`, { method: 'POST', body: { data: [id] } }, (data) => {
-            console.log(data);
             const isSuccess: boolean = data.messages.map((status: { isSuccess: boolean; message: string; code: string }) => {
                 showToast(status.message, status.isSuccess ? 'success' : 'error');
                 return status.isSuccess;
@@ -77,8 +76,8 @@
 <AlertDialog bind:open={showDialog}>
     <AlertDialogContent>
         <AlertDialogHeader>
-            <AlertDialogTitle>{deleteTitle}</AlertDialogTitle>
-            <AlertDialogDescription>{deleteText}</AlertDialogDescription>
+            <AlertDialogTitle class="wrap-break-word whitespace-normal">{deleteTitle}</AlertDialogTitle>
+            <AlertDialogDescription class="wrap-break-word whitespace-normal">{deleteText}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
             <AlertDialogCancel>{m['common.cancel']()}</AlertDialogCancel>

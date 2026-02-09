@@ -41,10 +41,8 @@
             return;
         }
 
-        await wrappedFetch(`/profile/companies/edit/${page.params.id}/administrators/remove`, { method: 'POST', body: { userId } }, (): void => {
-            paginatedCompanyAdministrators!.administrators = paginatedCompanyAdministrators!.administrators.filter(
-                (administrator: SerializedCompanyAdministrator): boolean => administrator.user.id !== userId
-            );
+        await wrappedFetch(`/profile/companies/edit/${page.params.id}/administrators/remove`, { method: 'POST', body: { userId } }, async (): Promise<void> => {
+            await getAdministrators(paginatedCompanyAdministrators?.currentPage, paginatedCompanyAdministrators?.limit);
             paginatedUsers!.users = paginatedUsers!.users.map((user: SearchCompanyAdministrator) => {
                 if (user.user.id == userId) {
                     return { ...user, isAdministrator: false };

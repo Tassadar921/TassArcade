@@ -37,9 +37,10 @@
         columns: ColumnDef<any>[];
         onSearch: () => void;
         query: string;
-        selectedRows?: string[];
+        selectedRows?: { id: string; label: string }[];
         batchDeleteTitle?: string;
         batchDeleteText?: string;
+        batchDeleteKey?: string;
         selectable?: boolean;
         onBatchDelete?: (ids: string[]) => void;
         onPaginationChange: (page: number, limit: number) => void;
@@ -58,6 +59,7 @@
         selectedRows = $bindable([]),
         batchDeleteTitle,
         batchDeleteText,
+        batchDeleteKey,
         selectable = true,
         onBatchDelete,
         onPaginationChange,
@@ -107,7 +109,7 @@
 
     const handleDelete = async (): Promise<void> => {
         showDialog = false;
-        await wrappedFetch(`${$location}/delete`, { method: 'POST', body: { data: [...selectedRows] } }, (data) => {
+        await wrappedFetch(`${$location}/delete`, { method: 'POST', body: { data: selectedRows.map((row: { id: string }) => row.id) } }, (data) => {
             const filteredStatuses: { isSuccess: boolean; message: string; id: string }[] = data.messages.filter((status: { isSuccess: boolean; message: string; id: string }) => {
                 showToast(status.message, status.isSuccess ? 'success' : 'error');
                 return status.isSuccess;
@@ -126,7 +128,7 @@
     const handlePaginationChange = (page: number, limit: number) => onPaginationChange(page, limit);
 
     $effect((): void => {
-        selectedRows = table.getFilteredSelectedRowModel().rows.map((row: Row<any>): string => row.original.id);
+        selectedRows = table.getFilteredSelectedRowModel().rows.map((row: Row<any>): { id: string; label: string } => ({ id: row.original.id, label: row.original[batchDeleteKey || 'id'] }));
     });
 </script>
 
