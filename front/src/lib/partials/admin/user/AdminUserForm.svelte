@@ -14,9 +14,9 @@
 
     let { user }: Props = $props();
 
-    let email = $state(user?.email || '');
-    let username = $state(user?.username || '');
-    let enabled = $state(user?.enabled || false);
+    let email = $derived(user?.email || '');
+    let username = $derived(user?.username || '');
+    let enabled = $derived(user?.enabled || false);
     let profilePicture: File | undefined = $state();
 
     const validation = $derived(

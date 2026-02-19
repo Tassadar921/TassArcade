@@ -19,6 +19,7 @@
         "public": "Public",
         "private": "Privé",
         "confirm": "Confirmer",
+        "choose": "Choisir",
         "error": {
             "default-message": "Quelque chose s'est mal passé"
         },
@@ -257,9 +258,33 @@
                         }
                     ]
                 },
+                "edit": {
+                    "title": "Modifier equipment",
+                    "meta": {
+                        "title": "Modifier equipment",
+                        "description": "Modifiez votre équipement. Mettez à jour les informations de votre équipement facilement."
+                    },
+                    "choose-equipment": "Choisir le type d'équipement"
+                },
                 "fields": {
                     "category": "Catégorie",
-                    "type": "Type"
+                    "type": "Type",
+                    "name": {
+                        "placeholder": "Billard bleu",
+                        "label": "Nom",
+                        "error": {
+                            "min": "Le nom doit contenir au moins {min} caractères.",
+                            "max": "Le nom ne doit pas dépasser {max} caractères."
+                        }
+                    },
+                    "description": {
+                        "placeholder": "Billard élégant avec tapis bleu, parfait pour parties conviviales.",
+                        "label": "Description",
+                        "error": {
+                            "min": "La description doit contenir au moins {min} caractères.",
+                            "max": "La description ne doit pas dépasser {max} caractères."
+                        }
+                    }
                 }
             }
         },

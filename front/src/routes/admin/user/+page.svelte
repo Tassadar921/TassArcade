@@ -44,7 +44,7 @@
 
 <Title title={m['admin.user.title']()} hasBackground />
 
-<Breadcrumb items={[{ title: 'Admin', href: '/admin' }, { title: m['admin.user.title']() }]} />
+<Breadcrumb items={[{ title: m['admin.title'](), href: '/admin' }, { title: m['admin.user.title']() }]} />
 
 {#if paginatedUsers}
     <div class="mt-3">

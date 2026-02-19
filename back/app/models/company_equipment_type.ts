@@ -44,10 +44,10 @@ export default class CompanyEquipmentType extends BaseModel {
     public apiSerialize(): SerializedCompanyEquipmentType {
         return {
             id: this.id,
+            name: this.name ?? undefined,
+            description: this.description ?? undefined,
             category: this.equipmentType.equipment.apiSerializeLight(),
             type: this.equipmentType.apiSerialize(),
-            name: this.name,
-            description: this.description,
             createdAt: this.createdAt?.toString(),
             updatedAt: this.updatedAt?.toString(),
         };

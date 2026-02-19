@@ -36,14 +36,14 @@
 
     const country: Country | undefined = $derived(page.data.countries.find((country: Country): boolean => country.data.name === company?.address.country));
 
-    let siret: string = $state(company?.siret ?? '10000000000000');
-    let name: string = $state(company?.name ?? '');
-    let address: string = $state(company?.address.address ?? '');
-    let postalCode: string = $state(company?.address.postalCode ?? '');
-    let city: string = $state(company?.address.city ?? '');
-    let complement: string = $state(company?.address.complement ?? '');
+    let siret: string = $derived(company?.siret ?? '10000000000000');
+    let name: string = $derived(company?.name ?? '');
+    let address: string = $derived(company?.address.address ?? '');
+    let postalCode: string = $derived(company?.address.postalCode ?? '');
+    let city: string = $derived(company?.address.city ?? '');
+    let complement: string = $derived(company?.address.complement ?? '');
     let countryCode: string = $derived(company?.address.country ? (country?.data.code ?? 'FR') : 'FR');
-    let email: string | undefined = $state(company?.email ?? undefined);
+    let email: string | undefined = $derived(company?.email ?? undefined);
     let phoneNumber: string | undefined = $derived(company?.phoneNumber?.replace(country?.data.dial_code ?? '', '') ?? undefined);
     let logo: File | undefined = $state();
 

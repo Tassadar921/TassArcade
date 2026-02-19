@@ -123,8 +123,9 @@ router
                                             .group((): void => {
                                                 router.get('/init', [CompanyEquipmentTypeController, 'init']);
                                                 router.get('/', [CompanyEquipmentTypeController, 'getAll']);
+                                                router.get('/:companyEquipmentTypeId', [CompanyEquipmentTypeController, 'getOne']);
                                                 router.post('/add', [CompanyEquipmentTypeController, 'addEquipment']);
-                                                router.post('/update', [CompanyEquipmentTypeController, 'updateEquipment']);
+                                                router.post('/:companyEquipmentTypeId/update', [CompanyEquipmentTypeController, 'updateEquipment']);
                                                 router.post('/remove', [CompanyEquipmentTypeController, 'removeEquipment']);
                                             })
                                             .prefix('equipments');

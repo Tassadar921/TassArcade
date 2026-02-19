@@ -48,10 +48,7 @@ export default class AdminUserController {
 
     public async delete({ request, response, i18n, user }: HttpContext) {
         const { users } = await request.validateUsing(deleteUsersValidator);
-
-        console.log('ici');
         const statuses: DeleteUserResult[] = await this.userRepository.delete(users, user);
-        console.log('là');
 
         return response.ok({
             messages: await Promise.all(

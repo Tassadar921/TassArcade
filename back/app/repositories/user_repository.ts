@@ -50,9 +50,7 @@ export default class UserRepository extends BaseRepository<typeof User> {
         return Promise.all(
             ids.map(async (id: string): Promise<DeleteUserResult> => {
                 try {
-                    console.log('là');
                     const user: User = await User.query().where('id', id).firstOrFail();
-                    console.log('ici');
 
                     if (user.id === currentUser.id) {
                         return {

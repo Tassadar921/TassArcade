@@ -57,6 +57,7 @@
             onPaginationChange={getCompanyEquipments}
             createText={m['common.add']()}
             onCreateClick={() => (showDialog = true)}
+            onBatchDelete={removeEquipment}
             batchDeleteTitle={m['company.edit.equipments.delete.title']({ equipments: selectedCompanyEquipments.map((companyEquipment) => companyEquipment.label).join(', ') })}
             batchDeleteText={m['company.edit.equipments.delete.text']({
                 equipments: selectedCompanyEquipments.map((companyEquipment) => companyEquipment.label).join(', '),

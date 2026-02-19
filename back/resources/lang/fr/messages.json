@@ -177,9 +177,18 @@
             "remove": {
                 "success": "{name} supprimé avec succès",
                 "error": {
-                    "not-found": "{name} non trouvé",
-                    "default": "Erreur lors de la suppression de l’équipement avec l’identifiant {id}"
+                    "default": "Erreur lors de la suppression de l’équipement {name}",
+                    "not-found": "Equipement d'entreprise avec l'id {id} non trouvé"
                 }
+            },
+            "get": {
+                "error": {
+                    "not-found": "Equipement d'entreprise avec l'id {id} non trouvé"
+                }
+            },
+            "delete": {
+                "title": "Supprimer {name}",
+                "text": "Êtes-vous sûr de vouloir supprimer {name} ?"
             }
         },
         "administrator": {

@@ -79,6 +79,9 @@
         get data() {
             return data;
         },
+        get columns() {
+            return columns;
+        },
         onRowSelectionChange: (updater) => {
             if (!selectable) return;
             if (typeof updater === 'function') {
@@ -102,7 +105,6 @@
                 return columnVisibility;
             },
         },
-        columns,
         getCoreRowModel: getCoreRowModel(),
         enableRowSelection: true,
     });

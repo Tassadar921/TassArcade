@@ -16,6 +16,7 @@
     const TranslationKeyEnum = {
         MANAGE_ADMINISTRATORS: 'company.edit.administrators',
         MANAGE_EQUIPMENTS: 'company.edit.equipments',
+        EDIT_EQUIPMENT: 'company.edit.equipments.edit',
     } as const;
 
     type TranslationKeyEnum = (typeof TranslationKeyEnum)[keyof typeof TranslationKeyEnum];

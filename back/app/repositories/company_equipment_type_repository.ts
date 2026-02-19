@@ -12,6 +12,7 @@ import { TransactionClientContract } from '@adonisjs/lucid/types/database';
 import { DeleteCompanyEquipmentTypeResult } from '#types/delete_company_equipment_type_result';
 import SerializedCompanyEquipmentType from '#types/serialized/serialized_company_equipment_type';
 import { ModelPaginatorContract } from '@adonisjs/lucid/types/model';
+import User from '#models/user';
 
 export default class CompanyEquipmentTypeRepository extends BaseRepository<typeof CompanyEquipmentType> {
     constructor() {
@@ -158,5 +159,36 @@ export default class CompanyEquipmentTypeRepository extends BaseRepository<typeo
                 }
             })
         );
+    }
+
+    public async getFromUserAndCompany(companyEquipmentTypeId: string, companyId: string, user: User, language: Language): Promise<CompanyEquipmentType> {
+        return this.Model.query()
+            .select('company_equipment_types.*')
+            .leftJoin('companies', 'company_equipment_types.company_id', 'companies.id')
+            .innerJoin('company_administrators', 'company_administrators.company_id', 'companies.id')
+            .where('company_equipment_types.id', companyEquipmentTypeId)
+            .andWhere('companies.id', companyId)
+            .andWhere('company_administrators.user_id', user.id)
+            .preload('equipmentType', (equipmentTypeQuery): void => {
+                equipmentTypeQuery
+                    .preload('translations', (equipmentTypeTranslationQuery): void => {
+                        equipmentTypeTranslationQuery.whereHas('language', (languageQuery): void => {
+                            languageQuery.where('code', language.code);
+                        });
+                    })
+                    .preload('equipment', (equipmentQuery): void => {
+                        equipmentQuery
+                            .preload('translations', (equipmentTypeTranslationQuery): void => {
+                                equipmentTypeTranslationQuery.whereHas('language', (languageQuery): void => {
+                                    languageQuery.where('code', language.code);
+                                });
+                            })
+                            .preload('thumbnail');
+                    });
+            })
+            .preload('company', (companyQuery): void => {
+                companyQuery.preload('logo').preload('address');
+            })
+            .firstOrFail();
     }
 }

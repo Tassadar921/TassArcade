@@ -1,5 +1,5 @@
 <script lang="ts">
-    import AdminCompanyForm from '#lib/partials/profile/company/AdminCompanyForm.svelte';
+    import CompanyForm from '#lib/partials/profile/company/CompanyForm.svelte';
 </script>
 
-<AdminCompanyForm />
+<CompanyForm />

@@ -18,6 +18,7 @@ export type { SerializedLogUser } from './serialized/serialized_log_user.js';
 export type { SerializedUser } from './serialized/serialized_user.js';
 export type { SerializedEquipment } from './serialized/serialized_equipment.js';
 export type { SerializedEquipmentType } from './serialized/serialized_equipment_type.js';
+export type { SerializedEquipmentTypeExtended } from './serialized/serialized_equipment_type_extended.js';
 export type { SerializedCompany } from './serialized/serialized_company.js';
 export type { SerializedCompanySuperLight } from './serialized/serialized_company_super_light.js';
 export type { SerializedCompanyLight } from './serialized/serialized_company_light.js';

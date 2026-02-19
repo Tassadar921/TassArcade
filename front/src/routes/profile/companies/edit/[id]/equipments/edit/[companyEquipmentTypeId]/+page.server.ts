@@ -3,29 +3,30 @@ import { redirect } from 'sveltekit-flash-message/server';
 import type { PageServerLoad } from './$types';
 import { type Actions, fail, type RequestEvent } from '@sveltejs/kit';
 import { extractFormData, extractFormErrors } from '#lib/services/requestService';
-import type { FormError } from '../../../../../../app';
+import type { FormError } from '../../../../../../../../app';
 
 export const load: PageServerLoad = async (event) => {
     const { locals, params, cookies } = event;
     try {
-        const response = await locals.client.get(`/api/profile/company/${params.id}/equipments/init`);
+        const response = await locals.client.get(`/api/profile/company/${params.id}/equipments/${params.companyEquipmentTypeId}`);
 
         if (response.status < 200 || response.status >= 300) {
             throw response;
         }
 
         const headers = {
-            title: m['company.edit.equipments.title'](),
+            title: m['company.edit.equipments.edit.title'](),
             meta: {
-                title: m['company.edit.equipments.meta.title'](),
-                description: m['company.edit.equipments.meta.description'](),
-                pathname: `/profile/companies/edit/${params.id}/equipments`,
+                title: m['company.edit.equipments.edit.meta.title'](),
+                description: m['company.edit.equipments.edit.meta.description'](),
+                pathname: `/profile/companies/edit/${params.id}/equipments/edit/${params.companyEquipmentTypeId}`,
             },
             breadcrumb: [
                 { title: m['profile.title'](), href: '/profile' },
                 { title: m['profile.companies.title'](), href: '/profile/companies' },
                 { title: m['company.edit.title']({ name: response.data.company.name }), href: `/profile/companies/edit/${params.id}` },
-                { title: m['company.edit.equipments.title']() },
+                { title: m['company.edit.equipments.title'](), href: `/profile/companies/edit/${params.id}/equipments` },
+                { title: m['company.edit.equipments.edit.title']() },
             ],
         };
 
@@ -35,6 +36,7 @@ export const load: PageServerLoad = async (event) => {
             ...headers,
         };
     } catch (error: any) {
+        console.log(error);
         const form: FormError = {
             data: {},
             errors: extractFormErrors(error?.response?.data),
@@ -47,7 +49,7 @@ export const load: PageServerLoad = async (event) => {
             maxAge: 60 * 60 * 24 * 7,
         });
 
-        redirect(303, `/${cookies.get('PARAGLIDE_LOCALE')}/profile/companies/edit/${params.id}`);
+        redirect(303, `/${cookies.get('PARAGLIDE_LOCALE')}/profile/companies/edit/${params.id}/equipments`);
     }
 };
 
@@ -61,7 +63,7 @@ export const actions: Actions = {
         let isSuccess: boolean = true;
 
         try {
-            const response = await locals.client.post('/api/profile/company/update', formData, {
+            const response = await locals.client.post(`/api/profile/company/${params.id}/equipments/${params.companyEquipmentTypeId}/update`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

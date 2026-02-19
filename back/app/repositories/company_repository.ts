@@ -174,18 +174,11 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
     }
 
     public async getFromUser(companyId: string, user: User): Promise<Company> {
-        return await this.Model.query()
+        return this.Model.query()
             .select('companies.*')
             .innerJoin('company_administrators', 'company_administrators.company_id', 'companies.id')
             .where('companies.id', companyId)
             .andWhere('company_administrators.user_id', user.id)
-            .preload('equipments', (companyEquipmentsQuery): void => {
-                companyEquipmentsQuery.preload('equipmentType', (equipmentTypeQuery): void => {
-                    equipmentTypeQuery.preload('equipment', (equipmentQuery): void => {
-                        equipmentQuery.preload('thumbnail');
-                    });
-                });
-            })
             .preload('address')
             .preload('logo')
             .firstOrFail();

@@ -19,6 +19,7 @@
         "public": "Public",
         "private": "Private",
         "confirm": "Confirm",
+        "choose": "Choose",
         "error": {
             "default-message": "Something went wrong"
         },
@@ -257,9 +258,33 @@
                         }
                     ]
                 },
+                "edit": {
+                    "title": "Edit equipment",
+                    "meta": {
+                        "title": "Edit equipment",
+                        "description": "Edit your company's equipment. Update the equipment details easily from your company settings."
+                    },
+                    "choose-equipment": "Choose equipment type"
+                },
                 "fields": {
                     "category": "Category",
-                    "type": "Type"
+                    "type": "Type",
+                    "name": {
+                        "placeholder": "Blue billiard",
+                        "label": "Name",
+                        "error": {
+                            "min": "The name must have at least {min} characters.",
+                            "max": "The name must not exceed {max} characters."
+                        }
+                    },
+                    "description": {
+                        "placeholder": "Elegant billiard table with blue felt, perfect for friendly games.",
+                        "label": "Description",
+                        "error": {
+                            "min": "The description must have at least {min} characters.",
+                            "max": "The description must not exceed {max} characters."
+                        }
+                    }
                 }
             }
         },

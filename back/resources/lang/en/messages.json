@@ -180,6 +180,11 @@
                     "default": "Error while deleting {name}",
                     "not-found": "Company equipment with identifier {id} not found"
                 }
+            },
+            "get": {
+                "error": {
+                    "not-found": "Company equipment with identifier {id} not found"
+                }
             }
         },
         "administrator": {

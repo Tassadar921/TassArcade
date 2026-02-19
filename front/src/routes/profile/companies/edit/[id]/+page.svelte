@@ -1,6 +1,6 @@
 <script lang="ts">
     import { page } from '$app/state';
-    import AdminCompanyForm from '#lib/partials/profile/company/AdminCompanyForm.svelte';
+    import CompanyForm from '#lib/partials/profile/company/CompanyForm.svelte';
 </script>
 
-<AdminCompanyForm company={page.data.company} />
+<CompanyForm company={page.data.company} />
