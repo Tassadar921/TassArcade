@@ -17,7 +17,7 @@
     const isWindows: boolean = /Win/.test(userAgent);
     const isLinux: boolean = /Linux/.test(userAgent);
 
-    const googleMapsLink: string = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+    const googleMapsLink: string = $state(`https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`);
     const appleMapsLink: string = `https://maps.apple.com/?q=${encodeURIComponent(address)}&ll=${latitude},${longitude}`;
 
     let finalLink: string = $state(googleMapsLink);

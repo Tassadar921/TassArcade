@@ -183,4 +183,29 @@ export default class CompanyRepository extends BaseRepository<typeof Company> {
             .preload('logo')
             .firstOrFail();
     }
+
+    public async getOne(companyId: string, language: Language): Promise<Company> {
+        return this.Model.query()
+            .where('companies.id', companyId)
+            .preload('address')
+            .preload('logo')
+            .preload('equipments', (equipmentQuery): void => {
+                equipmentQuery.preload('equipmentType', (equipmentTypeQuery): void => {
+                    equipmentTypeQuery
+                        .preload('translations', (ett): void => {
+                            ett.whereHas('language', (l): void => {
+                                l.where('code', language.code);
+                            });
+                        })
+                        .preload('equipment', (eq): void => {
+                            eq.preload('translations', (etr): void => {
+                                etr.whereHas('language', (l): void => {
+                                    l.where('code', language.code);
+                                });
+                            }).preload('thumbnail');
+                        });
+                });
+            })
+            .firstOrFail();
+    }
 }

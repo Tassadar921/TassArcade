@@ -15,6 +15,7 @@
     <DialogHeader>
         <DialogTitle>{selectedCompany.name} {selectedCompanyEquipment.name ? `- ${selectedCompanyEquipment.name}` : ''}</DialogTitle>
         <DialogDescription>
+            <p>{selectedCompanyEquipment.category.name} - {selectedCompanyEquipment.type.name}</p>
             <AddressExternalLink latitude={selectedCompany.address.latitude} longitude={selectedCompany.address.longitude} address={selectedCompany.address.fullAddress} />
             <p>{selectedCompanyEquipment.description}</p>
         </DialogDescription>

@@ -28,11 +28,11 @@ export default class ClusterController {
             precision = 9;
         }
 
-        const company: Company | null = companyId ? await this.companyRepository.findOneBy({ id: companyId }, ['address', 'equipments']) : null;
+        const company: Company | null = companyId ? await this.companyRepository.getOne(companyId, language) : null;
 
         return response.ok({
             clusters: await this.companyRepository.getClusters(minLat, maxLat, minLng, maxLng, precision, language, equipmentIds ?? []),
-            company: company?.apiSerialize(),
+            company: company?.apiSerializeLight(),
         });
     }
 }
