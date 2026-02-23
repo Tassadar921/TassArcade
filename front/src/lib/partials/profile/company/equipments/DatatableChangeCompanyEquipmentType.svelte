@@ -6,13 +6,13 @@
 
     type Props = {
         companyEquipmentType: SerializedEquipmentType;
-        changeCompanyEquipmentType: (EquipmentTypeId: string) => void;
+        changeCompanyEquipmentType: (equipmentType: SerializedEquipmentType) => void;
     };
 
     let { companyEquipmentType, changeCompanyEquipmentType }: Props = $props();
 </script>
 
-<Button variant="outline" onclick={() => changeCompanyEquipmentType(companyEquipmentType.id)}>
+<Button variant="outline" onclick={() => changeCompanyEquipmentType(companyEquipmentType)}>
     <PackagePlus />
     {m['common.choose']()}
 </Button>

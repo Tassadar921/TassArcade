@@ -13,7 +13,7 @@
 
 {#if selectedCompany && selectedCompanyEquipment}
     <DialogHeader>
-        <DialogTitle>{selectedCompany.name} - {selectedCompanyEquipment.name}</DialogTitle>
+        <DialogTitle>{selectedCompany.name} {selectedCompanyEquipment.name ? `- ${selectedCompanyEquipment.name}` : ''}</DialogTitle>
         <DialogDescription>
             <AddressExternalLink latitude={selectedCompany.address.latitude} longitude={selectedCompany.address.longitude} address={selectedCompany.address.fullAddress} />
             <p>{selectedCompanyEquipment.description}</p>

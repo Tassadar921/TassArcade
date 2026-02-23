@@ -37,7 +37,7 @@
                         {#each items as equipment}
                             <li>
                                 <Button variant="outline" class="flex flex-col items-center gap-1 w-56 h-20" onclick={() => handleCompanyEquipmentClicked(equipment)}>
-                                    <p>{equipment.name}</p>
+                                    <p>{equipment.name || equipment.type.name}</p>
                                     <p class="text-gray-700 dark:text-gray-500 text-sm text-wrap">{equipment.description}</p>
                                 </Button>
                             </li>

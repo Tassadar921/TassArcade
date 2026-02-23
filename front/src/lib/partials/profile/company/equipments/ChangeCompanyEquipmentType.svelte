@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { PaginatedEquipments } from 'backend/types';
+    import type { PaginatedEquipments, SerializedEquipmentType } from 'backend/types';
     import { DataTable } from '#lib/components/ui/data-table';
     import { wrappedFetch } from '#lib/services/requestService';
     import { m } from '#lib/paraglide/messages';
@@ -7,11 +7,10 @@
 
     type Props = {
         paginatedEquipments: PaginatedEquipments;
-        parentLimit: number;
-        parentPage: number;
+        handleChangeEquipment: (equipmentType: SerializedEquipmentType) => void;
     };
 
-    let { paginatedEquipments = $bindable(), parentLimit, parentPage }: Props = $props();
+    let { paginatedEquipments = $bindable(), handleChangeEquipment }: Props = $props();
 
     let query: string = $state('');
     let sortBy: string = $state('equipment_type_translations.name:asc');
@@ -25,11 +24,6 @@
         await wrappedFetch(`/equipments?page=${currentPage}&limit=${limit}&query=${query}&sortBy=${sortBy}`, { method: 'GET' }, ({ data }): void => {
             paginatedEquipments = data;
         });
-    };
-
-    const handleChangeEquipment = async (equipmentTypeId: string): Promise<void> => {
-        // TODO
-        console.log(equipmentTypeId);
     };
 
     const onPaginationChange = async (page: number, limit: number) => await getEquipments(page, limit);

@@ -42,11 +42,10 @@
 </script>
 
 <AdminForm
-    id={companyEquipmentType?.id}
+    id={companyEquipmentType.id}
     {canSubmit}
     deleteTitle={m['company.edit.equipments.delete.title']({ equipments: [companyEquipmentType.name ?? companyEquipmentType.type.name] })}
     deleteText={m['company.edit.equipments.delete.text']({ equipments: [companyEquipmentType.name ?? companyEquipmentType.type.name], count: 1 })}
-    action="/update"
     onError={handleFormSubmitError}
 >
     <Input

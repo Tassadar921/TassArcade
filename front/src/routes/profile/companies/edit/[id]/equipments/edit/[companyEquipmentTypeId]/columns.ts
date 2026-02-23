@@ -6,7 +6,7 @@ import type { SerializedEquipmentType } from 'backend/types';
 import DatatableAddCompanyEquipmentType from '#lib/partials/profile/company/equipments/DatatableAddCompanyEquipmentType.svelte';
 import DatatableChangeCompanyEquipmentType from '#lib/partials/profile/company/equipments/DatatableChangeCompanyEquipmentType.svelte';
 
-export const getEquipmentsColumns = (onSort: (field: string, order: 'asc' | 'desc') => void, onChange: (equipmentTypeId: string) => void): ColumnDef<SerializedEquipmentType>[] => [
+export const getEquipmentsColumns = (onSort: (field: string, order: 'asc' | 'desc') => void, onChange: (equipmentType: SerializedEquipmentType) => void): ColumnDef<SerializedEquipmentType>[] => [
     {
         id: 'name',
         accessorKey: 'name',

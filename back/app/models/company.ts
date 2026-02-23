@@ -67,6 +67,8 @@ export default class Company extends BaseModel {
         return {
             id: this.id,
             name: this.name,
+            phoneNumber: this.phoneNumber,
+            enabled: this.enabled,
             logo: this.logo?.apiSerialize(),
             address: this.address.apiSerialize(),
             createdAt: this.createdAt.toString(),
@@ -78,6 +80,8 @@ export default class Company extends BaseModel {
         return {
             id: this.id,
             name: this.name,
+            phoneNumber: this.phoneNumber,
+            enabled: this.enabled,
             logo: this.logo?.apiSerialize(),
             address: this.address.apiSerialize(),
             equipments: this.equipments

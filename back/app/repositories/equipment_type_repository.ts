@@ -7,6 +7,7 @@ import SerializedEquipmentTypeExtended from '#types/serialized/serialized_equipm
 import Equipment from '#models/equipment';
 import EquipmentTranslation from '#models/equipment_translation';
 import EquipmentTypeTranslation from '#models/equipment_type_translation';
+import db from '@adonisjs/lucid/services/db';
 
 export default class EquipmentTypeRepository extends BaseRepository<typeof EquipmentType> {
     constructor() {
@@ -38,11 +39,7 @@ export default class EquipmentTypeRepository extends BaseRepository<typeof Equip
             order: 'asc' | 'desc';
         }
     ): Promise<PaginatedEquipmentTypes> {
-        const baseQuery = this.Model.query()
-            .select('equipment_types.*')
-            .leftJoin('equipment_type_translations', 'equipment_type_translations.equipment_type_id', 'equipment_types.id')
-            .leftJoin('equipments', 'equipment_types.equipment_id', 'equipments.id')
-            .leftJoin('equipment_translations', 'equipment_translations.equipment_id', 'equipments.id');
+        const baseQuery = this.Model.query().select('equipment_types.*').leftJoin('equipments', 'equipment_types.equipment_id', 'equipments.id');
 
         if (query) {
             baseQuery.where((root): void => {
@@ -59,7 +56,36 @@ export default class EquipmentTypeRepository extends BaseRepository<typeof Equip
         }
 
         if (sortBy) {
-            baseQuery.orderBy(sortBy.field, sortBy.order);
+            const [table, field] = sortBy.field.split('.');
+
+            if (table.endsWith('_translations')) {
+                let foreignKey: string;
+                let parentTable: string;
+
+                if (table === 'equipment_type_translations') {
+                    foreignKey = 'equipment_type_id';
+                    parentTable = 'equipment_types';
+                } else if (table === 'equipment_translations') {
+                    foreignKey = 'equipment_id';
+                    parentTable = 'equipments';
+                } else {
+                    throw new Error(`Unknown translation table for sortBy: ${table}`);
+                }
+
+                baseQuery.orderBy(
+                    db
+                        .from(table)
+                        .whereColumn(`${table}.${foreignKey}`, `${parentTable}.id`)
+                        .whereExists((qb): void => {
+                            qb.from('languages').whereColumn('languages.id', `${table}.language_id`).where('languages.code', language.code);
+                        })
+                        .select(field)
+                        .limit(1),
+                    sortBy.order
+                );
+            } else {
+                baseQuery.orderBy(sortBy.field, sortBy.order);
+            }
         }
 
         baseQuery

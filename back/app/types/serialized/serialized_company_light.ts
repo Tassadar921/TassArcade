@@ -6,6 +6,7 @@ export type SerializedCompanyLight = {
     id: string;
     name: string;
     phoneNumber?: string;
+    enabled: boolean;
     logo?: SerializedFile;
     address: SerializedAddress;
     equipments: SerializedCompanyEquipmentType[];

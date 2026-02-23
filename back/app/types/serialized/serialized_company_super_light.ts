@@ -5,6 +5,7 @@ export type SerializedCompanySuperLight = {
     id: string;
     name: string;
     phoneNumber?: string;
+    enabled: boolean;
     logo?: SerializedFile;
     address: SerializedAddress;
     createdAt?: string;

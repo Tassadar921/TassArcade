@@ -55,7 +55,7 @@ export default class CompanyAdministratorController {
                 },
             }),
             equipments: await cache.getOrSet({
-                key: 'equipment-types:query::page:1:limit:10:sortBy:name:asc',
+                key: 'equipment-types:query::page:1:limit:10:sortBy:equipment_type_translations.name:asc',
                 tags: ['equipment-types'],
                 ttl: '24h',
                 factory: async (): Promise<PaginatedEquipmentTypes> => {
@@ -133,7 +133,7 @@ export default class CompanyAdministratorController {
 
         await Promise.all([companyEquipment.save(), cache.deleteByTag({ tags: [`company:${companyId}`] })]);
 
-        return response.ok({ message: i18n.t('messages.company.equipment.delete.success') });
+        return response.ok({ message: i18n.t('messages.company.equipment.update.success', { name: companyEquipment.name || companyEquipment.equipmentType.translations[0].name || '' }) });
     }
 
     public async getOne({ request, response, i18n, user, language }: HttpContext) {

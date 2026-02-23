@@ -243,7 +243,7 @@ export default class CompanyController {
         return response.ok({ company: company.apiSerializeLight(), message: i18n.t('messages.company.update.success', { name }) });
     }
 
-    public async get({ request, response, i18n, user }: HttpContext) {
+    public async getOne({ request, response, i18n, user }: HttpContext) {
         const { companyId } = await getCompanyValidator.validate(request.params());
         const company: Company | null = await this.companyRepository.getFromUser(companyId, user);
         if (!company) {
@@ -316,7 +316,7 @@ export default class CompanyController {
 
         return response.ok({
             message: i18n.t('messages.company.confirm.success', { name: company.name }),
-            company: company.apiSerialize(),
+            company: company.apiSerializeSuperLight(),
         });
     }
 

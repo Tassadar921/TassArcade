@@ -170,6 +170,7 @@
                 "success": "Equipment {name} successfully added"
             },
             "update": {
+                "success": "Equipment {name} successfully updated",
                 "error": {
                     "not-found": "Equipment not found"
                 }

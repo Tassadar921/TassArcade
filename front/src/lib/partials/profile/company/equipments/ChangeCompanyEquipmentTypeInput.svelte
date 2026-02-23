@@ -15,10 +15,16 @@
     let { paginatedEquipments = $bindable(), equipmentType }: Props = $props();
 
     let showDialog: boolean = $state(false);
+
+    const handleChangeEquipment = async (newEquipmentType: SerializedEquipmentType): Promise<void> => {
+        equipmentType = newEquipmentType;
+        showDialog = false;
+    };
 </script>
 
 <div class="flex gap-3">
-    <Input type="text" name="equipment-type" label={m['company.edit.equipments.fields.category']()} value={equipmentType.name} readonly />
+    <input type="hidden" name="equipment-type-id" value={equipmentType.id} />
+    <Input type="text" name="equipment-type" label={m['company.edit.equipments.fields.category']()} value={equipmentType.name} disabled />
     <Button variant="outline" onclick={() => (showDialog = true)}>
         <RefreshCcw />
     </Button>
@@ -27,7 +33,7 @@
 <Dialog bind:open={showDialog}>
     <DialogPortal>
         <DialogContent class="min-w-[90%] md:min-w-200">
-            <ChangeCompanyEquipmentType bind:paginatedEquipments parentLimit={paginatedEquipments.limit} parentPage={paginatedEquipments.currentPage} />
+            <ChangeCompanyEquipmentType bind:paginatedEquipments {handleChangeEquipment} />
         </DialogContent>
     </DialogPortal>
 </Dialog>

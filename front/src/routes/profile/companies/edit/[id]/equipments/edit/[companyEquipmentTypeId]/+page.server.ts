@@ -59,6 +59,15 @@ export const actions: Actions = {
 
         const formData: FormData = await request.formData();
 
+        console.log(formData);
+        const equipmentTypeId: FormDataEntryValue | null = formData.get('equipment-type-id');
+        if (!equipmentTypeId) {
+            throw 'Missing variable';
+        }
+
+        formData.append('equipmentTypeId', equipmentTypeId);
+        formData.delete('equipment-type-id');
+
         let data: any;
         let isSuccess: boolean = true;
 

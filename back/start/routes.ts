@@ -108,7 +108,7 @@ router
                                 router.post('/confirm', [CompanyController, 'confirm']);
                                 router
                                     .group((): void => {
-                                        router.get('/', [CompanyController, 'get']);
+                                        router.get('/', [CompanyController, 'getOne']);
                                         router
                                             .group((): void => {
                                                 router.get('/init', [CompanyAdministratorController, 'init']);

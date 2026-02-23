@@ -40,8 +40,8 @@ export default class EquipmentController {
 
         return response.ok(
             await cache.getOrSet({
-                key: `company-search-equipments:query:${query.toLowerCase()}:page:${page}:limit:${limit}:sortBy:${inputSortBy}`,
-                tags: ['company-search-equipments'],
+                key: `equipment-types:query:${query.toLowerCase()}:page:${page}:limit:${limit}:sortBy:${inputSortBy}`,
+                tags: ['equipment-types'],
                 ttl: '24h',
                 factory: async (): Promise<PaginatedEquipmentTypes> => {
                     const [field, order] = inputSortBy.split(':');
