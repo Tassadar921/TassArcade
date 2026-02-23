@@ -21,9 +21,10 @@
     type Props = {
         categories: SelectCategory[];
         selectedItems: SelectItem[];
+        onChange?: () => void;
     };
 
-    let { categories = $bindable([]), selectedItems = $bindable([]) }: Props = $props();
+    let { categories = $bindable([]), selectedItems = $bindable([]), onChange }: Props = $props();
 
     let isOpen: boolean = $state(false);
 
@@ -35,6 +36,8 @@
         if (categories.every((c) => !c.items.length)) {
             isOpen = false;
         }
+
+        onChange?.();
     };
 
     const removeItem = (item: SelectItem): void => {

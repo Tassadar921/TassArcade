@@ -117,6 +117,14 @@
         );
     };
 
+    const fetchClustersFromSelector = (): void => {
+        if (!mapInstance) {
+            return;
+        }
+
+        fetchClusters({ target: mapInstance } as MapMoveEvent);
+    };
+
     const handleMarkerClick = (point: Partial<Cluster>): void => {
         selectedCompany = point.companies![0];
         reorganizedEquipments = selectedCompany.equipments.reduce(
@@ -179,7 +187,7 @@
 
 <Title title={m['home.title']()} />
 
-<MultiSelectWithTags {categories} bind:selectedItems={selectedEquipments} />
+<MultiSelectWithTags {categories} bind:selectedItems={selectedEquipments} onChange={fetchClustersFromSelector} />
 
 <MapLibre
     center={[longitude, latitude]}
