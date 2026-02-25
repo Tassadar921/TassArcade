@@ -7,9 +7,9 @@ export const GET: RequestHandler = async ({ url, locals }): Promise<Response> =>
         const page: number = Number(url.searchParams.get('page')) || 1;
         const limit: number = Number(url.searchParams.get('limit')) || 10;
         const query: string = url.searchParams.get('query') || '';
-        const sortBy: string = url.searchParams.get('sortBy') || 'users.username:asc';
+        const sortBy: string = url.searchParams.get('sortBy') || 'equipment_translations.name:asc';
 
-        const response = await locals.client.get('/api/admin/user', {
+        const response = await locals.client.get('/api/admin/equipment', {
             params: { page, limit, query, sortBy },
         });
 
@@ -19,7 +19,7 @@ export const GET: RequestHandler = async ({ url, locals }): Promise<Response> =>
 
         return json({
             isSuccess: true,
-            users: response.data,
+            equipments: response.data,
         });
     } catch (error: any) {
         return json(

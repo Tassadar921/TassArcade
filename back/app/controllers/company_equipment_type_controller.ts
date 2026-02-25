@@ -59,7 +59,7 @@ export default class CompanyAdministratorController {
                 tags: ['equipment-types'],
                 ttl: '24h',
                 factory: async (): Promise<PaginatedEquipmentTypes> => {
-                    return await this.equipmentTypeRepository.getEquipments(language, '', 1, 10, { field: 'equipment_type_translations.name', order: 'asc' });
+                    return await this.equipmentTypeRepository.getEquipmentTypes(language, '', 1, 10, { field: 'equipment_type_translations.name', order: 'asc' });
                 },
             }),
         });
@@ -167,7 +167,7 @@ export default class CompanyAdministratorController {
                 tags: ['equipment-types'],
                 ttl: '24h',
                 factory: async (): Promise<PaginatedEquipmentTypes> => {
-                    return await this.equipmentTypeRepository.getEquipments(language, '', 1, 10, { field: 'equipment_type_translations.name', order: 'asc' });
+                    return await this.equipmentTypeRepository.getEquipmentTypes(language, '', 1, 10, { field: 'equipment_type_translations.name', order: 'asc' });
                 },
             }),
         });

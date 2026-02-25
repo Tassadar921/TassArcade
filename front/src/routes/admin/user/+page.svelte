@@ -16,7 +16,7 @@
 
     onMount(async (): Promise<void> => {
         if (page.data.isSuccess) {
-            paginatedUsers = page.data.data;
+            paginatedUsers = page.data.users;
         } else {
             await getUsers();
         }
@@ -36,8 +36,8 @@
     };
 
     const getUsers = async (page: number = 1, limit: number = 10): Promise<void> => {
-        await wrappedFetch(`/admin/user?page=${page}&limit=${limit}&query=${query}&sortBy=${sortBy}`, { method: 'GET' }, ({ data }): void => {
-            paginatedUsers = data;
+        await wrappedFetch(`/admin/user?page=${page}&limit=${limit}&query=${query}&sortBy=${sortBy}`, { method: 'GET' }, ({ users }): void => {
+            paginatedUsers = users;
         });
     };
 </script>

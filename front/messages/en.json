@@ -451,6 +451,29 @@
                     "description": "User profile picture (square image recommended)"
                 }
             }
+        },
+        "equipments": {
+            "title": "Equipments",
+            "fields": {
+                "thumbnail": "Thumbnail"
+            },
+            "delete": {
+                "title": "Delete {equipments}",
+                "text": [
+                    {
+                        "declarations": ["input equipments", "input count", "local countPlural = count: plural"],
+                        "selectors": ["countPlural"],
+                        "match": {
+                            "countPlural=zero": "Are you sure you want to delete {equipments} ? This action cannot be undone and will permanently remove the equipments and all related data.",
+                            "countPlural=one": "Are you sure you want to delete {equipments} ? This action cannot be undone and will permanently remove the equipment and all related data.",
+                            "countPlural=other": "Are you sure you want to delete {equipments} ? This action cannot be undone and will permanently remove the equipments and all related data."
+                        }
+                    }
+                ]
+            },
+            "new": {
+                "title": "New equipment"
+            }
         }
     }
 }

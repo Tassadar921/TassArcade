@@ -50,7 +50,7 @@ export default class EquipmentController {
                         order: order as 'asc' | 'desc',
                     };
 
-                    return await this.equipmentTypeRepository.getEquipments(language, query.toLowerCase(), page, limit, sortBy);
+                    return await this.equipmentTypeRepository.getEquipmentTypes(language, query.toLowerCase(), page, limit, sortBy);
                 },
             })
         );

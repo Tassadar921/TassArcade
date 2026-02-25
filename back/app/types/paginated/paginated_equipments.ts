@@ -1,7 +1,7 @@
-import SerializedEquipment from '#types/serialized/serialized_equipment';
+import SerializedEquipmentLight from '#types/serialized/serialized_equipment_light';
 
 export type PaginatedEquipments = {
-    equipments: SerializedEquipment[];
+    equipments: SerializedEquipmentLight[];
     firstPage: number;
     lastPage: number;
     limit: number;

@@ -8,44 +8,53 @@ import FileTypeEnum from '#types/enum/file_type_enum';
 import FileService from '#services/file_service';
 import { MultipartFile } from '@adonisjs/bodyparser/types';
 import UserRepository from '#repositories/user_repository';
-import { createUserValidator, deleteUsersValidator, getAdminUserValidator, searchAdminUsersValidator, updateUserValidator } from '#validators/admin/user';
 import User from '#models/user';
 import { cuid } from '@adonisjs/core/helpers';
 import SlugifyService from '#services/slugify_service';
-import PaginatedUsers from '#types/paginated/paginated_users';
 import SerializedUser from '#types/serialized/serialized_user';
 import StringService from '#services/string_service';
 import { DeleteUserResult } from '#types/delete_user_result';
+import { createOrUpdateEquipmentValidator, deleteEquipmentsValidator, getAdminEquipmentValidator, searchAdminEquipmentsValidator } from '#validators/admin/equipment';
+import EquipmentRepository from '#repositories/equipment_repository';
+import PaginatedEquipments from '#types/paginated/paginated_equipments';
+import Equipment from '#models/equipment';
+import EquipmentType from '#models/equipment_type';
 
 @inject()
 export default class AdminUserController {
     constructor(
         private readonly userRepository: UserRepository,
+        private readonly equipmentRepository: EquipmentRepository,
         private readonly fileService: FileService,
         private readonly slugifyService: SlugifyService,
         private readonly stringService: StringService
     ) {}
 
-    public async getAll({ request, response }: HttpContext) {
-        const { query, page, limit, sortBy: inputSortBy } = await request.validateUsing(searchAdminUsersValidator);
+    public async getAll({ request, response, language }: HttpContext) {
+        const { query, page, limit, sortBy: inputSortBy } = await request.validateUsing(searchAdminEquipmentsValidator);
+
+        await cache.deleteByTag({ tags: ['equipments'] });
 
         return response.ok(
             await cache.getOrSet({
-                key: `admin-users:query:${query.toLowerCase()}:page:${page}:limit:${limit}:sortBy:${inputSortBy}`,
-                tags: [`admin-users`],
-                ttl: '1h',
-                factory: async (): Promise<PaginatedUsers> => {
+                key: `equipments:query:${query}:page:${page}:limit:${limit}:sortBy:${inputSortBy}`,
+                tags: ['equipments'],
+                ttl: '24h',
+                factory: async (): Promise<PaginatedEquipments> => {
                     const [field, order] = inputSortBy.split(':');
-                    const sortBy = { field: this.stringService.toSnakeCase(field) as keyof User['$attributes'], order: order as 'asc' | 'desc' };
+                    const sortBy = {
+                        field: this.stringService.toSnakeCase(field) as `equipments.${keyof Equipment['$attributes']}` | `equipment_types.${keyof EquipmentType['$attributes']}`,
+                        order: order as 'asc' | 'desc',
+                    };
 
-                    return await this.userRepository.getAdminUsers(query.toLowerCase(), page, limit, sortBy);
+                    return await this.equipmentRepository.getEquipments(language, query, page, limit, sortBy);
                 },
             })
         );
     }
 
     public async delete({ request, response, i18n, user }: HttpContext) {
-        const { users } = await request.validateUsing(deleteUsersValidator);
+        const { equipments } = await request.validateUsing(deleteEquipmentsValidator);
         const statuses: DeleteUserResult[] = await this.userRepository.delete(users, user);
 
         return response.ok({
@@ -67,7 +76,7 @@ export default class AdminUserController {
     }
 
     public async create({ request, response, i18n }: HttpContext) {
-        const { username, email, profilePicture: inputProfilePicture } = await request.validateUsing(createUserValidator);
+        const { username, email, profilePicture: inputProfilePicture } = await request.validateUsing(createOrUpdateEquipmentValidator);
 
         let user: User | null = await this.userRepository.findOneBy({ email });
         if (user) {
@@ -92,7 +101,7 @@ export default class AdminUserController {
     }
 
     public async update({ request, response, i18n }: HttpContext) {
-        const { username, email, profilePicture: inputProfilePicture } = await request.validateUsing(updateUserValidator);
+        const { username, email, profilePicture: inputProfilePicture } = await request.validateUsing(createOrUpdateEquipmentValidator);
 
         const user: User = await this.userRepository.firstOrFail({ email }, ['profilePicture']);
 
@@ -127,7 +136,7 @@ export default class AdminUserController {
     }
 
     public async get({ request, response, i18n }: HttpContext) {
-        const { id } = await getAdminUserValidator.validate(request.params());
+        const { id } = await getAdminEquipmentValidator.validate(request.params());
         const user: User | null = await this.userRepository.findOneBy({ id });
         if (!user) {
             return response.notFound({ error: i18n.t('messages.admin.user.get.error.not-found') });

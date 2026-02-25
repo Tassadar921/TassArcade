@@ -25,7 +25,7 @@ export default class EquipmentTypeRepository extends BaseRepository<typeof Equip
             .firstOrFail();
     }
 
-    public async getEquipments(
+    public async getEquipmentTypes(
         language: Language,
         query: string,
         page: number,

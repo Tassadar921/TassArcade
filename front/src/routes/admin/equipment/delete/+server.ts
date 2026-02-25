@@ -2,15 +2,11 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { m } from '#lib/paraglide/messages';
 
-export const GET: RequestHandler = async ({ url, locals }): Promise<Response> => {
+export const POST: RequestHandler = async ({ request, locals }): Promise<Response> => {
+    const body = await request.json();
     try {
-        const page: number = Number(url.searchParams.get('page')) || 1;
-        const limit: number = Number(url.searchParams.get('limit')) || 10;
-        const query: string = url.searchParams.get('query') || '';
-        const sortBy: string = url.searchParams.get('sortBy') || 'users.username:asc';
-
-        const response = await locals.client.get('/api/admin/user', {
-            params: { page, limit, query, sortBy },
+        const response = await locals.client.post(`/api/admin/user/delete`, {
+            users: body.data,
         });
 
         if (response.status < 200 || response.status >= 300) {
@@ -19,7 +15,7 @@ export const GET: RequestHandler = async ({ url, locals }): Promise<Response> =>
 
         return json({
             isSuccess: true,
-            users: response.data,
+            messages: response.data.messages,
         });
     } catch (error: any) {
         return json(

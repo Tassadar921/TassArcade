@@ -52,7 +52,7 @@ export default class UserRepository extends BaseRepository<typeof User> {
                 try {
                     const user: User = await User.query().where('id', id).firstOrFail();
 
-                    if (user.id === currentUser.id) {
+                    if (id === currentUser.id) {
                         return {
                             isDeleted: false,
                             isCurrentUser: true,
