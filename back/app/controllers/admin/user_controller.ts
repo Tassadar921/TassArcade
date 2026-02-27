@@ -128,7 +128,7 @@ export default class AdminUserController {
 
     public async get({ request, response, i18n }: HttpContext) {
         const { id } = await getAdminUserValidator.validate(request.params());
-        const user: User | null = await this.userRepository.findOneBy({ id });
+        const user: User | null = await this.userRepository.findOneBy({ id }, ['profilePicture']);
         if (!user) {
             return response.notFound({ error: i18n.t('messages.admin.user.get.error.not-found') });
         }

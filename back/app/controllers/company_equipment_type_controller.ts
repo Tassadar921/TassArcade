@@ -143,8 +143,6 @@ export default class CompanyAdministratorController {
             return response.notFound({ error: i18n.t('messages.company.equipment.get.error.not-found') });
         }
 
-        await cache.deleteByTag({ tags: [`company:${companyId}`] });
-
         return response.ok({
             company: await cache.getOrSet({
                 key: `company:${companyEquipmentType.company.id}`,
@@ -156,7 +154,7 @@ export default class CompanyAdministratorController {
             }),
             companyEquipment: await cache.getOrSet({
                 key: `company-equipment:${companyId}`,
-                tags: [`company:${companyId}`, `company-equipment-types:${companyId}`],
+                tags: [`company:${companyId}`, `company-equipment-types:${companyId}`, 'equipment-types'],
                 ttl: '1h',
                 factory: (): SerializedCompanyEquipmentType => {
                     return companyEquipmentType.apiSerialize();

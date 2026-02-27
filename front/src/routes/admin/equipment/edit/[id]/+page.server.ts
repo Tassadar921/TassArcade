@@ -7,7 +7,7 @@ import { extractFormData, extractFormErrors } from '#lib/services/requestService
 export const load: PageServerLoad = async (event) => {
     const { locals, params, cookies } = event;
     try {
-        const response = await locals.client.get(`/api/admin/user/${params.id}`);
+        const response = await locals.client.get(`/api/admin/equipment/${params.id}`);
 
         if (response.status < 200 || response.status >= 300) {
             throw response;
@@ -15,7 +15,7 @@ export const load: PageServerLoad = async (event) => {
 
         return {
             isSuccess: true,
-            user: response.data,
+            ...response.data,
         };
     } catch (error: any) {
         const form: FormError = {
@@ -30,7 +30,7 @@ export const load: PageServerLoad = async (event) => {
             maxAge: 60 * 60 * 24 * 7,
         });
 
-        redirect(303, `/${cookies.get('PARAGLIDE_LOCALE')}/admin/user`);
+        redirect(303, `/${cookies.get('PARAGLIDE_LOCALE')}/admin/equipment`);
     }
 };
 
@@ -44,7 +44,7 @@ export const actions: Actions = {
         let isSuccess: boolean = true;
 
         try {
-            const response = await locals.client.post('/api/admin/user/update', formData, {
+            const response = await locals.client.post('/api/admin/equipment/update', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

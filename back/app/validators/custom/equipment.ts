@@ -9,8 +9,6 @@ const validEquipmentTranslationSortFields: string[] = [...EquipmentTranslation.$
 const sortByEquipmentValidator = (value: unknown, _options: any, field: FieldContext): void => {
     if (typeof value !== 'string') return;
 
-    console.log(value);
-
     const [fieldName, direction] = value.split(':');
 
     if (!fieldName || !direction) {

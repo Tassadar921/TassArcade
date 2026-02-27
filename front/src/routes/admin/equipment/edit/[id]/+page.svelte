@@ -3,11 +3,13 @@
     import { Title } from '#lib/components/ui/title';
     import { Breadcrumb } from '$lib/components/ui/breadcrumb';
     import { m } from '#lib/paraglide/messages';
-    import AdminUserForm from '#lib/partials/admin/user/AdminUserForm.svelte';
+    import AdminEquipmentForm from '#lib/partials/admin/equipment/AdminEquipmentForm.svelte';
+
+    console.log(page.data.equipment);
 </script>
 
-<Title title={page.data.user.username} />
+<Title title={page.data.equipment.name} />
 
-<Breadcrumb items={[{ title: m['admin.title'](), href: '/admin' }, { title: m['admin.user.title'](), href: '/admin/user' }, { title: page.data.user.username }]} />
+<Breadcrumb items={[{ title: m['admin.title'](), href: '/admin' }, { title: m['admin.equipment.title'](), href: '/admin/equipment' }, { title: page.data.equipment.name }]} />
 
-<AdminUserForm user={page.data.user} />
+<AdminEquipmentForm languages={page.data.languages} equipment={page.data.equipment} equipmentTranslations={page.data.equipmentTranslations} />

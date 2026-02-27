@@ -35,9 +35,9 @@ export const getEquipmentsColumns = (onSort: (field: string, order: 'asc' | 'des
         enableHiding: false,
     },
     {
-        header: m['admin.equipments.fields.thumbnail'](),
+        header: m['admin.equipment.fields.thumbnail'](),
         meta: {
-            headerName: m['admin.equipments.fields.thumbnail'](),
+            headerName: m['admin.equipment.fields.thumbnail'](),
         },
         cell: ({ row }) =>
             renderComponent(DatatableThumbnail, {
@@ -51,8 +51,8 @@ export const getEquipmentsColumns = (onSort: (field: string, order: 'asc' | 'des
             renderComponent(DataTableActions, {
                 id: row.original.id,
                 onDelete,
-                deleteTitle: m['admin.equipments.delete.title']({ equipments: row.original.name }),
-                deleteText: m['admin.equipments.delete.text']({ equipments: row.original.name, count: 1 }),
+                deleteTitle: m['admin.equipment.delete.title']({ equipments: row.original.name }),
+                deleteText: m['admin.equipment.delete.text']({ equipments: row.original.name, count: 1 }),
             }),
     },
 ];

@@ -3,6 +3,7 @@ import { DateTime } from 'luxon';
 import type { BelongsTo } from '@adonisjs/lucid/types/relations';
 import Equipment from '#models/equipment';
 import Language from '#models/language';
+import SerializedEquipmentTranslation from '#types/serialized/serialized_equipment_translation';
 
 export default class EquipmentTranslation extends BaseModel {
     public static table: string = 'equipment_translations';
@@ -39,5 +40,15 @@ export default class EquipmentTranslation extends BaseModel {
     @afterUpdate()
     public static async refresh(equipmentTranslation: EquipmentTranslation): Promise<void> {
         await equipmentTranslation.refresh();
+    }
+
+    public apiSerialize(): SerializedEquipmentTranslation {
+        return {
+            id: this.id,
+            name: this.name,
+            language: this.language.apiSerialize(),
+            createdAt: this.createdAt.toString(),
+            updatedAt: this.updatedAt.toString(),
+        };
     }
 }

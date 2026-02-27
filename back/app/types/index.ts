@@ -26,6 +26,9 @@ export type { SerializedCompanyAdministrator } from './serialized/serialized_com
 export type { SerializedAddress } from './serialized/serialized_address.js';
 export type { SerializedCompanyEquipmentType } from './serialized/serialized_company_equipment_type.js';
 export type { SerializedEquipmentLight } from './serialized/serialized_equipment_light.js';
+export type { SerializedLanguage } from './serialized/serialized_language.js';
+export type { SerializedEquipmentTranslation } from './serialized/serialized_equipment_translation.js';
+export type { SerializedEquipmentTypeTranslation } from './serialized/serialized_equipment_type_translation.js';
 
 export type { SearchCompanyAdministrator } from './search_company_administrator.js';
 

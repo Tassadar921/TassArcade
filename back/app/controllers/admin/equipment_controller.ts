@@ -7,38 +7,42 @@ import path from 'node:path';
 import FileTypeEnum from '#types/enum/file_type_enum';
 import FileService from '#services/file_service';
 import { MultipartFile } from '@adonisjs/bodyparser/types';
-import UserRepository from '#repositories/user_repository';
-import User from '#models/user';
 import { cuid } from '@adonisjs/core/helpers';
 import SlugifyService from '#services/slugify_service';
-import SerializedUser from '#types/serialized/serialized_user';
 import StringService from '#services/string_service';
-import { DeleteUserResult } from '#types/delete_user_result';
 import { createOrUpdateEquipmentValidator, deleteEquipmentsValidator, getAdminEquipmentValidator, searchAdminEquipmentsValidator } from '#validators/admin/equipment';
 import EquipmentRepository from '#repositories/equipment_repository';
 import PaginatedEquipments from '#types/paginated/paginated_equipments';
 import Equipment from '#models/equipment';
 import EquipmentType from '#models/equipment_type';
+import { DeleteEquipmentResult } from '#types/serialized/delete_equipment_result';
+import SerializedLanguage from '#types/serialized/serialized_language';
+import Language from '#models/language';
+import LanguageRepository from '#repositories/language_repository';
+import EquipmentTranslation from '#models/equipment_translation';
+import type { SupportedLocale } from '#config/i18n';
+import EquipmentTranslationRepository from '#repositories/equipment_translation_repository';
+import SerializedEquipmentTranslation from '#types/serialized/serialized_equipment_translation';
+import SerializedEquipmentLight from '#types/serialized/serialized_equipment_light';
 
 @inject()
-export default class AdminUserController {
+export default class AdminEquipmentController {
     constructor(
-        private readonly userRepository: UserRepository,
         private readonly equipmentRepository: EquipmentRepository,
         private readonly fileService: FileService,
         private readonly slugifyService: SlugifyService,
-        private readonly stringService: StringService
+        private readonly stringService: StringService,
+        private readonly languageRepository: LanguageRepository,
+        private readonly equipmentTranslationRepository: EquipmentTranslationRepository
     ) {}
 
     public async getAll({ request, response, language }: HttpContext) {
         const { query, page, limit, sortBy: inputSortBy } = await request.validateUsing(searchAdminEquipmentsValidator);
 
-        await cache.deleteByTag({ tags: ['equipments'] });
-
         return response.ok(
             await cache.getOrSet({
                 key: `equipments:query:${query}:page:${page}:limit:${limit}:sortBy:${inputSortBy}`,
-                tags: ['equipments'],
+                tags: ['admin-equipments'],
                 ttl: '24h',
                 factory: async (): Promise<PaginatedEquipments> => {
                     const [field, order] = inputSortBy.split(':');
@@ -53,119 +57,170 @@ export default class AdminUserController {
         );
     }
 
-    public async delete({ request, response, i18n, user }: HttpContext) {
+    public async delete({ request, response, i18n, language }: HttpContext) {
         const { equipments } = await request.validateUsing(deleteEquipmentsValidator);
-        const statuses: DeleteUserResult[] = await this.userRepository.delete(users, user);
+        const statuses: DeleteEquipmentResult[] = await this.equipmentRepository.delete(equipments, language);
 
         return response.ok({
             messages: await Promise.all(
-                statuses.map(async (status: DeleteUserResult): Promise<{ id: string; message: string; isSuccess: boolean }> => {
+                statuses.map(async (status: DeleteEquipmentResult): Promise<{ id: string; message: string; isSuccess: boolean }> => {
                     if (status.isDeleted) {
-                        await cache.deleteByTag({ tags: ['admin-users', `admin-user:${status.id}`] });
-                        return { id: status.id, message: i18n.t(`messages.admin.user.delete.success`, { username: status.username }), isSuccess: true };
+                        await cache.deleteByTag({ tags: ['admin-equipments', `admin-equipment:${status.id}`, 'equipment-types'] });
+                        return { id: status.id, message: i18n.t(`messages.admin.equipment.delete.success`, { name: status.name }), isSuccess: true };
                     } else {
-                        if (status.isCurrentUser) {
-                            return { id: status.id, message: i18n.t(`messages.admin.user.delete.error.current`, { username: status.username }), isSuccess: false };
-                        } else {
-                            return { id: status.id, message: i18n.t(`messages.admin.user.delete.error.default`, { id: status.id }), isSuccess: false };
-                        }
+                        return { id: status.id, message: i18n.t(`messages.admin.equipment.delete.error.default`, { id: status.id }), isSuccess: false };
                     }
                 })
             ),
         });
     }
 
-    public async create({ request, response, i18n }: HttpContext) {
-        const { username, email, profilePicture: inputProfilePicture } = await request.validateUsing(createOrUpdateEquipmentValidator);
+    public async create({ request, response, i18n, language }: HttpContext) {
+        const { category, translations, thumbnail: inputThumbnail } = await request.validateUsing(createOrUpdateEquipmentValidator);
 
-        let user: User | null = await this.userRepository.findOneBy({ email });
-        if (user) {
-            return response.badRequest({ error: i18n.t('messages.admin.user.create.error.already-exists', { email }) });
+        let equipment: Equipment | null = await this.equipmentRepository.findOneBy({ category });
+        if (equipment) {
+            return response.badRequest({ error: i18n.t('messages.admin.equipment.create.error.already-exists', { category }) });
         }
 
-        let profilePicture: File | undefined = undefined;
-        if (inputProfilePicture) {
-            profilePicture = await this.processInputProfilePicture(inputProfilePicture);
-        }
+        const thumbnail: File = await this.processInputThumbnail(inputThumbnail);
 
-        user = await User.create({
-            username,
-            email,
-            profilePictureId: profilePicture?.id,
-            password: cuid(),
+        equipment = await Equipment.create({
+            category,
+            thumbnailId: thumbnail.id,
         });
 
-        await Promise.all([user.load('profilePicture'), cache.deleteByTag({ tags: ['admin-users'] })]);
+        await Promise.all(
+            translations.map(async (translation) => {
+                const language: Language = await this.languageRepository.firstOrFail({ code: translation.code as SupportedLocale });
 
-        return response.created({ user: user.apiSerialize(), message: i18n.t('messages.admin.user.create.success', { email, username }) });
+                await EquipmentTranslation.create({
+                    name: translation.name,
+                    languageId: language.id,
+                    equipmentId: equipment!.id,
+                });
+            })
+        );
+
+        equipment = await this.equipmentRepository.loadForSerialization(equipment, language);
+
+        await Promise.all([equipment.load('thumbnail'), cache.deleteByTag({ tags: ['admin-equipments'] })]);
+
+        return response.created({
+            user: equipment.apiSerialize(),
+            message: i18n.t('messages.admin.user.create.success', { name: translations.find((translation) => translation.code === language.code)?.name }),
+        });
     }
 
-    public async update({ request, response, i18n }: HttpContext) {
-        const { username, email, profilePicture: inputProfilePicture } = await request.validateUsing(createOrUpdateEquipmentValidator);
+    public async update({ request, response, i18n, language: currentLanguage }: HttpContext) {
+        const { category, translations, thumbnail: inputThumbnail } = await request.validateUsing(createOrUpdateEquipmentValidator);
 
-        const user: User = await this.userRepository.firstOrFail({ email }, ['profilePicture']);
+        const equipment: Equipment = await this.equipmentRepository.firstOrFail({ category }, ['thumbnail']);
+        let thumbnailChanged: boolean = false;
 
-        user.username = username;
-
-        if (inputProfilePicture) {
-            if (user.profilePicture && !this.areSameFiles(user.profilePicture, inputProfilePicture)) {
-                this.fileService.delete(user.profilePicture);
+        if (inputThumbnail) {
+            if (!this.areSameFiles(equipment.thumbnail, inputThumbnail)) {
+                thumbnailChanged = true;
+                this.fileService.delete(equipment.thumbnail);
             }
-            const profilePicture: File = await this.processInputProfilePicture(inputProfilePicture);
-            user.profilePictureId = profilePicture.id;
+            const thumbnail: File = await this.processInputThumbnail(inputThumbnail);
+            equipment.thumbnailId = thumbnail.id;
             await Promise.all([
-                user.load('profilePicture'),
+                equipment.load('thumbnail'),
                 cache.set({
-                    key: `user-profile-picture:${user.id}`,
-                    tags: [`user:${user.id}`],
+                    key: `equipment-thumbnail:${equipment.id}`,
+                    tags: [`equipment:${equipment.id}`],
                     ttl: '1h',
-                    value: app.makePath(profilePicture.path),
+                    value: app.makePath(thumbnail.path),
                 }),
             ]);
         }
 
-        await user.save();
+        await equipment.save();
 
-        if (inputProfilePicture && user.profilePicture && !this.areSameFiles(user.profilePicture, inputProfilePicture)) {
-            await user.profilePicture.delete();
+        if (thumbnailChanged) {
+            await equipment.thumbnail.delete();
         }
 
-        await Promise.all([cache.deleteByTag({ tags: ['admin-users', `admin-user:${user.id}`] })]);
+        let currentEquipmentTranslation: EquipmentTranslation | undefined;
 
-        return response.ok({ user: user.apiSerialize(), message: i18n.t('messages.admin.user.update.success', { username }) });
+        await Promise.all([
+            cache.deleteByTag({ tags: ['admin-equipments', `admin-equipment:${equipment.id}`] }),
+            translations.map(async (translation): Promise<void> => {
+                let equipmentTranslation: EquipmentTranslation | null = await this.equipmentTranslationRepository.getFromEquipmentAndLanguageCode(equipment, translation.code as SupportedLocale);
+                if (!equipmentTranslation) {
+                    const language: Language = await this.languageRepository.firstOrFail({ code: translation.code as SupportedLocale });
+                    equipmentTranslation = await EquipmentTranslation.create({
+                        name: translation.name,
+                        equipmentId: equipment.id,
+                        languageId: language.id,
+                    });
+                } else {
+                    equipmentTranslation.name = translation.name;
+                    await equipmentTranslation.save();
+                }
+
+                if (translation.code === currentLanguage.code) {
+                    currentEquipmentTranslation = equipmentTranslation;
+                }
+            }),
+        ]);
+
+        return response.ok({ equipment: equipment.apiSerialize(), message: i18n.t('messages.admin.equipment.update.success', { name: currentEquipmentTranslation?.name }) });
     }
 
-    public async get({ request, response, i18n }: HttpContext) {
+    public async get({ request, response, i18n, language }: HttpContext) {
         const { id } = await getAdminEquipmentValidator.validate(request.params());
-        const user: User | null = await this.userRepository.findOneBy({ id });
-        if (!user) {
-            return response.notFound({ error: i18n.t('messages.admin.user.get.error.not-found') });
+
+        const equipment: Equipment | null = await this.equipmentRepository.getOne(id, language);
+        if (!equipment) {
+            return response.notFound({ error: i18n.t('messages.admin.equipment.get.error.not-found') });
         }
 
-        return response.ok(
-            await cache.getOrSet({
-                key: `admin-user:${user.id}`,
-                tags: [`admin-user:${user.id}`],
+        return response.ok({
+            equipment: await cache.getOrSet({
+                key: `admin-equipment:${equipment.id}`,
+                tags: [`admin-equipment:${equipment.id}`],
                 ttl: '1h',
-                factory: (): SerializedUser => {
-                    return user.apiSerialize();
+                factory: (): SerializedEquipmentLight => {
+                    return equipment.apiSerializeLight();
                 },
-            })
-        );
+            }),
+            equipmentTranslations: await cache.getOrSet({
+                key: `admin-equipment-translations:${equipment.id}`,
+                tags: [`admin-equipment:${equipment.id}`],
+                ttl: '1h',
+                factory: async (): Promise<SerializedEquipmentTranslation[]> => {
+                    const equipmentTranslations: EquipmentTranslation[] = await this.equipmentTranslationRepository.getAllFromEquipment(equipment);
+
+                    return await Promise.all(equipmentTranslations.map((equipmentTranslation: EquipmentTranslation): SerializedEquipmentTranslation => equipmentTranslation.apiSerialize()));
+                },
+            }),
+            languages: await cache.getOrSet({
+                key: 'languages',
+                tags: ['languages'],
+                ttl: '24h',
+                factory: async (): Promise<SerializedLanguage[]> => {
+                    const languages: Language[] = await this.languageRepository.all(['flag']);
+
+                    return languages.map((language: Language): SerializedLanguage => language.apiSerialize());
+                },
+            }),
+        });
     }
 
-    private async processInputProfilePicture(inputProfilePicture: MultipartFile): Promise<File> {
-        const extension: string = path.extname(inputProfilePicture.clientName);
-        inputProfilePicture.clientName = `${cuid()}-${this.slugifyService.slugify(inputProfilePicture.clientName)}`;
-        const profilePicturePath: string = `static/profile-picture`;
-        await inputProfilePicture.move(app.makePath(profilePicturePath));
+    private async processInputThumbnail(inputThumbnail: MultipartFile): Promise<File> {
+        const extension: string = path.extname(inputThumbnail.clientName);
+        inputThumbnail.clientName = `${cuid()}-${this.slugifyService.slugify(inputThumbnail.clientName)}`;
+        const thumbnailPath: string = 'static/equipment-thumbnail';
+        await inputThumbnail.move(app.makePath(thumbnailPath));
         return await File.create({
-            name: inputProfilePicture.clientName,
-            path: `${profilePicturePath}/${inputProfilePicture.clientName}`,
+            name: inputThumbnail.clientName,
+            path: `${thumbnailPath}/${inputThumbnail.clientName}`,
             extension,
-            mimeType: `${inputProfilePicture.type}/${inputProfilePicture.subtype}`,
-            size: inputProfilePicture.size,
-            type: FileTypeEnum.PROFILE_PICTURE,
+            mimeType: `${inputThumbnail.type}/${inputThumbnail.subtype}`,
+            size: inputThumbnail.size,
+            type: FileTypeEnum.EQUIPMENT_THUMBNAIL,
         });
     }
 

@@ -1,23 +1,5 @@
 {
     "admin": {
-        "language": {
-            "delete": {
-                "success": "Successfully deleted {name}",
-                "error": {
-                    "fallback": "You cannot delete the default language ({name})",
-                    "default": "Error while deleting language with code {code}"
-                }
-            },
-            "create": {
-                "success": "Successfully created language {name}",
-                "error": {
-                    "already-exists": "Language with code {code} already exists"
-                }
-            },
-            "update": {
-                "success": "Successfully updated language {name}"
-            }
-        },
         "user": {
             "get": {
                 "error": {
@@ -39,6 +21,28 @@
             },
             "update": {
                 "success": "Successfully updated {username}"
+            }
+        },
+        "equipment": {
+            "get": {
+                "error": {
+                    "not-found": "Equipment not found"
+                }
+            },
+            "delete": {
+                "success": "Successfully deleted equipment {name}",
+                "error": {
+                    "default": "Error while deleting equipment with identifier {id}"
+                }
+            },
+            "create": {
+                "success": "Successfully created equipment {name}",
+                "error": {
+                    "already-exists": "Equipment with category {category} already exists"
+                }
+            },
+            "update": {
+                "success": "Successfully updated equipment {name}"
             }
         }
     },
@@ -82,8 +86,14 @@
         },
         "serve-company-logo": {
             "error": {
-                "logo-not-found": "Company not found",
+                "company-not-found": "Company not found",
                 "no-file": "Company logo not found"
+            }
+        },
+        "serve-language-flag": {
+            "error": {
+                "language-not-found": "Language not found",
+                "no-file": "Language flag not found"
             }
         }
     },

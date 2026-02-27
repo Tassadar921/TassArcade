@@ -48,8 +48,8 @@ export default class CompanyEquipmentType extends BaseModel {
             description: this.description ?? undefined,
             category: this.equipmentType.equipment.apiSerializeLight(),
             type: this.equipmentType.apiSerialize(),
-            createdAt: this.createdAt?.toString(),
-            updatedAt: this.updatedAt?.toString(),
+            createdAt: this.createdAt.toString(),
+            updatedAt: this.updatedAt.toString(),
         };
     }
 }

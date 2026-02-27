@@ -3,19 +3,22 @@ import { HttpContext } from '@adonisjs/core/http';
 import app from '@adonisjs/core/services/app';
 import UserRepository from '#repositories/user_repository';
 import User from '#models/user';
-import { serveStaticProfilePictureFileValidator, serveStaticEquipmentThumbnailFileValidator, serveStaticCompanyLogoFileValidator } from '#validators/file';
+import { serveStaticProfilePictureFileValidator, serveStaticEquipmentThumbnailFileValidator, serveStaticCompanyLogoFileValidator, serveStaticLanguageFlagFileValidator } from '#validators/file';
 import cache from '@adonisjs/cache/services/main';
 import EquipmentRepository from '#repositories/equipment_repository';
 import Equipment from '#models/equipment';
 import CompanyRepository from '#repositories/company_repository';
 import Company from '#models/company';
+import LanguageRepository from '#repositories/language_repository';
+import Language from '#models/language';
 
 @inject()
 export default class FileController {
     constructor(
         private readonly userRepository: UserRepository,
         private readonly equipmentRepository: EquipmentRepository,
-        private readonly companyRepository: CompanyRepository
+        private readonly companyRepository: CompanyRepository,
+        private readonly languageRepository: LanguageRepository
     ) {}
 
     public async serveStaticProfilePictureFile({ request, response, i18n }: HttpContext) {
@@ -97,7 +100,35 @@ export default class FileController {
             if (error.message === 'NO_FILE') {
                 return response.notFound({ error: i18n.t('messages.file.serve-company-logo.error.no-file') });
             } else {
-                return response.notFound({ error: i18n.t('messages.file.serve-company-logo.error.logo-not-found') });
+                return response.notFound({ error: i18n.t('messages.file.serve-company-logo.error.company-not-found') });
+            }
+        }
+    }
+
+    public async serveStaticLanguageFlagFile({ request, response, i18n }: HttpContext) {
+        const { languageId } = await serveStaticLanguageFlagFileValidator.validate(request.params());
+
+        try {
+            const filePath: string = await cache.getOrSet({
+                key: `language-flag:${languageId}`,
+                tags: [`language-flag:${languageId}`],
+                ttl: '1h',
+                factory: async (): Promise<string> => {
+                    const language: Language = await this.languageRepository.firstOrFail({ id: languageId }, ['flag']);
+                    if (!language.flag) {
+                        throw new Error('NO_FILE');
+                    }
+
+                    return app.makePath(language.flag.path);
+                },
+            });
+
+            return response.download(filePath);
+        } catch (error: any) {
+            if (error.message === 'NO_FILE') {
+                return response.notFound({ error: i18n.t('messages.file.serve-language-flag.error.no-file') });
+            } else {
+                return response.notFound({ error: i18n.t('messages.file.serve-language-flag.error.language-not-found') });
             }
         }
     }

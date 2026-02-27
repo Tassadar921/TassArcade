@@ -1,23 +1,5 @@
 {
     "admin": {
-        "language": {
-            "delete": {
-                "success": "{name} supprimé avec succès",
-                "error": {
-                    "fallback": "Vous ne pouvez pas supprimer la langue par défaut ({name})",
-                    "default": "Une erreur est survenue lors de la suppression de la langue du code {code}"
-                }
-            },
-            "create": {
-                "success": "Langue {name} créée avec succès",
-                "error": {
-                    "already-exists": "Une language avec le code {code} existe déjà"
-                }
-            },
-            "update": {
-                "success": "{name} mis à jour avec succès"
-            }
-        },
         "user": {
             "get": {
                 "error": {
@@ -39,6 +21,28 @@
             },
             "update": {
                 "success": "Utilisateur {username} mis à jour avec succès"
+            }
+        },
+        "equipment": {
+            "get": {
+                "error": {
+                    "not-found": "Équipement introuvable"
+                }
+            },
+            "delete": {
+                "success": "Équipement {name} supprimé avec succès",
+                "error": {
+                    "default": "Erreur lors de la suppression de l’équipement avec l’identifiant {id}"
+                }
+            },
+            "create": {
+                "success": "Équipement {name} créé avec succès",
+                "error": {
+                    "already-exists": "Un équipement avec la catégorie {category} existe déjà"
+                }
+            },
+            "update": {
+                "success": "Équipement {name} mis à jour avec succès"
             }
         }
     },
@@ -82,8 +86,14 @@
         },
         "serve-company-logo": {
             "error": {
-                "logo-not-found": "Company non trouvée",
+                "company-not-found": "Company non trouvée",
                 "no-file": "Logo de l'entreprise introuvable"
+            }
+        },
+        "serve-language-flag": {
+            "error": {
+                "language-not-found": "Langue non trouvée",
+                "no-file": "Drapeau de la langue introuvable"
             }
         }
     },

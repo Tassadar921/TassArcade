@@ -12,6 +12,7 @@ const AdminEquipmentController = () => import('#controllers/admin/equipment_cont
 
 // App controllers
 const HealthCheckController = () => import('#controllers/health_checks_controller');
+const LanguageController = () => import('#controllers/language_controller');
 const AuthController = () => import('#controllers/auth_controller');
 const ProfileController = () => import('#controllers/profile_controller');
 const FileController = () => import('#controllers/file_controller');
@@ -159,6 +160,8 @@ router
                         router.get('/profile-picture/:userId', [FileController, 'serveStaticProfilePictureFile']);
                     })
                     .prefix('static');
+
+                router.get('/languages/all', [LanguageController, 'getAll']);
             })
             .use([middleware.auth()]);
 
@@ -171,6 +174,7 @@ router
             .group((): void => {
                 router.get('/equipment-thumbnail/:equipmentId', [FileController, 'serveStaticEquipmentThumbnailFile']);
                 router.get('/company-logo/:companyId', [FileController, 'serveStaticCompanyLogoFile']);
+                router.get('/language-flag/:languageId', [FileController, 'serveStaticLanguageFlagFile']);
             })
             .prefix('static');
     })

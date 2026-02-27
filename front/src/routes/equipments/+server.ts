@@ -8,7 +8,7 @@ export const GET: RequestHandler = async ({ url, locals }): Promise<Response> =>
         const query: string = url.searchParams.get('query') || '';
         const sortBy: string = url.searchParams.get('sortBy') || 'equipment_type_translations.name';
 
-        const response = await locals.client.get(`/api/equipments`, {
+        const response = await locals.client.get('/api/equipments', {
             params: { page, limit, query, sortBy },
         });
 

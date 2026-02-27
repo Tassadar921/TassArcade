@@ -15,7 +15,6 @@
     let sortBy: string = $state('equipment_translations.name:asc');
 
     onMount(async (): Promise<void> => {
-        console.log(paginatedEquipments);
         if (page.data.isSuccess) {
             paginatedEquipments = page.data.equipments;
         } else {
@@ -43,9 +42,9 @@
     };
 </script>
 
-<Title title={m['admin.equipments.title']()} hasBackground />
+<Title title={m['admin.equipment.title']()} hasBackground />
 
-<Breadcrumb items={[{ title: m['admin.title'](), href: '/admin' }, { title: m['admin.equipments.title']() }]} />
+<Breadcrumb items={[{ title: m['admin.title'](), href: '/admin' }, { title: m['admin.equipment.title']() }]} />
 
 {#if paginatedEquipments}
     <div class="mt-3">
@@ -57,8 +56,8 @@
             bind:query
             bind:selectedRows={selectedEquipments}
             onBatchDelete={handleDelete}
-            batchDeleteTitle={m['admin.equipments.delete.title']({ equipments: selectedEquipments.map((equipment) => equipment.label).join(', ') })}
-            batchDeleteText={m['admin.equipments.delete.text']({ equipments: selectedEquipments.map((equipment) => equipment.label).join(', '), count: selectedEquipments.length })}
+            batchDeleteTitle={m['admin.equipment.delete.title']({ equipments: selectedEquipments.map((equipment) => equipment.label).join(', ') })}
+            batchDeleteText={m['admin.equipment.delete.text']({ equipments: selectedEquipments.map((equipment) => equipment.label).join(', '), count: selectedEquipments.length })}
             onPaginationChange={getEquipments}
             batchDeleteKey="name"
         />

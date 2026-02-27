@@ -46,25 +46,25 @@ export default class Equipment extends BaseModel {
     public apiSerialize(): SerializedEquipment {
         return {
             id: this.id,
-            name: this.translations?.length ? this.translations[0].name : '',
+            name: this.translations[0].name,
             category: this.category,
             thumbnail: this.thumbnail.apiSerialize(),
             types: this.types
                 .map((type: EquipmentType): SerializedEquipmentType => type.apiSerialize())
                 .sort((a: SerializedEquipmentType, b: SerializedEquipmentType): number => a.name.localeCompare(b.name)),
-            createdAt: this.createdAt?.toString(),
-            updatedAt: this.updatedAt?.toString(),
+            createdAt: this.createdAt.toString(),
+            updatedAt: this.updatedAt.toString(),
         };
     }
 
     public apiSerializeLight(): SerializedEquipmentLight {
         return {
             id: this.id,
-            name: this.translations?.length ? this.translations[0].name : '',
+            name: this.translations[0].name,
             category: this.category,
             thumbnail: this.thumbnail.apiSerialize(),
-            createdAt: this.createdAt?.toString(),
-            updatedAt: this.updatedAt?.toString(),
+            createdAt: this.createdAt.toString(),
+            updatedAt: this.updatedAt.toString(),
         };
     }
 }

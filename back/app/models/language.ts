@@ -2,6 +2,8 @@ import { DateTime } from 'luxon';
 import { afterCreate, afterUpdate, BaseModel, belongsTo, column } from '@adonisjs/lucid/orm';
 import File from '#models/file';
 import type { BelongsTo } from '@adonisjs/lucid/types/relations';
+import SerializedLanguage from '#types/serialized/serialized_language';
+import type { SupportedLocale } from '#config/i18n';
 
 interface LanguageInterface {
     name: string;
@@ -30,7 +32,7 @@ export default class Language extends BaseModel {
     declare name: string;
 
     @column()
-    declare code: string;
+    declare code: SupportedLocale;
 
     @column()
     declare isFallback: boolean;
@@ -53,5 +55,13 @@ export default class Language extends BaseModel {
     @afterUpdate()
     public static async refresh(language: Language): Promise<void> {
         await language.refresh();
+    }
+
+    public apiSerialize(): SerializedLanguage {
+        return {
+            name: this.name,
+            code: this.code,
+            flag: this.flag.apiSerialize(),
+        };
     }
 }

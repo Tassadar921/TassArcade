@@ -40,7 +40,7 @@ export default class EquipmentRepository extends BaseRepository<typeof Equipment
             order: 'asc' | 'desc';
         }
     ): Promise<PaginatedEquipments> {
-        const baseQuery = this.Model.query();
+        const baseQuery = this.Model.query().select('equipments.*');
 
         if (query) {
             baseQuery.where((root): void => {
@@ -112,5 +112,27 @@ export default class EquipmentRepository extends BaseRepository<typeof Equipment
                 }
             })
         );
+    }
+
+    public async loadForSerialization(equipment: Equipment, language: Language): Promise<Equipment> {
+        await equipment.load('translations', (equipmentTranslationQuery): void => {
+            equipmentTranslationQuery.whereHas('language', (languageQuery): void => {
+                languageQuery.where('code', language.code);
+            });
+        });
+
+        return equipment;
+    }
+
+    public async getOne(equipmentId: string, language: Language): Promise<Equipment> {
+        return this.Model.query()
+            .where('id', equipmentId)
+            .preload('thumbnail')
+            .preload('translations', (equipmentTranslationQuery): void => {
+                equipmentTranslationQuery.whereHas('language', (languageQuery): void => {
+                    languageQuery.where('code', language.code);
+                });
+            })
+            .firstOrFail();
     }
 }

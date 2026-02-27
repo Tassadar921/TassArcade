@@ -11,3 +11,7 @@ export const serveStaticEquipmentThumbnailFileValidator = vine.create({
 export const serveStaticCompanyLogoFileValidator = vine.create({
     companyId: vine.string().uuid(),
 });
+
+export const serveStaticLanguageFlagFileValidator = vine.create({
+    languageId: vine.string().uuid(),
+});

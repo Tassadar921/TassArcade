@@ -47,8 +47,8 @@ export default class File extends BaseModel {
             mimeType: this.mimeType,
             size: this.size,
             type: this.type,
-            createdAt: this.createdAt?.toString(),
-            updatedAt: this.updatedAt?.toString(),
+            createdAt: this.createdAt.toString(),
+            updatedAt: this.updatedAt.toString(),
         };
     }
 }

@@ -21,7 +21,8 @@ list-routes:
 	cd back && node ace list:routes
 
 clear-cache:
-	docker exec -it redis redis-cli FLUSHALL
+	docker exec redis redis-cli FLUSHALL
+	docker restart back
 
 db-fresh:
 	./compose-env.sh exec -T backend node ace migration:fresh
@@ -40,7 +41,7 @@ db-factory:
 init-logs-db:
 	./init-logs-db.sh
 
-db: init-logs-db db-fresh db-seed db-factory
+db: init-logs-db db-fresh db-seed db-factory clear-cache
 
 paraglide:
 	cd front && npx paraglide-js compile

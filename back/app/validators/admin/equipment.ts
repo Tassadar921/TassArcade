@@ -1,5 +1,15 @@
 import vine from '@vinejs/vine';
 import { sortByEquipmentRule } from '#validators/custom/equipment';
+import { supportedLocales } from '#config/i18n';
+
+const translationSchema = vine.object({
+    code: vine
+        .string()
+        .trim()
+        .fixedLength(2)
+        .in([...supportedLocales]),
+    name: vine.string().trim().minLength(3).maxLength(50),
+});
 
 export const searchAdminEquipmentsValidator = vine.create({
     query: vine.string().trim().maxLength(50),
@@ -13,15 +23,11 @@ export const deleteEquipmentsValidator = vine.create({
 });
 
 export const createOrUpdateEquipmentValidator = vine.create({
-    english: vine.object({
-        name: vine.string().trim().minLength(3).maxLength(50),
-    }),
-    french: vine.object({
-        name: vine.string().trim().minLength(3).maxLength(50),
-    }),
+    category: vine.string().trim().minLength(3).maxLength(50),
+    translations: vine.array(translationSchema).minLength(supportedLocales.length),
     thumbnail: vine.file({
         size: '2mb',
-        extnames: ['png', 'jpg', 'jpeg', 'webp', 'svg'],
+        extnames: ['svg'],
     }),
 });
 

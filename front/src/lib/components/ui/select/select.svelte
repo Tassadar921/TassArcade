@@ -66,7 +66,7 @@
     {#if isExpanded}
         <div class="max-h-72 overflow-y-auto absolute bg-white dark:bg-gray-800 shadow-md rounded-lg z-50 w-32 p-2 right-0" bind:this={popoverRef}>
             {#each items as item}
-                <Button aria-disabled={item.disabled} class="w-full border-none !px-1 flex justify-start bg-gray-100" variant="outline" onclick={() => handleClick(item)}>
+                <Button aria-disabled={item.disabled} class="w-full border-none px-1! flex justify-start bg-gray-100" variant="outline" onclick={() => handleClick(item)}>
                     {#if item.icon}
                         <item.icon />
                     {/if}

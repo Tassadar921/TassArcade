@@ -2,6 +2,17 @@ import { type Actions, fail, type RequestEvent } from '@sveltejs/kit';
 import { redirect } from 'sveltekit-flash-message/server';
 import { extractFormData, extractFormErrors } from '#lib/services/requestService';
 import type { FormError } from '../../../../app';
+import type { PageServerLoad } from './$types';
+
+export const load: PageServerLoad = async ({ fetch }) => {
+    const response: Response = await fetch('/languages');
+
+    console.log('là');
+    const { isSuccess, languages } = await response.json();
+    console.log('ici');
+
+    return isSuccess && response.ok ? { isSuccess, languages } : { isSuccess: false };
+};
 
 export const actions: Actions = {
     default: async (event: RequestEvent): Promise<void> => {
@@ -13,7 +24,7 @@ export const actions: Actions = {
         let isSuccess: boolean = true;
 
         try {
-            const response = await locals.client.post('/api/admin/user/create', formData, {
+            const response = await locals.client.post('/api/admin/equipment/create', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -32,7 +43,7 @@ export const actions: Actions = {
         if (isSuccess) {
             redirect(
                 303,
-                `/${cookies.get('PARAGLIDE_LOCALE')}/admin/user/edit/${data.user.id}`,
+                `/${cookies.get('PARAGLIDE_LOCALE')}/admin/equipment/edit/${data.equipment.id}`,
                 {
                     type: 'success',
                     message: data?.message,

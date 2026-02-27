@@ -452,9 +452,27 @@
                 }
             }
         },
-        "equipments": {
+        "equipment": {
             "title": "Equipments",
             "fields": {
+                "name": {
+                    "error": {
+                        "min": "The name is too short.",
+                        "max": "The name is too long."
+                    }
+                },
+                "code": {
+                    "error": {
+                        "length": "The code must be exactly 2 letters."
+                    }
+                },
+                "category": {
+                    "label": "Category",
+                    "error": {
+                        "min": "The category is too short.",
+                        "max": "The category is too long."
+                    }
+                },
                 "thumbnail": "Thumbnail"
             },
             "delete": {

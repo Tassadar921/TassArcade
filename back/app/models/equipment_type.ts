@@ -40,8 +40,8 @@ export default class EquipmentType extends BaseModel {
         return {
             id: this.id,
             name: this.translations?.length ? this.translations[0].name : '',
-            createdAt: this.createdAt?.toString(),
-            updatedAt: this.updatedAt?.toString(),
+            createdAt: this.createdAt.toString(),
+            updatedAt: this.updatedAt.toString(),
         };
     }
 
@@ -50,8 +50,8 @@ export default class EquipmentType extends BaseModel {
             id: this.id,
             name: this.translations?.length ? this.translations[0].name : '',
             equipment: this.equipment.apiSerializeLight(),
-            createdAt: this.createdAt?.toString(),
-            updatedAt: this.updatedAt?.toString(),
+            createdAt: this.createdAt.toString(),
+            updatedAt: this.updatedAt.toString(),
         };
     }
 }

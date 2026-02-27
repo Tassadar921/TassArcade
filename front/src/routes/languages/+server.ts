@@ -1,13 +1,9 @@
-import { json } from '@sveltejs/kit';
-import type { RequestHandler } from './$types';
+import { json, type RequestHandler } from '@sveltejs/kit';
 import { m } from '#lib/paraglide/messages';
 
-export const POST: RequestHandler = async ({ request, locals }): Promise<Response> => {
-    const body = await request.json();
+export const GET: RequestHandler = async ({ locals }): Promise<Response> => {
     try {
-        const response = await locals.client.post(`/api/admin/equipment/delete`, {
-            equipments: body.data,
-        });
+        const response = await locals.client.get('/api/languages/all');
 
         if (response.status < 200 || response.status >= 300) {
             throw response;
@@ -15,7 +11,7 @@ export const POST: RequestHandler = async ({ request, locals }): Promise<Respons
 
         return json({
             isSuccess: true,
-            messages: response.data.messages,
+            languages: response.data,
         });
     } catch (error: any) {
         return json(
