@@ -2,7 +2,7 @@ import BaseRepository from '#repositories/base/base_repository';
 import Equipment from '#models/equipment';
 import Language from '#models/language';
 import db from '@adonisjs/lucid/services/db';
-import { DeleteEquipmentResult } from '#types/serialized/delete_equipment_result';
+import { DeleteEquipmentResult } from '#types/delete_equipment_result';
 import EquipmentType from '#models/equipment_type';
 import { ModelPaginatorContract } from '@adonisjs/lucid/types/model';
 import PaginatedEquipments from '#types/paginated/paginated_equipments';

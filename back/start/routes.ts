@@ -9,6 +9,7 @@ const UnsubscribeController = () => import('@adonisjs/transmit/controllers/unsub
 // Admin controllers
 const AdminUserController = () => import('#controllers/admin/user_controller');
 const AdminEquipmentController = () => import('#controllers/admin/equipment_controller');
+const AdminEquipmentTypeController = () => import('#controllers/admin/equipment_type_controller');
 
 // App controllers
 const HealthCheckController = () => import('#controllers/health_checks_controller');
@@ -102,6 +103,16 @@ router
                                 router.get('/:id', [AdminEquipmentController, 'get']);
                             })
                             .prefix('equipment');
+
+                        router
+                            .group((): void => {
+                                router.get('/', [AdminEquipmentTypeController, 'getAll']);
+                                router.post('/delete', [AdminEquipmentTypeController, 'delete']);
+                                router.post('/create', [AdminEquipmentTypeController, 'create']);
+                                router.post('/update', [AdminEquipmentTypeController, 'update']);
+                                router.get('/:id', [AdminEquipmentTypeController, 'get']);
+                            })
+                            .prefix('equipment-type');
                     })
                     .prefix('admin')
                     .use([middleware.isAdmin()]);

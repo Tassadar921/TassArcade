@@ -7,6 +7,7 @@ import SerializedEquipmentTypeExtended from '#types/serialized/serialized_equipm
 import Equipment from '#models/equipment';
 import EquipmentTranslation from '#models/equipment_translation';
 import EquipmentTypeTranslation from '#models/equipment_type_translation';
+import { DeleteEquipmentTypeResult } from '#types/delete_equipment_type_result';
 import db from '@adonisjs/lucid/services/db';
 
 export default class EquipmentTypeRepository extends BaseRepository<typeof EquipmentType> {
@@ -114,5 +115,111 @@ export default class EquipmentTypeRepository extends BaseRepository<typeof Equip
             total: paginator.total,
             currentPage: paginator.currentPage,
         };
+    }
+
+    public async delete(equipmentTypeIds: string[], language: Language): Promise<DeleteEquipmentTypeResult[]> {
+        const results: DeleteEquipmentTypeResult[] = [];
+
+        for (const equipmentTypeId of equipmentTypeIds) {
+            try {
+                const equipmentType: EquipmentType | null = await this.Model.query()
+                    .where('id', equipmentTypeId)
+                    .preload('translations', (query): void => {
+                        query.whereHas('language', (languageQuery): void => {
+                            languageQuery.where('code', language.code);
+                        });
+                    })
+                    .first();
+
+                if (!equipmentType) {
+                    results.push({
+                        id: equipmentTypeId,
+                        name: '',
+                        isDeleted: false,
+                    });
+                    continue;
+                }
+
+                const name: string = equipmentType.translations.length > 0 ? equipmentType.translations[0].name : equipmentType.code;
+
+                await equipmentType.delete();
+                results.push({
+                    id: equipmentTypeId,
+                    name,
+                    isDeleted: true,
+                });
+            } catch (error) {
+                results.push({
+                    id: equipmentTypeId,
+                    name: '',
+                    isDeleted: false,
+                });
+            }
+        }
+
+        return results;
+    }
+
+    public async findOneBy(criteria: { code?: string }): Promise<EquipmentType | null> {
+        const query = this.Model.query();
+
+        if (criteria.code) {
+            query.where('code', criteria.code);
+        }
+
+        return await query.first();
+    }
+
+    public async getOneByCode(code: string, language: Language): Promise<EquipmentType | null> {
+        return this.Model.query()
+            .where('code', code)
+            .preload('translations', (query): void => {
+                query.whereHas('language', (languageQuery): void => {
+                    languageQuery.where('code', language.code);
+                });
+            })
+            .first();
+    }
+
+    public async getOneById(id: string, language: Language): Promise<EquipmentType | null> {
+        return this.Model.query()
+            .where('id', id)
+            .preload('translations', (query): void => {
+                query.whereHas('language', (languageQuery): void => {
+                    languageQuery.where('code', language.code);
+                });
+            })
+            .preload('equipment', (equipmentQuery): void => {
+                equipmentQuery
+                    .preload('translations', (equipmentTranslationQuery): void => {
+                        equipmentTranslationQuery.whereHas('language', (languageQuery): void => {
+                            languageQuery.where('code', language.code);
+                        });
+                    })
+                    .preload('thumbnail');
+            })
+            .first();
+    }
+
+    public async loadForSerialization(equipmentType: EquipmentType, language: Language): Promise<EquipmentType> {
+        await equipmentType.load((equipmentTypeQuery): void => {
+            equipmentTypeQuery
+                .load('equipment', (equipmentQuery): void => {
+                    equipmentQuery
+                        .preload('translations', (equipmentTranslationQuery): void => {
+                            equipmentTranslationQuery.whereHas('language', (languageQuery): void => {
+                                languageQuery.where('code', language.code);
+                            });
+                        })
+                        .preload('thumbnail');
+                })
+                .load('translations', (translationQuery): void => {
+                    translationQuery.whereHas('language', (languageQuery): void => {
+                        languageQuery.where('code', language.code);
+                    });
+                });
+        });
+
+        return equipmentType;
     }
 }

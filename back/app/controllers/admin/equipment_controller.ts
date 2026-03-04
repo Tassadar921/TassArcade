@@ -14,7 +14,7 @@ import EquipmentRepository from '#repositories/equipment_repository';
 import PaginatedEquipments from '#types/paginated/paginated_equipments';
 import Equipment from '#models/equipment';
 import EquipmentType from '#models/equipment_type';
-import { DeleteEquipmentResult } from '#types/serialized/delete_equipment_result';
+import { DeleteEquipmentResult } from '#types/delete_equipment_result';
 import SerializedLanguage from '#types/serialized/serialized_language';
 import Language from '#models/language';
 import LanguageRepository from '#repositories/language_repository';
