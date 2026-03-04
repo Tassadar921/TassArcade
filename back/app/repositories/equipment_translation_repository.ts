@@ -10,10 +10,10 @@ export default class EquipmentTranslationRepository extends BaseRepository<typeo
 
     public async getFromEquipmentAndLanguageCode(equipment: Equipment, languageCode: SupportedLocale): Promise<EquipmentTranslation | null> {
         return this.Model.query()
-            .select('equipment_translations')
-            .leftJoin('languages', 'equipment_translations.language_id', 'languages.id')
-            .where('languages.code', languageCode)
-            .andWhere('equipment_translations.equipment_id', equipment.id)
+            .whereHas('language', (query) => {
+                query.where('code', languageCode);
+            })
+            .andWhere('equipment_id', equipment.id)
             .first();
     }
 

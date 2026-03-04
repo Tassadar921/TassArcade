@@ -15,16 +15,16 @@
 
     let { languages, equipment, equipmentTranslations }: Props = $props();
 
-    let translations = $derived(
-        languages.map((language: SerializedLanguage) => {
-            return {
-                code: language.code,
-                name: equipmentTranslations ? equipmentTranslations.find((translation: SerializedEquipmentTranslation) => translation.language.code === language.code)?.name || '' : '',
-            };
-        })
-    );
-    let category = $derived(equipment?.category || '');
+    let translations: { code: string; name: string }[] = $state([]);
+    let category = $state(equipment?.category || '');
     let thumbnail: File | undefined = $state();
+
+    const buildTranslations = (languages: SerializedLanguage[], equipmentTranslations?: SerializedEquipmentTranslation[]): { code: string; name: string }[] => {
+        return languages.map((language) => ({
+            code: language.code,
+            name: equipmentTranslations?.find((t) => t.language.code === language.code)?.name ?? '',
+        }));
+    };
 
     const validation = $derived(
         adminEquipmentValidator.safeParse({
@@ -37,7 +37,7 @@
     const canSubmit = $derived(validation.success);
     let errors: any = $state({ formErrors: [], properties: {} });
 
-    $effect(() => {
+    $effect((): void => {
         if (validation.success) {
             errors = { formErrors: [], properties: {} };
         } else {
@@ -45,8 +45,8 @@
         }
     });
 
-    $effect(() => {
-        console.log(equipment?.category, category);
+    $effect((): void => {
+        translations = buildTranslations(languages, equipmentTranslations);
     });
 </script>
 
@@ -68,20 +68,35 @@
                 error={errors.properties?.category?.errors?.[0]}
                 required
             />
-            {#each translations as translation}
-                <div class="flex flex-col gap-2">
-                    <p>{translation.code}</p>
-                    <p>{translation.name}</p>
-                </div>
+            <input type="hidden" name="translations" value={JSON.stringify(translations)} />
+            {#each languages as language}
+                {@const translationIndex = translations.findIndex((t) => t.code === language.code)}
+                {@const translation = translationIndex >= 0 ? translations[translationIndex] : null}
+                {#if translation}
+                    <div class="flex flex-col gap-2">
+                        <div class="flex gap-3">
+                            <img src={`/assets/language-flag/${language.id}`} alt={language.name} class="size-10" />
+                            <Input
+                                name=""
+                                label={m['common.name']()}
+                                min={3}
+                                max={50}
+                                bind:value={translation.name}
+                                error={errors.properties?.translations?.items?.[translationIndex]?.properties?.name?.errors?.[0]}
+                                required
+                            />
+                        </div>
+                    </div>
+                {/if}
             {/each}
         </div>
         <div>
             <FileUpload
                 name="thumbnail"
-                accept="png jpg jpeg gif webp svg"
+                accept="svg"
                 fileName={equipment?.thumbnail?.name}
-                title={m['admin.user.new.profile-picture.title']()}
-                description={m['admin.user.new.profile-picture.description']()}
+                title={m['admin.equipment.fields.thumbnail.title']()}
+                description={m['admin.equipment.fields.thumbnail.description']()}
                 pathPrefix="equipment-thumbnail"
                 id={equipment?.id || ''}
                 bind:file={thumbnail}

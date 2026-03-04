@@ -124,7 +124,7 @@ export default class EquipmentRepository extends BaseRepository<typeof Equipment
         return equipment;
     }
 
-    public async getOne(equipmentId: string, language: Language): Promise<Equipment> {
+    public async getOneById(equipmentId: string, language: Language): Promise<Equipment | null> {
         return this.Model.query()
             .where('id', equipmentId)
             .preload('thumbnail')
@@ -133,6 +133,18 @@ export default class EquipmentRepository extends BaseRepository<typeof Equipment
                     languageQuery.where('code', language.code);
                 });
             })
-            .firstOrFail();
+            .first();
+    }
+
+    public async getOneByCategory(category: string, language: Language): Promise<Equipment | null> {
+        return this.Model.query()
+            .where('category', category)
+            .preload('thumbnail')
+            .preload('translations', (equipmentTranslationQuery): void => {
+                equipmentTranslationQuery.whereHas('language', (languageQuery): void => {
+                    languageQuery.where('code', language.code);
+                });
+            })
+            .first();
     }
 }

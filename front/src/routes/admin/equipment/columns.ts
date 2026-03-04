@@ -35,9 +35,9 @@ export const getEquipmentsColumns = (onSort: (field: string, order: 'asc' | 'des
         enableHiding: false,
     },
     {
-        header: m['admin.equipment.fields.thumbnail'](),
+        header: m['admin.equipment.fields.thumbnail.title'](),
         meta: {
-            headerName: m['admin.equipment.fields.thumbnail'](),
+            headerName: m['admin.equipment.fields.thumbnail.title'](),
         },
         cell: ({ row }) =>
             renderComponent(DatatableThumbnail, {

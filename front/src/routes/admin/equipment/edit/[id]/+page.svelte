@@ -4,8 +4,6 @@
     import { Breadcrumb } from '$lib/components/ui/breadcrumb';
     import { m } from '#lib/paraglide/messages';
     import AdminEquipmentForm from '#lib/partials/admin/equipment/AdminEquipmentForm.svelte';
-
-    console.log(page.data.equipment);
 </script>
 
 <Title title={page.data.equipment.name} />

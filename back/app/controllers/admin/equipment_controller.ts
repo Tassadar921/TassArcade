@@ -7,7 +7,6 @@ import path from 'node:path';
 import FileTypeEnum from '#types/enum/file_type_enum';
 import FileService from '#services/file_service';
 import { MultipartFile } from '@adonisjs/bodyparser/types';
-import { cuid } from '@adonisjs/core/helpers';
 import SlugifyService from '#services/slugify_service';
 import StringService from '#services/string_service';
 import { createOrUpdateEquipmentValidator, deleteEquipmentsValidator, getAdminEquipmentValidator, searchAdminEquipmentsValidator } from '#validators/admin/equipment';
@@ -76,6 +75,18 @@ export default class AdminEquipmentController {
     }
 
     public async create({ request, response, i18n, language }: HttpContext) {
+        const rawTranslations = request.input('translations');
+
+        if (typeof rawTranslations === 'string') {
+            try {
+                request.updateBody({
+                    translations: JSON.parse(rawTranslations),
+                });
+            } catch {
+                return response.badRequest({ message: 'Invalid translations JSON' });
+            }
+        }
+
         const { category, translations, thumbnail: inputThumbnail } = await request.validateUsing(createOrUpdateEquipmentValidator);
 
         let equipment: Equipment | null = await this.equipmentRepository.findOneBy({ category });
@@ -107,24 +118,44 @@ export default class AdminEquipmentController {
         await Promise.all([equipment.load('thumbnail'), cache.deleteByTag({ tags: ['admin-equipments'] })]);
 
         return response.created({
-            user: equipment.apiSerialize(),
-            message: i18n.t('messages.admin.user.create.success', { name: translations.find((translation) => translation.code === language.code)?.name }),
+            equipment: equipment.apiSerializeLight(),
+            message: i18n.t('messages.admin.equipment.create.success', { name: translations.find((translation) => translation.code === language.code)?.name }),
         });
     }
 
     public async update({ request, response, i18n, language: currentLanguage }: HttpContext) {
+        const rawTranslations = request.input('translations');
+
+        if (typeof rawTranslations === 'string') {
+            try {
+                request.updateBody({
+                    ...request.all(),
+                    translations: JSON.parse(rawTranslations),
+                });
+            } catch {
+                return response.badRequest({ message: 'Invalid translations JSON' });
+            }
+        }
+
         const { category, translations, thumbnail: inputThumbnail } = await request.validateUsing(createOrUpdateEquipmentValidator);
 
-        const equipment: Equipment = await this.equipmentRepository.firstOrFail({ category }, ['thumbnail']);
-        let thumbnailChanged: boolean = false;
+        console.log(translations);
 
-        if (inputThumbnail) {
-            if (!this.areSameFiles(equipment.thumbnail, inputThumbnail)) {
-                thumbnailChanged = true;
-                this.fileService.delete(equipment.thumbnail);
-            }
+        const equipment: Equipment | null = await this.equipmentRepository.getOneByCategory(category, currentLanguage);
+        if (!equipment) {
+            return response.notFound({ error: i18n.t('messages.admin.equipment.get.error.not-found') });
+        }
+
+        if (!this.areSameFiles(equipment.thumbnail, inputThumbnail)) {
+            this.fileService.delete(equipment.thumbnail);
+
             const thumbnail: File = await this.processInputThumbnail(inputThumbnail);
             equipment.thumbnailId = thumbnail.id;
+
+            await equipment.save();
+
+            await equipment.thumbnail.delete();
+
             await Promise.all([
                 equipment.load('thumbnail'),
                 cache.set({
@@ -136,43 +167,42 @@ export default class AdminEquipmentController {
             ]);
         }
 
-        await equipment.save();
-
-        if (thumbnailChanged) {
-            await equipment.thumbnail.delete();
-        }
-
         let currentEquipmentTranslation: EquipmentTranslation | undefined;
 
         await Promise.all([
             cache.deleteByTag({ tags: ['admin-equipments', `admin-equipment:${equipment.id}`] }),
             translations.map(async (translation): Promise<void> => {
-                let equipmentTranslation: EquipmentTranslation | null = await this.equipmentTranslationRepository.getFromEquipmentAndLanguageCode(equipment, translation.code as SupportedLocale);
-                if (!equipmentTranslation) {
-                    const language: Language = await this.languageRepository.firstOrFail({ code: translation.code as SupportedLocale });
-                    equipmentTranslation = await EquipmentTranslation.create({
-                        name: translation.name,
-                        equipmentId: equipment.id,
-                        languageId: language.id,
-                    });
-                } else {
-                    equipmentTranslation.name = translation.name;
-                    await equipmentTranslation.save();
-                }
+                try {
+                    let equipmentTranslation: EquipmentTranslation | null = await this.equipmentTranslationRepository.getFromEquipmentAndLanguageCode(equipment, translation.code as SupportedLocale);
 
-                if (translation.code === currentLanguage.code) {
-                    currentEquipmentTranslation = equipmentTranslation;
+                    if (!equipmentTranslation) {
+                        const language: Language = await this.languageRepository.firstOrFail({ code: translation.code as SupportedLocale });
+                        equipmentTranslation = await EquipmentTranslation.create({
+                            name: translation.name,
+                            equipmentId: equipment.id,
+                            languageId: language.id,
+                        });
+                    } else {
+                        equipmentTranslation.name = translation.name;
+                        await equipmentTranslation.save();
+                    }
+
+                    if (translation.code === currentLanguage.code) {
+                        currentEquipmentTranslation = equipmentTranslation;
+                    }
+                } catch (error) {
+                    throw error;
                 }
             }),
         ]);
 
-        return response.ok({ equipment: equipment.apiSerialize(), message: i18n.t('messages.admin.equipment.update.success', { name: currentEquipmentTranslation?.name }) });
+        return response.ok({ equipment: equipment.apiSerializeLight(), message: i18n.t('messages.admin.equipment.update.success', { name: currentEquipmentTranslation?.name || '' }) });
     }
 
     public async get({ request, response, i18n, language }: HttpContext) {
         const { id } = await getAdminEquipmentValidator.validate(request.params());
 
-        const equipment: Equipment | null = await this.equipmentRepository.getOne(id, language);
+        const equipment: Equipment | null = await this.equipmentRepository.getOneById(id, language);
         if (!equipment) {
             return response.notFound({ error: i18n.t('messages.admin.equipment.get.error.not-found') });
         }
@@ -210,26 +240,30 @@ export default class AdminEquipmentController {
     }
 
     private async processInputThumbnail(inputThumbnail: MultipartFile): Promise<File> {
-        const extension: string = path.extname(inputThumbnail.clientName);
-        inputThumbnail.clientName = `${cuid()}-${this.slugifyService.slugify(inputThumbnail.clientName)}`;
-        const thumbnailPath: string = 'static/equipment-thumbnail';
-        await inputThumbnail.move(app.makePath(thumbnailPath));
-        return await File.create({
-            name: inputThumbnail.clientName,
-            path: `${thumbnailPath}/${inputThumbnail.clientName}`,
-            extension,
-            mimeType: `${inputThumbnail.type}/${inputThumbnail.subtype}`,
-            size: inputThumbnail.size,
-            type: FileTypeEnum.EQUIPMENT_THUMBNAIL,
-        });
+        try {
+            const originalName: string = inputThumbnail.clientName;
+            const slugifiedName: string = this.slugifyService.slugify(originalName);
+            const uniqueFilename: string = `${slugifiedName.replace('.svg', '')}-${Date.now()}.svg`;
+
+            const thumbnailPath: string = 'static/equipment-thumbnail';
+            const fullPath: string = app.makePath(thumbnailPath);
+
+            await inputThumbnail.move(fullPath, { name: uniqueFilename });
+
+            return await File.create({
+                name: uniqueFilename,
+                path: `${thumbnailPath}/${uniqueFilename}`,
+                extension: path.extname(originalName),
+                mimeType: `${inputThumbnail.type}/${inputThumbnail.subtype}`,
+                size: inputThumbnail.size,
+                type: FileTypeEnum.EQUIPMENT_THUMBNAIL,
+            });
+        } catch (error) {
+            throw error;
+        }
     }
 
     private areSameFiles(file: File, multipartFile: MultipartFile): boolean {
-        return (
-            file.extension === path.extname(multipartFile.clientName) &&
-            file.mimeType === `${multipartFile.type}/${multipartFile.subtype}` &&
-            file.size === multipartFile.size &&
-            file.type === multipartFile.type
-        );
+        return file.extension === path.extname(multipartFile.clientName) && file.mimeType === multipartFile.headers['content-type'] && file.size === multipartFile.size;
     }
 }

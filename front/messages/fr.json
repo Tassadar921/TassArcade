@@ -473,7 +473,10 @@
                         "max": "La catégorie est trop longue."
                     }
                 },
-                "thumbnail": "Miniature"
+                "thumbnail": {
+                    "title": "Vignette",
+                    "description": "Drapeau de la langue (image carrée recommandée), SVG uniquement."
+                }
             },
             "delete": {
                 "title": "Supprimer {equipments}",

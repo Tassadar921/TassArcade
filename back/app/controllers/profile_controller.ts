@@ -116,13 +116,19 @@ export default class ProfileController {
                 await oldProfilePicture.delete();
             }
 
-            profilePicture.clientName = `${cuid()}-${this.slugifyService.slugify(profilePicture.clientName)}`;
-            const profilePicturePath: string = `static/profile-picture`;
-            await profilePicture.move(app.makePath(profilePicturePath));
+            const originalName: string = profilePicture.clientName;
+            const slugifiedName: string = this.slugifyService.slugify(originalName);
+            const extension: string = path.extname(originalName);
+            const uniqueFilename: string = `${slugifiedName.replace(extension, '')}-${Date.now()}${extension}`;
+
+            const profilePicturePath: string = 'static/profile-picture';
+            const fullPath: string = app.makePath(profilePicturePath);
+
+            await profilePicture.move(fullPath, { name: uniqueFilename });
             const newProfilePicture: File = await File.create({
-                name: profilePicture.clientName,
-                path: `${profilePicturePath}/${profilePicture.clientName}`,
-                extension: path.extname(profilePicture.clientName),
+                name: uniqueFilename,
+                path: `${profilePicturePath}/${uniqueFilename}`,
+                extension,
                 mimeType: `${profilePicture.type}/${profilePicture.subtype}`,
                 size: profilePicture.size,
                 type: FileTypeEnum.PROFILE_PICTURE,

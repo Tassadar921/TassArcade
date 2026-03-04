@@ -55,7 +55,7 @@ export default class FileController {
         try {
             const filePath: string = await cache.getOrSet({
                 key: `equipment-thumbnail:${equipmentId}`,
-                tags: [`equipment-thumbnail:${equipmentId}`],
+                tags: [`equipment:${equipmentId}`],
                 ttl: '1h',
                 factory: async (): Promise<string> => {
                     const equipment: Equipment = await this.equipmentRepository.firstOrFail({ id: equipmentId }, ['thumbnail']);

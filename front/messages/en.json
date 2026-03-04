@@ -473,7 +473,10 @@
                         "max": "The category is too long."
                     }
                 },
-                "thumbnail": "Thumbnail"
+                "thumbnail": {
+                    "title": "Thumbnail",
+                    "description": "Language flag (square image recommended), SVG only."
+                }
             },
             "delete": {
                 "title": "Delete {equipments}",

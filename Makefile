@@ -25,6 +25,7 @@ clear-cache:
 	docker restart back
 
 db-fresh:
+	rm -rf back/static
 	./compose-env.sh exec -T backend node ace migration:fresh
 	./compose-env.sh exec -T backend node ace migration:fresh --connection=logs
 

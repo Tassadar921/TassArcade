@@ -146,26 +146,31 @@ export default class AdminUserController {
     }
 
     private async processInputProfilePicture(inputProfilePicture: MultipartFile): Promise<File> {
-        const extension: string = path.extname(inputProfilePicture.clientName);
-        inputProfilePicture.clientName = `${cuid()}-${this.slugifyService.slugify(inputProfilePicture.clientName)}`;
-        const profilePicturePath: string = `static/profile-picture`;
-        await inputProfilePicture.move(app.makePath(profilePicturePath));
-        return await File.create({
-            name: inputProfilePicture.clientName,
-            path: `${profilePicturePath}/${inputProfilePicture.clientName}`,
-            extension,
-            mimeType: `${inputProfilePicture.type}/${inputProfilePicture.subtype}`,
-            size: inputProfilePicture.size,
-            type: FileTypeEnum.PROFILE_PICTURE,
-        });
+        try {
+            const originalName: string = inputProfilePicture.clientName;
+            const slugifiedName: string = this.slugifyService.slugify(originalName);
+            const extension: string = path.extname(originalName);
+            const uniqueFilename: string = `${slugifiedName.replace(extension, '')}-${Date.now()}${extension}`;
+
+            const profilePicturePath: string = 'static/profile-picture';
+            const fullPath: string = app.makePath(profilePicturePath);
+
+            await inputProfilePicture.move(fullPath, { name: uniqueFilename });
+
+            return await File.create({
+                name: uniqueFilename,
+                path: `${profilePicturePath}/${uniqueFilename}`,
+                extension,
+                mimeType: `${inputProfilePicture.type}/${inputProfilePicture.subtype}`,
+                size: inputProfilePicture.size,
+                type: FileTypeEnum.PROFILE_PICTURE,
+            });
+        } catch (error) {
+            throw error;
+        }
     }
 
     private areSameFiles(file: File, multipartFile: MultipartFile): boolean {
-        return (
-            file.extension === path.extname(multipartFile.clientName) &&
-            file.mimeType === `${multipartFile.type}/${multipartFile.subtype}` &&
-            file.size === multipartFile.size &&
-            file.type === multipartFile.type
-        );
+        return file.extension === path.extname(multipartFile.clientName) && file.mimeType === multipartFile.headers['content-type'] && file.size === multipartFile.size;
     }
 }

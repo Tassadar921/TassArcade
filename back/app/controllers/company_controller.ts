@@ -25,7 +25,6 @@ import CountryService from '#services/country_service';
 import FileService from '#services/file_service';
 import OpenAiApiService from '#services/open_ai_service';
 import { OpenAiCompanyVerificationResult } from '#types/open-ai/open_ai_company_verification_result';
-import { cuid } from '@adonisjs/core/helpers';
 import app from '@adonisjs/core/services/app';
 import File from '#models/file';
 import path from 'node:path';
@@ -331,13 +330,19 @@ export default class CompanyController {
             await oldLogo.delete();
         }
 
-        logo.clientName = `${cuid()}-${this.slugifyService.slugify(logo.clientName)}`;
-        const logoPath: string = `static/company-logo`;
-        await logo.move(app.makePath(logoPath));
+        const originalName: string = logo.clientName;
+        const slugifiedName: string = this.slugifyService.slugify(originalName);
+        const extension: string = path.extname(originalName);
+        const uniqueFilename: string = `${slugifiedName.replace(extension, '')}-${Date.now()}${extension}`;
+
+        const logoPath: string = 'static/company-logo';
+        const fullPath: string = app.makePath(logoPath);
+
+        await logo.move(fullPath, { name: uniqueFilename });
         const newLogo: File = await File.create({
-            name: logo.clientName,
-            path: `${logoPath}/${logo.clientName}`,
-            extension: path.extname(logo.clientName),
+            name: uniqueFilename,
+            path: `${logoPath}/${uniqueFilename}`,
+            extension,
             mimeType: `${logo.type}/${logo.subtype}`,
             size: logo.size,
             type: FileTypeEnum.COMPANY_LOGO,
