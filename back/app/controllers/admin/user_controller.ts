@@ -32,7 +32,7 @@ export default class AdminUserController {
         return response.ok(
             await cache.getOrSet({
                 key: `admin-users:query:${query.toLowerCase()}:page:${page}:limit:${limit}:sortBy:${inputSortBy}`,
-                tags: [`admin-users`],
+                tags: [`users`],
                 ttl: '1h',
                 factory: async (): Promise<PaginatedUsers> => {
                     const [field, order] = inputSortBy.split(':');
@@ -52,7 +52,7 @@ export default class AdminUserController {
             messages: await Promise.all(
                 statuses.map(async (status: DeleteUserResult): Promise<{ id: string; message: string; isSuccess: boolean }> => {
                     if (status.isDeleted) {
-                        await cache.deleteByTag({ tags: ['admin-users', `admin-user:${status.id}`] });
+                        await cache.deleteByTag({ tags: ['users', `user:${status.id}`] });
                         return { id: status.id, message: i18n.t(`messages.admin.user.delete.success`, { username: status.username }), isSuccess: true };
                     } else {
                         if (status.isCurrentUser) {
@@ -86,7 +86,7 @@ export default class AdminUserController {
             password: cuid(),
         });
 
-        await Promise.all([user.load('profilePicture'), cache.deleteByTag({ tags: ['admin-users'] })]);
+        await Promise.all([user.load('profilePicture'), cache.deleteByTag({ tags: ['users'] })]);
 
         return response.created({ user: user.apiSerialize(), message: i18n.t('messages.admin.user.create.success', { email, username }) });
     }
@@ -121,7 +121,7 @@ export default class AdminUserController {
             await user.profilePicture.delete();
         }
 
-        await Promise.all([cache.deleteByTag({ tags: ['admin-users', `admin-user:${user.id}`] })]);
+        await Promise.all([cache.deleteByTag({ tags: ['users', `user:${user.id}`] })]);
 
         return response.ok({ user: user.apiSerialize(), message: i18n.t('messages.admin.user.update.success', { username }) });
     }
@@ -136,7 +136,7 @@ export default class AdminUserController {
         return response.ok(
             await cache.getOrSet({
                 key: `admin-user:${user.id}`,
-                tags: [`admin-user:${user.id}`],
+                tags: [`user:${user.id}`],
                 ttl: '1h',
                 factory: (): SerializedUser => {
                     return user.apiSerialize();
@@ -161,7 +161,7 @@ export default class AdminUserController {
                 name: uniqueFilename,
                 path: `${profilePicturePath}/${uniqueFilename}`,
                 extension,
-                mimeType: `${inputProfilePicture.type}/${inputProfilePicture.subtype}`,
+                mimeType: inputProfilePicture.headers['content-type'],
                 size: inputProfilePicture.size,
                 type: FileTypeEnum.PROFILE_PICTURE,
             });

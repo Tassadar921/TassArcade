@@ -151,7 +151,7 @@ export default class OauthController {
             acceptedTermsAndConditions: true,
             role: UserRoleEnum.USER,
         });
-        await cache.deleteByTag({ tags: [`admin-users`] });
+        await cache.deleteByTag({ tags: [`users`] });
 
         await UserToken.create({
             userId: createdUser.id,

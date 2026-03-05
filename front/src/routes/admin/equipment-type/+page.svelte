@@ -15,7 +15,6 @@
     let sortBy: string = $state('equipment_type_translations.name:asc');
 
     onMount(async (): Promise<void> => {
-        console.log(page.data);
         if (page.data.isSuccess) {
             paginatedEquipmentTypes = page.data.equipmentTypes;
         } else {

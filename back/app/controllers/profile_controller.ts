@@ -135,13 +135,7 @@ export default class ProfileController {
             });
             user.profilePictureId = newProfilePicture.id;
 
-            await cache.deleteByTag({ tags: [`user:${user.id}`, `admin-users`, `admin-user:${user.id}`] });
-            await cache.set({
-                key: `user-profile-picture:${user.id}`,
-                tags: [`user:${user.id}`],
-                ttl: '1h',
-                value: app.makePath(newProfilePicture.path),
-            });
+            await cache.deleteByTag({ tags: [`user:${user.id}`, 'users', `user:${user.id}`] });
         }
 
         await user.save();

@@ -3,7 +3,7 @@ import { sortByEquipmentTypeRule } from '#validators/custom/equipment_type';
 import { supportedLocales } from '#config/i18n';
 
 const translationSchema = vine.object({
-    code: vine
+    languageCode: vine
         .string()
         .trim()
         .fixedLength(2)

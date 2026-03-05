@@ -350,13 +350,6 @@ export default class CompanyController {
 
         company.logoId = newLogo.id;
 
-        await cache.set({
-            key: `company-logo:${company.id}`,
-            tags: [`company:${company.id}`],
-            ttl: '1h',
-            value: app.makePath(newLogo.path),
-        });
-
         return company;
     }
 }

@@ -20,7 +20,7 @@ upgrade:
 list-routes:
 	cd back && node ace list:routes
 
-clear-cache:
+cache:
 	docker exec redis redis-cli FLUSHALL
 	docker restart back
 
@@ -42,7 +42,7 @@ db-factory:
 init-logs-db:
 	./init-logs-db.sh
 
-db: init-logs-db db-fresh db-seed db-factory clear-cache
+db: init-logs-db db-fresh db-seed db-factory cache
 
 paraglide:
 	cd front && npx paraglide-js compile

@@ -34,7 +34,7 @@ export default class AdminEquipmentTypeController {
         return response.ok(
             await cache.getOrSet({
                 key: `equipment-types:query:${query}:page:${page}:limit:${limit}:sortBy:${inputSortBy}`,
-                tags: ['admin-equipment-types'],
+                tags: ['equipment-types'],
                 ttl: '24h',
                 factory: async (): Promise<PaginatedEquipmentTypes> => {
                     const [field, order] = inputSortBy.split(':');
@@ -57,7 +57,7 @@ export default class AdminEquipmentTypeController {
             messages: await Promise.all(
                 statuses.map(async (status: DeleteEquipmentTypeResult): Promise<{ id: string; message: string; isSuccess: boolean }> => {
                     if (status.isDeleted) {
-                        await cache.deleteByTag({ tags: ['admin-equipment-types', `admin-equipment-type:${status.id}`, 'equipments'] });
+                        await cache.deleteByTag({ tags: ['equipment-types', `equipment-type:${status.id}`, 'equipments'] });
                         return { id: status.id, message: i18n.t(`messages.admin.equipment-type.delete.success`, { name: status.name }), isSuccess: true };
                     } else {
                         return { id: status.id, message: i18n.t(`messages.admin.equipment-type.delete.error.default`, { id: status.id }), isSuccess: false };
@@ -100,7 +100,7 @@ export default class AdminEquipmentTypeController {
 
         await Promise.all(
             translations.map(async (translation) => {
-                const language: Language = await this.languageRepository.firstOrFail({ code: translation.code as SupportedLocale });
+                const language: Language = await this.languageRepository.firstOrFail({ code: translation.languageCode as SupportedLocale });
 
                 await EquipmentTypeTranslation.create({
                     name: translation.name,
@@ -112,11 +112,11 @@ export default class AdminEquipmentTypeController {
 
         equipmentType = await this.equipmentTypeRepository.loadForSerialization(equipmentType, language);
 
-        await cache.deleteByTag({ tags: ['admin-equipment-types'] });
+        await cache.deleteByTag({ tags: ['equipment-types'] });
 
         return response.created({
             equipmentType: equipmentType.apiSerializeExtended(),
-            message: i18n.t('messages.admin.equipment-type.create.success', { name: translations.find((translation) => translation.code === language.code)?.name }),
+            message: i18n.t('messages.admin.equipment-type.create.success', { name: translations.find((translation) => translation.languageCode === language.code)?.name }),
         });
     }
 
@@ -152,16 +152,16 @@ export default class AdminEquipmentTypeController {
         let currentEquipmentTypeTranslation: EquipmentTypeTranslation | undefined;
 
         await Promise.all([
-            cache.deleteByTag({ tags: ['admin-equipment-types', `admin-equipment-type:${equipmentType.id}`] }),
+            cache.deleteByTag({ tags: ['equipment-types', `equipment-type:${equipmentType.id}`] }),
             translations.map(async (translation): Promise<void> => {
                 try {
                     let equipmentTypeTranslation: EquipmentTypeTranslation | null = await this.equipmentTypeTranslationRepository.getFromEquipmentTypeAndLanguageCode(
                         equipmentType,
-                        translation.code as SupportedLocale
+                        translation.languageCode as SupportedLocale
                     );
 
                     if (!equipmentTypeTranslation) {
-                        const language: Language = await this.languageRepository.firstOrFail({ code: translation.code as SupportedLocale });
+                        const language: Language = await this.languageRepository.firstOrFail({ code: translation.languageCode as SupportedLocale });
                         equipmentTypeTranslation = await EquipmentTypeTranslation.create({
                             name: translation.name,
                             equipmentTypeId: equipmentType.id,
@@ -172,7 +172,7 @@ export default class AdminEquipmentTypeController {
                         await equipmentTypeTranslation.save();
                     }
 
-                    if (translation.code === currentLanguage.code) {
+                    if (translation.languageCode === currentLanguage.code) {
                         currentEquipmentTypeTranslation = equipmentTypeTranslation;
                     }
                 } catch (error) {
@@ -190,8 +190,6 @@ export default class AdminEquipmentTypeController {
     public async get({ request, response, i18n, language }: HttpContext) {
         const { id } = await getAdminEquipmentTypeValidator.validate(request.params());
 
-        await cache.deleteByTag({ tags: ['admin-equipment-types', `admin-equipment-type:${id}`] });
-
         const equipmentType: EquipmentType | null = await this.equipmentTypeRepository.getOneById(id, language);
         if (!equipmentType) {
             return response.notFound({ error: i18n.t('messages.admin.equipment-type.get.error.not-found') });
@@ -200,7 +198,7 @@ export default class AdminEquipmentTypeController {
         return response.ok({
             equipmentType: await cache.getOrSet({
                 key: `admin-equipment-type:${equipmentType.id}`,
-                tags: [`admin-equipment-type:${equipmentType.id}`],
+                tags: [`equipment-type:${equipmentType.id}`],
                 ttl: '1h',
                 factory: (): SerializedEquipmentTypeExtended => {
                     return equipmentType.apiSerializeExtended();
@@ -208,7 +206,7 @@ export default class AdminEquipmentTypeController {
             }),
             equipmentTypeTranslations: await cache.getOrSet({
                 key: `admin-equipment-type-translations:${equipmentType.id}`,
-                tags: [`admin-equipment-type:${equipmentType.id}`],
+                tags: [`equipment-type:${equipmentType.id}`],
                 ttl: '1h',
                 factory: async (): Promise<SerializedEquipmentTypeTranslation[]> => {
                     const equipmentTypeTranslations: EquipmentTypeTranslation[] = await this.equipmentTypeTranslationRepository.getAllFromEquipmentType(equipmentType);

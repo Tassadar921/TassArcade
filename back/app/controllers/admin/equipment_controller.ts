@@ -38,10 +38,12 @@ export default class AdminEquipmentController {
     public async getAll({ request, response, language }: HttpContext) {
         const { query, page, limit, sortBy: inputSortBy } = await request.validateUsing(searchAdminEquipmentsValidator);
 
+        await cache.deleteByTag({ tags: ['equipments'] });
+
         return response.ok(
             await cache.getOrSet({
                 key: `equipments:query:${query}:page:${page}:limit:${limit}:sortBy:${inputSortBy}`,
-                tags: ['admin-equipments'],
+                tags: ['equipments'],
                 ttl: '24h',
                 factory: async (): Promise<PaginatedEquipments> => {
                     const [field, order] = inputSortBy.split(':');
@@ -64,7 +66,7 @@ export default class AdminEquipmentController {
             messages: await Promise.all(
                 statuses.map(async (status: DeleteEquipmentResult): Promise<{ id: string; message: string; isSuccess: boolean }> => {
                     if (status.isDeleted) {
-                        await cache.deleteByTag({ tags: ['admin-equipments', `admin-equipment:${status.id}`, 'equipment-types'] });
+                        await cache.deleteByTag({ tags: ['equipments', `equipment:${status.id}`, 'equipment-types'] });
                         return { id: status.id, message: i18n.t(`messages.admin.equipment.delete.success`, { name: status.name }), isSuccess: true };
                     } else {
                         return { id: status.id, message: i18n.t(`messages.admin.equipment.delete.error.default`, { id: status.id }), isSuccess: false };
@@ -116,7 +118,7 @@ export default class AdminEquipmentController {
 
         equipment = await this.equipmentRepository.loadForSerialization(equipment, language);
 
-        await Promise.all([equipment.load('thumbnail'), cache.deleteByTag({ tags: ['admin-equipments'] })]);
+        await Promise.all([equipment.load('thumbnail'), cache.deleteByTag({ tags: ['equipments'] })]);
 
         return response.created({
             equipment: equipment.apiSerializeLight(),
@@ -140,8 +142,6 @@ export default class AdminEquipmentController {
 
         const { category, translations, thumbnail: inputThumbnail } = await request.validateUsing(createOrUpdateEquipmentValidator);
 
-        console.log(translations);
-
         const equipment: Equipment | null = await this.equipmentRepository.getOneByCategory(category, currentLanguage);
         if (!equipment) {
             return response.notFound({ error: i18n.t('messages.admin.equipment.get.error.not-found') });
@@ -154,24 +154,14 @@ export default class AdminEquipmentController {
             equipment.thumbnailId = thumbnail.id;
 
             await equipment.save();
-
             await equipment.thumbnail.delete();
-
-            await Promise.all([
-                equipment.load('thumbnail'),
-                cache.set({
-                    key: `equipment-thumbnail:${equipment.id}`,
-                    tags: [`equipment:${equipment.id}`],
-                    ttl: '1h',
-                    value: app.makePath(thumbnail.path),
-                }),
-            ]);
+            await equipment.load('thumbnail');
         }
 
         let currentEquipmentTranslation: EquipmentTranslation | undefined;
 
         await Promise.all([
-            cache.deleteByTag({ tags: ['admin-equipments', `admin-equipment:${equipment.id}`] }),
+            cache.deleteByTag({ tags: ['equipments', `equipment:${equipment.id}`] }),
             translations.map(async (translation): Promise<void> => {
                 try {
                     let equipmentTranslation: EquipmentTranslation | null = await this.equipmentTranslationRepository.getFromEquipmentAndLanguageCode(
@@ -214,7 +204,7 @@ export default class AdminEquipmentController {
         return response.ok({
             equipment: await cache.getOrSet({
                 key: `admin-equipment:${equipment.id}`,
-                tags: [`admin-equipment:${equipment.id}`],
+                tags: [`equipment:${equipment.id}`],
                 ttl: '1h',
                 factory: (): SerializedEquipmentLight => {
                     return equipment.apiSerializeLight();
@@ -222,7 +212,7 @@ export default class AdminEquipmentController {
             }),
             equipmentTranslations: await cache.getOrSet({
                 key: `admin-equipment-translations:${equipment.id}`,
-                tags: [`admin-equipment:${equipment.id}`],
+                tags: [`equipment:${equipment.id}`],
                 ttl: '1h',
                 factory: async (): Promise<SerializedEquipmentTranslation[]> => {
                     const equipmentTranslations: EquipmentTranslation[] = await this.equipmentTranslationRepository.getAllFromEquipment(equipment);
@@ -258,7 +248,7 @@ export default class AdminEquipmentController {
                 name: uniqueFilename,
                 path: `${thumbnailPath}/${uniqueFilename}`,
                 extension: path.extname(originalName),
-                mimeType: `${inputThumbnail.type}/${inputThumbnail.subtype}`,
+                mimeType: inputThumbnail.headers['content-type'],
                 size: inputThumbnail.size,
                 type: FileTypeEnum.EQUIPMENT_THUMBNAIL,
             });
