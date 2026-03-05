@@ -80,6 +80,7 @@ export default class AdminEquipmentController {
         if (typeof rawTranslations === 'string') {
             try {
                 request.updateBody({
+                    ...request.all(),
                     translations: JSON.parse(rawTranslations),
                 });
             } catch {
@@ -103,7 +104,7 @@ export default class AdminEquipmentController {
 
         await Promise.all(
             translations.map(async (translation) => {
-                const language: Language = await this.languageRepository.firstOrFail({ code: translation.code as SupportedLocale });
+                const language: Language = await this.languageRepository.firstOrFail({ code: translation.languageCode as SupportedLocale });
 
                 await EquipmentTranslation.create({
                     name: translation.name,
@@ -119,7 +120,7 @@ export default class AdminEquipmentController {
 
         return response.created({
             equipment: equipment.apiSerializeLight(),
-            message: i18n.t('messages.admin.equipment.create.success', { name: translations.find((translation) => translation.code === language.code)?.name }),
+            message: i18n.t('messages.admin.equipment.create.success', { name: translations.find((translation) => translation.languageCode === language.code)?.name }),
         });
     }
 
@@ -173,10 +174,13 @@ export default class AdminEquipmentController {
             cache.deleteByTag({ tags: ['admin-equipments', `admin-equipment:${equipment.id}`] }),
             translations.map(async (translation): Promise<void> => {
                 try {
-                    let equipmentTranslation: EquipmentTranslation | null = await this.equipmentTranslationRepository.getFromEquipmentAndLanguageCode(equipment, translation.code as SupportedLocale);
+                    let equipmentTranslation: EquipmentTranslation | null = await this.equipmentTranslationRepository.getFromEquipmentAndLanguageCode(
+                        equipment,
+                        translation.languageCode as SupportedLocale
+                    );
 
                     if (!equipmentTranslation) {
-                        const language: Language = await this.languageRepository.firstOrFail({ code: translation.code as SupportedLocale });
+                        const language: Language = await this.languageRepository.firstOrFail({ code: translation.languageCode as SupportedLocale });
                         equipmentTranslation = await EquipmentTranslation.create({
                             name: translation.name,
                             equipmentId: equipment.id,
@@ -187,7 +191,7 @@ export default class AdminEquipmentController {
                         await equipmentTranslation.save();
                     }
 
-                    if (translation.code === currentLanguage.code) {
+                    if (translation.languageCode === currentLanguage.code) {
                         currentEquipmentTranslation = equipmentTranslation;
                     }
                 } catch (error) {

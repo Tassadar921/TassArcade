@@ -22,7 +22,7 @@ export const actions: Actions = {
         let isSuccess: boolean = true;
 
         try {
-            const response = await locals.client.post('/api/admin/equipment/create', formData, {
+            const response = await locals.client.post('/api/admin/equipment-type/create', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -41,7 +41,7 @@ export const actions: Actions = {
         if (isSuccess) {
             redirect(
                 303,
-                `/${cookies.get('PARAGLIDE_LOCALE')}/admin/equipment/edit/${data.equipment.id}`,
+                `/${cookies.get('PARAGLIDE_LOCALE')}/admin/equipment-type/edit/${data.equipmentType.id}`,
                 {
                     type: 'success',
                     message: data?.message,

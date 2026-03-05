@@ -1,12 +1,12 @@
 import type { ColumnDef } from '@tanstack/table-core';
 import { m } from '#lib/paraglide/messages';
-import type { SerializedEquipment } from 'backend/types';
+import type { SerializedEquipmentTypeExtended } from 'backend/types';
 import { renderComponent } from '#lib/components/ui/data-table/render-helpers';
 import { Checkbox } from '#lib/components/ui/checkbox';
 import { SortableColumn, DataTableActions } from '#lib/components/ui/data-table';
 import DatatableThumbnail from '#lib/partials/admin/shared/DatatableThumbnail.svelte';
 
-export const getEquipmentsColumns = (onSort: (field: string, order: 'asc' | 'desc') => void, onDelete: (ids: string[]) => void): ColumnDef<SerializedEquipment>[] => [
+export const getEquipmentTypesColumns = (onSort: (field: string, order: 'asc' | 'desc') => void, onDelete: (ids: string[]) => void): ColumnDef<SerializedEquipmentTypeExtended>[] => [
     {
         id: 'select',
         header: ({ table }) =>
@@ -29,7 +29,7 @@ export const getEquipmentsColumns = (onSort: (field: string, order: 'asc' | 'des
         header: () =>
             renderComponent(SortableColumn, {
                 title: m['common.name'](),
-                field: 'equipment_translations.name',
+                field: 'equipment_type_translations.name',
                 onclick: onSort,
             }),
         enableHiding: false,
@@ -41,7 +41,7 @@ export const getEquipmentsColumns = (onSort: (field: string, order: 'asc' | 'des
         },
         cell: ({ row }) =>
             renderComponent(DatatableThumbnail, {
-                equipment: row.original,
+                equipment: row.original.equipment,
             }),
     },
     {

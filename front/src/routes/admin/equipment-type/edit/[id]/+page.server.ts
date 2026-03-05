@@ -1,15 +1,37 @@
-import { type Actions, fail, type RequestEvent } from '@sveltejs/kit';
 import { redirect } from 'sveltekit-flash-message/server';
-import { extractFormData, extractFormErrors } from '#lib/services/requestService';
-import type { FormError } from '../../../../app';
 import type { PageServerLoad } from './$types';
+import { type Actions, fail, type RequestEvent } from '@sveltejs/kit';
+import type { FormError } from '../../../../../app';
+import { extractFormData, extractFormErrors } from '#lib/services/requestService';
 
-export const load: PageServerLoad = async ({ fetch }) => {
-    const response: Response = await fetch('/languages');
+export const load: PageServerLoad = async (event) => {
+    const { locals, params, cookies } = event;
+    try {
+        const response = await locals.client.get(`/api/admin/equipment-type/${params.id}`);
 
-    const { isSuccess, languages } = await response.json();
+        if (response.status < 200 || response.status >= 300) {
+            throw response;
+        }
 
-    return isSuccess && response.ok ? { isSuccess, languages } : { isSuccess: false };
+        return {
+            isSuccess: true,
+            ...response.data,
+        };
+    } catch (error: any) {
+        const form: FormError = {
+            data: {},
+            errors: extractFormErrors(error?.response?.data),
+        };
+
+        cookies.set('formError', JSON.stringify(form), {
+            path: '/',
+            httpOnly: true,
+            sameSite: 'lax',
+            maxAge: 60 * 60 * 24 * 7,
+        });
+
+        redirect(303, `/${cookies.get('PARAGLIDE_LOCALE')}/admin/equipment-type`);
+    }
 };
 
 export const actions: Actions = {
@@ -22,7 +44,7 @@ export const actions: Actions = {
         let isSuccess: boolean = true;
 
         try {
-            const response = await locals.client.post('/api/admin/equipment/create', formData, {
+            const response = await locals.client.post('/api/admin/equipment-type/update', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -40,8 +62,6 @@ export const actions: Actions = {
 
         if (isSuccess) {
             redirect(
-                303,
-                `/${cookies.get('PARAGLIDE_LOCALE')}/admin/equipment/edit/${data.equipment.id}`,
                 {
                     type: 'success',
                     message: data?.message,

@@ -39,6 +39,7 @@ export default class EquipmentType extends BaseModel {
     public apiSerialize(): SerializedEquipmentType {
         return {
             id: this.id,
+            code: this.code,
             name: this.translations?.length ? this.translations[0].name : '',
             createdAt: this.createdAt.toString(),
             updatedAt: this.updatedAt.toString(),
@@ -48,6 +49,7 @@ export default class EquipmentType extends BaseModel {
     public apiSerializeExtended(): SerializedEquipmentTypeExtended {
         return {
             id: this.id,
+            code: this.code,
             name: this.translations?.length ? this.translations[0].name : '',
             equipment: this.equipment.apiSerializeLight(),
             createdAt: this.createdAt.toString(),

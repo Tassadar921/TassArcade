@@ -73,6 +73,7 @@ export default class AdminEquipmentTypeController {
         if (typeof rawTranslations === 'string') {
             try {
                 request.updateBody({
+                    ...request.all(),
                     translations: JSON.parse(rawTranslations),
                 });
             } catch {
@@ -188,6 +189,8 @@ export default class AdminEquipmentTypeController {
 
     public async get({ request, response, i18n, language }: HttpContext) {
         const { id } = await getAdminEquipmentTypeValidator.validate(request.params());
+
+        await cache.deleteByTag({ tags: ['admin-equipment-types', `admin-equipment-type:${id}`] });
 
         const equipmentType: EquipmentType | null = await this.equipmentTypeRepository.getOneById(id, language);
         if (!equipmentType) {

@@ -50,8 +50,6 @@ export const actions: Actions = {
                 },
             });
 
-            console.log(response.data);
-
             if (response.status < 200 || response.status >= 300) {
                 throw response;
             }

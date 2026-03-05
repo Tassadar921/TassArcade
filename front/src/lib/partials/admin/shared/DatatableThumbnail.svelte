@@ -1,9 +1,9 @@
 <script lang="ts">
-    import type { SerializedEquipment } from 'backend/types';
+    import type { SerializedEquipment, SerializedEquipmentLight } from 'backend/types';
     import { mode } from 'mode-watcher';
 
     type Props = {
-        equipment: SerializedEquipment;
+        equipment: SerializedEquipment | SerializedEquipmentLight;
     };
 
     let { equipment }: Props = $props();

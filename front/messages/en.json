@@ -461,9 +461,9 @@
                         "max": "The name is too long."
                     }
                 },
-                "code": {
+                "language-code": {
                     "error": {
-                        "length": "The code must be exactly 2 letters."
+                        "length": "The language code must be exactly 2 letters."
                     }
                 },
                 "category": {
@@ -494,6 +494,46 @@
             },
             "new": {
                 "title": "New equipment"
+            }
+        },
+        "equipment-type": {
+            "title": "Equipment Types",
+            "fields": {
+                "name": {
+                    "error": {
+                        "min": "The name is too short.",
+                        "max": "The name is too long."
+                    }
+                },
+                "language-code": {
+                    "error": {
+                        "length": "The language code must consist of exactly 2 letters."
+                    }
+                },
+                "code": {
+                    "label": "Code",
+                    "error": {
+                        "min": "The code is too short.",
+                        "max": "The code is too long."
+                    }
+                }
+            },
+            "delete": {
+                "title": "Delete {equipmentTypes}",
+                "text": [
+                    {
+                        "declarations": ["input equipmentTypes", "input count", "local countPlural = count: plural"],
+                        "selectors": ["countPlural"],
+                        "match": {
+                            "countPlural=zero": "Are you sure you want to delete {equipmentTypes}? This action is irreversible and will permanently delete the equipment types as well as all associated data.",
+                            "countPlural=one": "Are you sure you want to delete {equipmentTypes}? This action is irreversible and will permanently delete the equipment type as well as all associated data.",
+                            "countPlural=other": "Are you sure you want to delete {equipmentTypes}? This action is irreversible and will permanently delete the equipment types as well as all associated data."
+                        }
+                    }
+                ]
+            },
+            "new": {
+                "title": "New Equipment Type"
             }
         }
     }

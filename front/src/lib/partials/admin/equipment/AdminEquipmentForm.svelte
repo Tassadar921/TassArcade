@@ -15,21 +15,21 @@
 
     let { languages, equipment, equipmentTranslations }: Props = $props();
 
-    let translations: { code: string; name: string }[] = $state([]);
+    let translations: { languageCode: string; name: string }[] = $state([]);
     let category = $state(equipment?.category || '');
     let thumbnail: File | undefined = $state();
 
-    const buildTranslations = (languages: SerializedLanguage[], equipmentTranslations?: SerializedEquipmentTranslation[]): { code: string; name: string }[] => {
+    const buildTranslations = (languages: SerializedLanguage[], equipmentTranslations?: SerializedEquipmentTranslation[]): { languageCode: string; name: string }[] => {
         return languages.map((language) => ({
-            code: language.code,
+            languageCode: language.code,
             name: equipmentTranslations?.find((t) => t.language.code === language.code)?.name ?? '',
         }));
     };
 
     const validation = $derived(
         adminEquipmentValidator.safeParse({
-            translations,
             category,
+            translations,
             thumbnail,
         })
     );
@@ -70,7 +70,7 @@
             />
             <input type="hidden" name="translations" value={JSON.stringify(translations)} />
             {#each languages as language}
-                {@const translationIndex = translations.findIndex((t) => t.code === language.code)}
+                {@const translationIndex = translations.findIndex((t) => t.languageCode === language.code)}
                 {@const translation = translationIndex >= 0 ? translations[translationIndex] : null}
                 {#if translation}
                     <div class="flex flex-col gap-2">

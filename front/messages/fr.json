@@ -461,9 +461,9 @@
                         "max": "Le nom est trop long."
                     }
                 },
-                "code": {
+                "language-code": {
                     "error": {
-                        "length": "Le code doit être composé d'exactement 2 lettres."
+                        "length": "Le code de la langue doit être composé d'exactement 2 lettres."
                     }
                 },
                 "category": {
@@ -494,6 +494,46 @@
             },
             "new": {
                 "title": "Nouvel équipement"
+            }
+        },
+        "equipment-type": {
+            "title": "Types d'équipements",
+            "fields": {
+                "name": {
+                    "error": {
+                        "min": "Le nom est trop court.",
+                        "max": "Le nom est trop long."
+                    }
+                },
+                "language-code": {
+                    "error": {
+                        "length": "Le code de la langue doit être composé d'exactement 2 lettres."
+                    }
+                },
+                "code": {
+                    "label": "Code",
+                    "error": {
+                        "min": "Le code est trop court.",
+                        "max": "Le code est trop long."
+                    }
+                }
+            },
+            "delete": {
+                "title": "Supprimer {equipmentTypes}",
+                "text": [
+                    {
+                        "declarations": ["input equipmentTypes", "input count", "local countPlural = count: plural"],
+                        "selectors": ["countPlural"],
+                        "match": {
+                            "countPlural=zero": "Êtes-vous sûr de vouloir supprimer {equipmentTypes} ? Cette action est irréversible et supprimera définitivement les types d'équipements ainsi que toutes les données associées.",
+                            "countPlural=one": "Êtes-vous sûr de vouloir supprimer {equipmentTypes} ? Cette action est irréversible et supprimera définitivement le type d'équipement ainsi que toutes les données associées.",
+                            "countPlural=other": "Êtes-vous sûr de vouloir supprimer {equipmentTypes} ? Cette action est irréversible et supprimera définitivement les types d'équipements ainsi que toutes les données associées."
+                        }
+                    }
+                ]
+            },
+            "new": {
+                "title": "Nouveau type d'équipement"
             }
         }
     }

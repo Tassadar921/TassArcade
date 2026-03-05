@@ -6,7 +6,7 @@
     import { page } from '$app/state';
 </script>
 
-<Title title={m['admin.user.new.title']()} />
+<Title title={m['admin.equipment.new.title']()} />
 
 <Breadcrumb items={[{ title: m['admin.title'](), href: '/admin' }, { title: m['admin.equipment.title'](), href: '/admin/equipment' }, { title: m['admin.equipment.new.title']() }]} />
 
