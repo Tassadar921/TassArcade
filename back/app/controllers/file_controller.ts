@@ -39,7 +39,8 @@ export default class FileController {
                 },
             });
 
-            return response.header('Cache-Control', 'no-cache, no-store, must-revalidate').header('Pragma', 'no-cache').header('Expires', '0').download(filePath);        } catch (error: any) {
+            return response.header('Cache-Control', 'no-cache, no-store, must-revalidate').header('Pragma', 'no-cache').header('Expires', '0').download(filePath);
+        } catch (error: any) {
             if (error.message === 'NO_FILE') {
                 return response.notFound({ error: i18n.t('messages.file.serve-profile-picture.error.no-file') });
             } else {
@@ -94,7 +95,8 @@ export default class FileController {
                 },
             });
 
-            return response.header('Cache-Control', 'no-cache, no-store, must-revalidate').header('Pragma', 'no-cache').header('Expires', '0').download(filePath);        } catch (error: any) {
+            return response.header('Cache-Control', 'no-cache, no-store, must-revalidate').header('Pragma', 'no-cache').header('Expires', '0').download(filePath);
+        } catch (error: any) {
             if (error.message === 'NO_FILE') {
                 return response.notFound({ error: i18n.t('messages.file.serve-company-logo.error.no-file') });
             } else {
@@ -121,7 +123,8 @@ export default class FileController {
                 },
             });
 
-            return response.header('Cache-Control', 'no-cache, no-store, must-revalidate').header('Pragma', 'no-cache').header('Expires', '0').download(filePath);        } catch (error: any) {
+            return response.header('Cache-Control', 'no-cache, no-store, must-revalidate').header('Pragma', 'no-cache').header('Expires', '0').download(filePath);
+        } catch (error: any) {
             if (error.message === 'NO_FILE') {
                 return response.notFound({ error: i18n.t('messages.file.serve-language-flag.error.no-file') });
             } else {
