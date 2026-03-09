@@ -44,6 +44,32 @@
             "update": {
                 "success": "Successfully updated equipment {name}"
             }
+        },
+        "equipment-type": {
+            "get": {
+                "error": {
+                    "not-found": "Equipment type not found"
+                }
+            },
+            "delete": {
+                "success": "Successfully deleted equipment type {name}",
+                "error": {
+                    "default": "Error while deleting equipment type with identifier {id}"
+                }
+            },
+            "create": {
+                "success": "Successfully created equipment type {name}",
+                "error": {
+                    "already-exists": "Equipment type with code {code} already exists",
+                    "equipment-not-found": "Equipment not found"
+                }
+            },
+            "update": {
+                "success": "Successfully updated equipment type {name}",
+                "error": {
+                    "equipment-not-found": "Equipment not found"
+                }
+            }
         }
     },
     "auth": {

@@ -44,6 +44,32 @@
             "update": {
                 "success": "Équipement {name} mis à jour avec succès"
             }
+        },
+        "equipment-type": {
+            "get": {
+                "error": {
+                    "not-found": "Type d'équipement introuvable"
+                }
+            },
+            "delete": {
+                "success": "Type d'équipement {name} supprimé avec succès",
+                "error": {
+                    "default": "Erreur lors de la suppression du type d'équipement avec l’identifiant {id}"
+                }
+            },
+            "create": {
+                "success": "Type d'équipement {name} créé avec succès",
+                "error": {
+                    "already-exists": "Un type d'équipement avec le code {code} existe déjà",
+                    "equipment-not-found": "Équipement introuvable"
+                }
+            },
+            "update": {
+                "success": "Type d'équipement {name} mis à jour avec succès",
+                "error": {
+                    "equipment-not-found": "Équipement introuvable"
+                }
+            }
         }
     },
     "auth": {
