@@ -534,6 +534,9 @@
             },
             "new": {
                 "title": "Nouveau type d'équipement"
+            },
+            "edit": {
+                "choose-equipment": "Choisir le type d'équipement"
             }
         }
     }

@@ -51,7 +51,7 @@ services:
         volumes:
             - ./front:/app
             - /app/node_modules
-            - ./back/app/types:/app/back/app/types:ro
+            - ./back/app/types:/app/back/types:ro
         environment:
             - CHOKIDAR_USEPOLLING=true
             - WATCHPACK_POLLING=true

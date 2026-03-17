@@ -5,14 +5,14 @@
     import { Button } from '#lib/components/ui/button';
 
     type Props = {
-        companyEquipmentType: SerializedEquipmentType;
-        addCompanyEquipmentType: (EquipmentTypeId: string) => void;
+        equipmentType: SerializedEquipmentType;
+        addCompanyEquipmentType: (equipmentTypeId: string) => void;
     };
 
-    let { companyEquipmentType, addCompanyEquipmentType }: Props = $props();
+    let { equipmentType, addCompanyEquipmentType }: Props = $props();
 </script>
 
-<Button variant="outline" onclick={() => addCompanyEquipmentType(companyEquipmentType.id)}>
+<Button variant="outline" onclick={() => addCompanyEquipmentType(equipmentType.id)}>
     <PackagePlus />
     {m['common.add']()}
 </Button>

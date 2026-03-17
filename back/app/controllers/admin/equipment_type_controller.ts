@@ -17,6 +17,7 @@ import EquipmentTypeTranslationRepository from '#repositories/equipment_type_tra
 import SerializedEquipmentTypeTranslation from '#types/serialized/serialized_equipment_type_translation';
 import SerializedEquipmentTypeExtended from '#types/serialized/serialized_equipment_type_extended';
 import EquipmentRepository from '#repositories/equipment_repository';
+import PaginatedEquipments from '#types/paginated/paginated_equipments';
 
 @inject()
 export default class AdminEquipmentTypeController {
@@ -67,7 +68,7 @@ export default class AdminEquipmentTypeController {
         });
     }
 
-    public async create({ request, response, i18n, language }: HttpContext) {
+    public async create({ request, response, i18n, language: currentLanguage }: HttpContext) {
         const rawTranslations = request.input('translations');
 
         if (typeof rawTranslations === 'string') {
@@ -110,13 +111,12 @@ export default class AdminEquipmentTypeController {
             })
         );
 
-        equipmentType = await this.equipmentTypeRepository.loadForSerialization(equipmentType, language);
-
+        equipmentType = await this.equipmentTypeRepository.loadForSerialization(equipmentType, currentLanguage);
         await cache.deleteByTag({ tags: ['equipment-types'] });
 
         return response.created({
             equipmentType: equipmentType.apiSerializeExtended(),
-            message: i18n.t('messages.admin.equipment-type.create.success', { name: translations.find((translation) => translation.languageCode === language.code)?.name }),
+            message: i18n.t('messages.admin.equipment-type.create.success', { name: translations.find((translation): boolean => translation.languageCode === currentLanguage.code)?.name }),
         });
     }
 
@@ -141,7 +141,7 @@ export default class AdminEquipmentTypeController {
             return response.notFound({ error: i18n.t('messages.admin.equipment-type.update.error.equipment-not-found') });
         }
 
-        const equipmentType: EquipmentType | null = await this.equipmentTypeRepository.getOneByCode(code, currentLanguage);
+        let equipmentType: EquipmentType | null = await this.equipmentTypeRepository.getOneByCode(code, currentLanguage);
         if (!equipmentType) {
             return response.notFound({ error: i18n.t('messages.admin.equipment-type.get.error.not-found') });
         }
@@ -156,7 +156,7 @@ export default class AdminEquipmentTypeController {
             translations.map(async (translation): Promise<void> => {
                 try {
                     let equipmentTypeTranslation: EquipmentTypeTranslation | null = await this.equipmentTypeTranslationRepository.getFromEquipmentTypeAndLanguageCode(
-                        equipmentType,
+                        equipmentType!,
                         translation.languageCode as SupportedLocale
                     );
 
@@ -164,7 +164,7 @@ export default class AdminEquipmentTypeController {
                         const language: Language = await this.languageRepository.firstOrFail({ code: translation.languageCode as SupportedLocale });
                         equipmentTypeTranslation = await EquipmentTypeTranslation.create({
                             name: translation.name,
-                            equipmentTypeId: equipmentType.id,
+                            equipmentTypeId: equipmentType!.id,
                             languageId: language.id,
                         });
                     } else {
@@ -180,6 +180,9 @@ export default class AdminEquipmentTypeController {
                 }
             }),
         ]);
+
+        equipmentType = await this.equipmentTypeRepository.loadForSerialization(equipmentType, currentLanguage);
+        await cache.deleteByTag({ tags: ['equipment-types'] });
 
         return response.ok({
             equipmentType: equipmentType.apiSerializeExtended(),
@@ -214,6 +217,14 @@ export default class AdminEquipmentTypeController {
                     return await Promise.all(
                         equipmentTypeTranslations.map((equipmentTypeTranslation: EquipmentTypeTranslation): SerializedEquipmentTypeTranslation => equipmentTypeTranslation.apiSerialize())
                     );
+                },
+            }),
+            equipments: await cache.getOrSet({
+                key: `equipments:query::page:1:limit:10:sortBy:equipment_translations.name:asc`,
+                tags: ['equipments'],
+                ttl: '24h',
+                factory: async (): Promise<PaginatedEquipments> => {
+                    return await this.equipmentRepository.getEquipments(language, '', 1, 10, { field: 'equipment_translations.name', order: 'asc' });
                 },
             }),
             languages: await cache.getOrSet({

@@ -107,9 +107,16 @@
         });
     };
 
-    const handleFormSubmitError = (): void => {
-        email = undefined;
-        phoneNumber = undefined;
+    const handleError = (): void => {
+        siret = company?.siret ?? '10000000000000';
+        name = company?.name ?? '';
+        address = company?.address.address ?? '';
+        postalCode = company?.address.postalCode ?? '';
+        city = company?.address.city ?? '';
+        complement = company?.address.complement ?? '';
+        countryCode = company?.address.country ? (country?.data.code ?? 'FR') : 'FR';
+        email = company?.email ?? undefined;
+        phoneNumber = company?.phoneNumber?.replace(country?.data.dial_code ?? '', '') ?? undefined;
     };
 
     $effect((): void => {
@@ -131,7 +138,7 @@
     deleteTitle={m['company.delete.title']({ name: company?.name ?? '' })}
     deleteText={m['company.delete.text']({ name: company?.name ?? '' })}
     action={company ? '?/update' : ''}
-    onError={handleFormSubmitError}
+    onError={handleError}
 >
     <div class="flex gap-3">
         <Input

@@ -13,7 +13,6 @@ import { createOrUpdateEquipmentValidator, deleteEquipmentsValidator, getAdminEq
 import EquipmentRepository from '#repositories/equipment_repository';
 import PaginatedEquipments from '#types/paginated/paginated_equipments';
 import Equipment from '#models/equipment';
-import EquipmentType from '#models/equipment_type';
 import { DeleteEquipmentResult } from '#types/delete_equipment_result';
 import SerializedLanguage from '#types/serialized/serialized_language';
 import Language from '#models/language';
@@ -38,8 +37,6 @@ export default class AdminEquipmentController {
     public async getAll({ request, response, language }: HttpContext) {
         const { query, page, limit, sortBy: inputSortBy } = await request.validateUsing(searchAdminEquipmentsValidator);
 
-        await cache.deleteByTag({ tags: ['equipments'] });
-
         return response.ok(
             await cache.getOrSet({
                 key: `equipments:query:${query}:page:${page}:limit:${limit}:sortBy:${inputSortBy}`,
@@ -48,7 +45,7 @@ export default class AdminEquipmentController {
                 factory: async (): Promise<PaginatedEquipments> => {
                     const [field, order] = inputSortBy.split(':');
                     const sortBy = {
-                        field: this.stringService.toSnakeCase(field) as `equipments.${keyof Equipment['$attributes']}` | `equipment_types.${keyof EquipmentType['$attributes']}`,
+                        field: this.stringService.toSnakeCase(field) as `equipments.${keyof Equipment['$attributes']}` | `equipment_translations.${keyof EquipmentTranslation['$attributes']}`,
                         order: order as 'asc' | 'desc',
                     };
 

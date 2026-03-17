@@ -103,7 +103,7 @@ export const getEquipmentsColumns = (onSort: (field: string, order: 'asc' | 'des
         enableHiding: false,
         cell: ({ row }) =>
             renderComponent(DatatableAddCompanyEquipmentType, {
-                companyEquipmentType: row.original,
+                equipmentType: row.original,
                 addCompanyEquipmentType: onAdd,
             }),
     },

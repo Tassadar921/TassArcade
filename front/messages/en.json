@@ -534,6 +534,9 @@
             },
             "new": {
                 "title": "New Equipment Type"
+            },
+            "edit": {
+                "choose-equipment": "Choose equipment"
             }
         }
     }

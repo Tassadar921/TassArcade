@@ -3,10 +3,10 @@ import Equipment from '#models/equipment';
 import Language from '#models/language';
 import db from '@adonisjs/lucid/services/db';
 import { DeleteEquipmentResult } from '#types/delete_equipment_result';
-import EquipmentType from '#models/equipment_type';
 import { ModelPaginatorContract } from '@adonisjs/lucid/types/model';
 import PaginatedEquipments from '#types/paginated/paginated_equipments';
 import SerializedEquipmentLight from '#types/serialized/serialized_equipment_light';
+import EquipmentTranslation from '#models/equipment_translation';
 
 export default class EquipmentRepository extends BaseRepository<typeof Equipment> {
     constructor() {
@@ -36,7 +36,7 @@ export default class EquipmentRepository extends BaseRepository<typeof Equipment
         page: number,
         limit: number,
         sortBy: {
-            field: `equipments.${keyof Equipment['$attributes']}` | `equipment_types.${keyof EquipmentType['$attributes']}`;
+            field: `equipments.${keyof Equipment['$attributes']}` | `equipment_translations.${keyof EquipmentTranslation['$attributes']}`;
             order: 'asc' | 'desc';
         }
     ): Promise<PaginatedEquipments> {
@@ -107,7 +107,6 @@ export default class EquipmentRepository extends BaseRepository<typeof Equipment
 
                     return { isDeleted: true, name: equipment.translations[0].name, id };
                 } catch (error) {
-                    console.log(error);
                     return { isDeleted: false, id };
                 }
             })

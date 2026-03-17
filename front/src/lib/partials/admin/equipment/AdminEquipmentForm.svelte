@@ -6,6 +6,7 @@
     import FileUpload from '#components/FileUpload.svelte';
     import * as zod from 'zod';
     import { adminEquipmentValidator } from '#lib/validators/admin/equipment';
+    import AdminTranslatableNameForm from '#lib/partials/admin/AdminTranslatableNameForm.svelte';
 
     type Props = {
         languages: SerializedLanguage[];
@@ -18,6 +19,11 @@
     let translations: { languageCode: string; name: string }[] = $state([]);
     let category = $state(equipment?.category || '');
     let thumbnail: File | undefined = $state();
+
+    const handleError = (): void => {
+        translations = buildTranslations(languages, equipmentTranslations);
+        category = equipment?.category || '';
+    };
 
     const buildTranslations = (languages: SerializedLanguage[], equipmentTranslations?: SerializedEquipmentTranslation[]): { languageCode: string; name: string }[] => {
         return languages.map((language) => ({
@@ -55,6 +61,7 @@
     {canSubmit}
     deleteTitle={m['admin.equipment.delete.title']({ equipments: [equipment?.category] })}
     deleteText={m['admin.equipment.delete.text']({ equipments: [equipment?.category], count: 1 })}
+    onError={handleError}
 >
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="flex flex-col gap-8">
@@ -68,27 +75,7 @@
                 error={errors.properties?.category?.errors?.[0]}
                 required
             />
-            <input type="hidden" name="translations" value={JSON.stringify(translations)} />
-            {#each languages as language}
-                {@const translationIndex = translations.findIndex((t) => t.languageCode === language.code)}
-                {@const translation = translationIndex >= 0 ? translations[translationIndex] : null}
-                {#if translation}
-                    <div class="flex flex-col gap-2">
-                        <div class="flex gap-3">
-                            <img src={`/assets/language-flag/${language.id}`} alt={language.name} class="size-10" />
-                            <Input
-                                name=""
-                                label={m['common.name']()}
-                                min={3}
-                                max={50}
-                                bind:value={translation.name}
-                                error={errors.properties?.translations?.items?.[translationIndex]?.properties?.name?.errors?.[0]}
-                                required
-                            />
-                        </div>
-                    </div>
-                {/if}
-            {/each}
+            <AdminTranslatableNameForm bind:translations {languages} {errors} />
         </div>
         <div>
             <FileUpload

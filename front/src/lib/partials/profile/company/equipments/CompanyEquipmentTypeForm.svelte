@@ -27,7 +27,7 @@
     const canSubmit = $derived(validation.success && !!(name || description));
     let errors: any = $state({ formErrors: [], properties: {} });
 
-    const handleFormSubmitError = (): void => {
+    const handleError = (): void => {
         name = companyEquipmentType.name;
         description = companyEquipmentType.description;
     };
@@ -46,7 +46,7 @@
     {canSubmit}
     deleteTitle={m['company.edit.equipments.delete.title']({ equipments: [companyEquipmentType.name ?? companyEquipmentType.type.name] })}
     deleteText={m['company.edit.equipments.delete.text']({ equipments: [companyEquipmentType.name ?? companyEquipmentType.type.name], count: 1 })}
-    onError={handleFormSubmitError}
+    onError={handleError}
 >
     <Input
         type="text"

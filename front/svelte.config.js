@@ -4,6 +4,10 @@ import * as path from 'node:path';
 
 const config = {
     preprocess: vitePreprocess(),
+    onwarn(warning, handler) {
+        if (warning.code === 'state_referenced_locally') return;
+        handler(warning);
+    },
     kit: {
         env: {
             publicPrefix: 'PUBLIC_',
@@ -15,7 +19,7 @@ const config = {
             '#components': './src/components',
             '#icons': './src/icons',
             '#lib': './src/lib',
-            'backend/types': path.resolve('back/app/types/index.ts'),
+            'backend/types': path.resolve('back/types/index.ts'),
         },
     },
 };
