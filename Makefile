@@ -100,11 +100,11 @@ migrate-prod:
 start-back-prod:
 	@echo "Restarting tassarcade-backend..."
 	@pm2 delete tassarcade-backend > /dev/null 2>&1 || true
-	@pm2 start back/build/bin/server.js --name essaimons-v1-backend --update-env
+	@pm2 start back/build/bin/server.js --name tassarcade-backend --update-env
 
 start-front-prod:
 	@echo "Restarting tassarcade-frontend..."
 	@pm2 delete tassarcade-frontend > /dev/null 2>&1 || true
-	@PORT=4173 pm2 start front/build/index.js --name essaimons-v1-frontend --update-env
+	@PORT=4173 pm2 start front/build/index.js --name tassarcade-frontend --update-env
 
 deploy: build-prod migrate-prod start-back-prod start-front-prod
