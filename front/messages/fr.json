@@ -10,6 +10,8 @@
         "delete": "Supprimer",
         "create": "Créer",
         "cancel": "Annuler",
+        "remove": "Supprimer",
+        "add": "Ajouter",
         "back-to-home": "Retour à la page d'accueil",
         "name": "Nom",
         "created-at": "Créé le",
@@ -17,6 +19,7 @@
         "public": "Public",
         "private": "Privé",
         "confirm": "Confirmer",
+        "choose": "Choisir",
         "error": {
             "default-message": "Quelque chose s'est mal passé"
         },
@@ -209,10 +212,9 @@
                 "introduction": "Vérification de votre entreprise\n\nTéléversez un extrait Kbis récent (moins de 3 mois) ou un certificat d’immatriculation INPI ou équivalent pour activer votre compte professionnel.",
                 "file-upload": {
                     "title": "Téléversez votre document",
-                    "description": "Formats acceptés : PDF, JPG, PNG\nTaille maximale : 5 Mo\nDocument attendu : Extrait Kbis complet et lisible, certificat INPI récent ou équivalent",
+                    "description": "Formats acceptés : PDF, JPG, JPEG, PNG\nTaille maximale : 5 Mo\nDocument attendu : Extrait Kbis complet et lisible, certificat INPI récent ou équivalent",
                     "error": {
-                        "type": "Le fichier doit être un PDF, JPG ou PNG.",
-                        "format": "Le fichier doit être un PDF, JPG ou PNG.",
+                        "type": "Le fichier doit être un PDF, JPG, JPEG ou PNG.",
                         "size": "Le fichier doit faire moins de 5 Mo."
                     }
                 },
@@ -220,6 +222,69 @@
                 "popover": {
                     "title": "Traitement des données",
                     "content": "Le document Kbis ou certificat INPI est analysé automatiquement pour vérifier l’existence légale de votre entreprise.\n\nLes fichiers téléversés ne sont pas conservés après vérification.\n\nSeules les données nécessaires à l’identification (nom, SIRET, adresse, représentant légal) sont enregistrées.\n\nCe traitement est effectué dans le cadre de l’exécution du service, conformément au RGPD.\n\nPour toute question ou pour exercer vos droits (accès, rectification, suppression), contactez :\n dpo@tonapp.com"
+                }
+            },
+            "administrators": {
+                "title": "Gérer les administrateurs",
+                "meta": {
+                    "title": "Modifier les administrateurs",
+                    "description": "Gérez les administrateurs de votre entreprise. Recherchez des utilisateurs et mettez à jour leurs autorisations d’accès facilement."
+                },
+                "fields": {
+                    "role": "Rôle"
+                },
+                "add": "Ajouter un administrateur"
+            },
+            "equipments": {
+                "title": "Gérer les équipments",
+                "meta": {
+                    "title": "Modifier les équipements",
+                    "description": "Gérez les équipements de votre entreprise. Ajoutez, modifiez ou supprimez des équipements depuis les paramètres de votre société."
+                },
+                "add": {
+                    "title": "Ajouter un nouvel équipement"
+                },
+                "delete": {
+                    "title": "Supprimer {equipments}",
+                    "text": [
+                        {
+                            "declarations": ["input equipments", "input count", "local countPlural = count: plural"],
+                            "selectors": ["countPlural"],
+                            "match": {
+                                "countPlural=zero": "Êtes-vous sûr de vouloir supprimer {equipments} ? Cette action est irréversible et supprimera définitivement les équipements ainsi que toutes les données associées.",
+                                "countPlural=one": "Êtes-vous sûr de vouloir supprimer {equipments} ? Cette action est irréversible et supprimera définitivement l'équipement ainsi que toutes les données associées.",
+                                "countPlural=other": "Êtes-vous sûr de vouloir supprimer {equipments} ? Cette action est irréversible et supprimera définitivement les équipements ainsi que toutes les données associées."
+                            }
+                        }
+                    ]
+                },
+                "edit": {
+                    "title": "Modifier equipment",
+                    "meta": {
+                        "title": "Modifier equipment",
+                        "description": "Modifiez votre équipement. Mettez à jour les informations de votre équipement facilement."
+                    },
+                    "choose-equipment": "Choisir le type d'équipement"
+                },
+                "fields": {
+                    "category": "Catégorie",
+                    "type": "Type",
+                    "name": {
+                        "placeholder": "Billard bleu",
+                        "label": "Nom",
+                        "error": {
+                            "min": "Le nom doit contenir au moins {min} caractères.",
+                            "max": "Le nom ne doit pas dépasser {max} caractères."
+                        }
+                    },
+                    "description": {
+                        "placeholder": "Billard élégant avec tapis bleu, parfait pour parties conviviales.",
+                        "label": "Description",
+                        "error": {
+                            "min": "La description doit contenir au moins {min} caractères.",
+                            "max": "La description ne doit pas dépasser {max} caractères."
+                        }
+                    }
                 }
             }
         },
@@ -229,7 +294,7 @@
         },
         "fields": {
             "siret": {
-                "placeholder": "732 829 320 00074",
+                "placeholder": "73282932000074",
                 "label": "SIRET",
                 "popover": {
                     "content": "En cliquant sur ce bouton, cela remplira le formulaire à partir des données publiques officielles de l'entreprise"
@@ -289,6 +354,14 @@
             "email": {
                 "placeholder": "direction@maison-delcourt.com",
                 "label": "Email"
+            },
+            "logo": {
+                "title": "Logo",
+                "description": "Formats acceptés : JPG, JPEG, PNG, SVG, WEBP\nTaille maximale : 2 Mo",
+                "error": {
+                    "type": "Le logo doit être une image",
+                    "size": "Le logo doit peser moins de 5 MB"
+                }
             },
             "enabled": "Activé"
         }
@@ -377,6 +450,93 @@
                     "title": "Image de profil",
                     "description": "Image de profil de l'utilisateur (format carré recommandé)"
                 }
+            }
+        },
+        "equipment": {
+            "title": "Équipements",
+            "fields": {
+                "name": {
+                    "error": {
+                        "min": "Le nom est trop court.",
+                        "max": "Le nom est trop long."
+                    }
+                },
+                "language-code": {
+                    "error": {
+                        "length": "Le code de la langue doit être composé d'exactement 2 lettres."
+                    }
+                },
+                "category": {
+                    "label": "Catégorie",
+                    "error": {
+                        "min": "La catégorie est trop courte.",
+                        "max": "La catégorie est trop longue."
+                    }
+                },
+                "thumbnail": {
+                    "title": "Vignette",
+                    "description": "Drapeau de la langue (image carrée recommandée), SVG uniquement."
+                }
+            },
+            "delete": {
+                "title": "Supprimer {equipments}",
+                "text": [
+                    {
+                        "declarations": ["input equipments", "input count", "local countPlural = count: plural"],
+                        "selectors": ["countPlural"],
+                        "match": {
+                            "countPlural=zero": "Êtes-vous sûr de vouloir supprimer {equipments} ? Cette action est irréversible et supprimera définitivement les équipements ainsi que toutes les données associées.",
+                            "countPlural=one": "Êtes-vous sûr de vouloir supprimer {equipments} ? Cette action est irréversible et supprimera définitivement l'équipement ainsi que toutes les données associées.",
+                            "countPlural=other": "Êtes-vous sûr de vouloir supprimer {equipments} ? Cette action est irréversible et supprimera définitivement les équipements ainsi que toutes les données associées."
+                        }
+                    }
+                ]
+            },
+            "new": {
+                "title": "Nouvel équipement"
+            }
+        },
+        "equipment-type": {
+            "title": "Types d'équipements",
+            "fields": {
+                "name": {
+                    "error": {
+                        "min": "Le nom est trop court.",
+                        "max": "Le nom est trop long."
+                    }
+                },
+                "language-code": {
+                    "error": {
+                        "length": "Le code de la langue doit être composé d'exactement 2 lettres."
+                    }
+                },
+                "code": {
+                    "label": "Code",
+                    "error": {
+                        "min": "Le code est trop court.",
+                        "max": "Le code est trop long."
+                    }
+                }
+            },
+            "delete": {
+                "title": "Supprimer {equipmentTypes}",
+                "text": [
+                    {
+                        "declarations": ["input equipmentTypes", "input count", "local countPlural = count: plural"],
+                        "selectors": ["countPlural"],
+                        "match": {
+                            "countPlural=zero": "Êtes-vous sûr de vouloir supprimer {equipmentTypes} ? Cette action est irréversible et supprimera définitivement les types d'équipements ainsi que toutes les données associées.",
+                            "countPlural=one": "Êtes-vous sûr de vouloir supprimer {equipmentTypes} ? Cette action est irréversible et supprimera définitivement le type d'équipement ainsi que toutes les données associées.",
+                            "countPlural=other": "Êtes-vous sûr de vouloir supprimer {equipmentTypes} ? Cette action est irréversible et supprimera définitivement les types d'équipements ainsi que toutes les données associées."
+                        }
+                    }
+                ]
+            },
+            "new": {
+                "title": "Nouveau type d'équipement"
+            },
+            "edit": {
+                "choose-equipment": "Choisir le type d'équipement"
             }
         }
     }

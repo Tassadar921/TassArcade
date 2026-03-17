@@ -18,6 +18,7 @@
     import { wrappedFetch } from '#lib/services/requestService';
     import { location, navigate } from '#lib/stores/locationStore';
     import type { Snippet } from 'svelte';
+    import { Spinner } from '#lib/components/ui/spinner';
 
     type Props = {
         children: Snippet;
@@ -31,12 +32,13 @@
 
     let { children, id, canSubmit, deleteTitle, deleteText, action, onError }: Props = $props();
 
+    let isLoading: boolean = $state(false);
     let showDialog: boolean = $state(false);
 
     const handleDelete = async (): Promise<void> => {
         showDialog = false;
         await wrappedFetch(`${$location.replace(`/edit/${id}`, '')}/delete`, { method: 'POST', body: { data: [id] } }, (data) => {
-            const isSuccess: boolean = data.messages.map((status: { isSuccess: boolean; message: string; code: string }) => {
+            const isSuccess: boolean = data.messages.map((status: { isSuccess: boolean; message: string; id: string }) => {
                 showToast(status.message, status.isSuccess ? 'success' : 'error');
                 return status.isSuccess;
             })[0];
@@ -48,6 +50,8 @@
     };
 
     $effect((): void => {
+        isLoading = false;
+
         if (!page.data.formError) {
             return;
         }
@@ -59,7 +63,14 @@
     });
 </script>
 
-<form use:enhance method="POST" {action} enctype="multipart/form-data" class="py-10 px-5 flex flex-col gap-8 rounded-lg shadow-md mt-5 bg-gray-300 dark:bg-gray-700">
+<form
+    use:enhance
+    method="POST"
+    {action}
+    enctype="multipart/form-data"
+    class="py-10 px-5 flex flex-col gap-8 rounded-lg shadow-md mt-5 bg-gray-300 dark:bg-gray-700"
+    onsubmit={() => (isLoading = true)}
+>
     {@render children?.()}
     <div class="w-full flex justify-end gap-5 pr-5">
         {#if id}
@@ -67,7 +78,13 @@
                 {m['common.delete']()}
             </Button>
         {/if}
-        <Button size="lg" type="submit" variant="secondary" disabled={!canSubmit}>{m[`common.${id ? 'update' : 'create'}`]()}</Button>
+        <Button class="w-32" size="lg" type="submit" variant="secondary" disabled={!canSubmit}>
+            {#if isLoading}
+                <Spinner class="size-6" />
+            {:else}
+                {m[`common.${id ? 'update' : 'create'}`]()}
+            {/if}
+        </Button>
     </div>
 </form>
 

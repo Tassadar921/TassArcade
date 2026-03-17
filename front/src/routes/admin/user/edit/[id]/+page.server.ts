@@ -1,4 +1,3 @@
-import { m } from '#lib/paraglide/messages';
 import { redirect } from 'sveltekit-flash-message/server';
 import type { PageServerLoad } from './$types';
 import { type Actions, fail, type RequestEvent } from '@sveltejs/kit';
@@ -19,14 +18,19 @@ export const load: PageServerLoad = async (event) => {
             user: response.data,
         };
     } catch (error: any) {
-        redirect(
-            `/${cookies.get('PARAGLIDE_LOCALE')}/admin/user`,
-            {
-                type: 'error',
-                message: error?.response?.data?.error ?? m['common.error.default-message'](),
-            },
-            event
-        );
+        const form: FormError = {
+            data: {},
+            errors: extractFormErrors(error?.response?.data),
+        };
+
+        cookies.set('formError', JSON.stringify(form), {
+            path: '/',
+            httpOnly: true,
+            sameSite: 'lax',
+            maxAge: 60 * 60 * 24 * 7,
+        });
+
+        redirect(303, `/${cookies.get('PARAGLIDE_LOCALE')}/admin/user`);
     }
 };
 

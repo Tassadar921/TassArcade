@@ -3,22 +3,25 @@ import { HttpContext } from '@adonisjs/core/http';
 import app from '@adonisjs/core/services/app';
 import UserRepository from '#repositories/user_repository';
 import User from '#models/user';
-import { serveStaticProfilePictureFileValidator, serveStaticLanguageFlagFileValidator, serveStaticEquipmentThumbnailFileValidator } from '#validators/file';
+import { serveStaticProfilePictureFileValidator, serveStaticEquipmentThumbnailFileValidator, serveStaticCompanyLogoFileValidator, serveStaticLanguageFlagFileValidator } from '#validators/file';
 import cache from '@adonisjs/cache/services/main';
-import LanguageRepository from '#repositories/language_repository';
-import Language from '#models/language';
 import EquipmentRepository from '#repositories/equipment_repository';
 import Equipment from '#models/equipment';
+import CompanyRepository from '#repositories/company_repository';
+import Company from '#models/company';
+import LanguageRepository from '#repositories/language_repository';
+import Language from '#models/language';
 
 @inject()
 export default class FileController {
     constructor(
         private readonly userRepository: UserRepository,
-        private readonly languageRepository: LanguageRepository,
-        private readonly equipmentRepository: EquipmentRepository
+        private readonly equipmentRepository: EquipmentRepository,
+        private readonly companyRepository: CompanyRepository,
+        private readonly languageRepository: LanguageRepository
     ) {}
 
-    public async serveStaticProfilePictureFile({ request, response, i18n }: HttpContext): Promise<void> {
+    public async serveStaticProfilePictureFile({ request, response, i18n }: HttpContext) {
         const { userId } = await serveStaticProfilePictureFileValidator.validate(request.params());
 
         try {
@@ -27,7 +30,7 @@ export default class FileController {
                 tags: [`user:${userId}`],
                 ttl: '1h',
                 factory: async (): Promise<string> => {
-                    const user: User = await this.userRepository.firstOrFail({ id: userId });
+                    const user: User = await this.userRepository.firstOrFail({ id: userId }, ['profilePicture']);
                     if (!user.profilePicture) {
                         throw new Error('NO_FILE');
                     }
@@ -36,7 +39,7 @@ export default class FileController {
                 },
             });
 
-            return response.download(filePath);
+            return response.header('Cache-Control', 'no-cache, no-store, must-revalidate').header('Pragma', 'no-cache').header('Expires', '0').download(filePath);
         } catch (error: any) {
             if (error.message === 'NO_FILE') {
                 return response.notFound({ error: i18n.t('messages.file.serve-profile-picture.error.no-file') });
@@ -46,44 +49,16 @@ export default class FileController {
         }
     }
 
-    public async serveStaticLanguageFlagFile({ request, response, i18n }: HttpContext): Promise<void> {
-        const { languageCode } = await serveStaticLanguageFlagFileValidator.validate(request.params());
-
-        try {
-            const filePath: string = await cache.getOrSet({
-                key: `language-flag:${languageCode}`,
-                tags: [`language:${languageCode}`],
-                ttl: '1h',
-                factory: async (): Promise<string> => {
-                    const language: Language = await this.languageRepository.firstOrFail({ code: languageCode });
-                    if (!language.flag) {
-                        throw new Error('NO_FILE');
-                    }
-
-                    return app.makePath(language.flag.path);
-                },
-            });
-
-            return response.download(filePath);
-        } catch (error: any) {
-            if (error.message === 'NO_FILE') {
-                return response.notFound({ error: i18n.t('messages.file.serve-language-flag.error.no-file') });
-            } else {
-                return response.notFound({ error: i18n.t('messages.file.serve-language-flag.error.language-not-found') });
-            }
-        }
-    }
-
-    public async serveStaticEquipmentThumbnailFile({ request, response, i18n }: HttpContext): Promise<void> {
+    public async serveStaticEquipmentThumbnailFile({ request, response, i18n }: HttpContext) {
         const { equipmentId } = await serveStaticEquipmentThumbnailFileValidator.validate(request.params());
 
         try {
             const filePath: string = await cache.getOrSet({
                 key: `equipment-thumbnail:${equipmentId}`,
-                tags: [`equipment-thumbnail:${equipmentId}`],
+                tags: [`equipment:${equipmentId}`],
                 ttl: '1h',
                 factory: async (): Promise<string> => {
-                    const equipment: Equipment = await this.equipmentRepository.firstOrFail({ id: equipmentId });
+                    const equipment: Equipment = await this.equipmentRepository.firstOrFail({ id: equipmentId }, ['thumbnail']);
                     if (!equipment.thumbnail) {
                         throw new Error('NO_FILE');
                     }
@@ -92,12 +67,68 @@ export default class FileController {
                 },
             });
 
-            return response.download(filePath);
+            return response.header('Cache-Control', 'no-cache, no-store, must-revalidate').header('Pragma', 'no-cache').header('Expires', '0').download(filePath);
         } catch (error: any) {
             if (error.message === 'NO_FILE') {
                 return response.notFound({ error: i18n.t('messages.file.serve-equipment-thumbnail.error.no-file') });
             } else {
                 return response.notFound({ error: i18n.t('messages.file.serve-equipment-thumbnail.error.equipment-not-found') });
+            }
+        }
+    }
+
+    public async serveStaticCompanyLogoFile({ request, response, i18n }: HttpContext) {
+        const { companyId } = await serveStaticCompanyLogoFileValidator.validate(request.params());
+
+        try {
+            const filePath: string = await cache.getOrSet({
+                key: `company-logo:${companyId}`,
+                tags: [`company-logo:${companyId}`],
+                ttl: '1h',
+                factory: async (): Promise<string> => {
+                    const company: Company = await this.companyRepository.firstOrFail({ id: companyId }, ['logo']);
+                    if (!company.logo) {
+                        throw new Error('NO_FILE');
+                    }
+
+                    return app.makePath(company.logo.path);
+                },
+            });
+
+            return response.header('Cache-Control', 'no-cache, no-store, must-revalidate').header('Pragma', 'no-cache').header('Expires', '0').download(filePath);
+        } catch (error: any) {
+            if (error.message === 'NO_FILE') {
+                return response.notFound({ error: i18n.t('messages.file.serve-company-logo.error.no-file') });
+            } else {
+                return response.notFound({ error: i18n.t('messages.file.serve-company-logo.error.company-not-found') });
+            }
+        }
+    }
+
+    public async serveStaticLanguageFlagFile({ request, response, i18n }: HttpContext) {
+        const { languageId } = await serveStaticLanguageFlagFileValidator.validate(request.params());
+
+        try {
+            const filePath: string = await cache.getOrSet({
+                key: `language-flag:${languageId}`,
+                tags: [`language-flag:${languageId}`],
+                ttl: '1h',
+                factory: async (): Promise<string> => {
+                    const language: Language = await this.languageRepository.firstOrFail({ id: languageId }, ['flag']);
+                    if (!language.flag) {
+                        throw new Error('NO_FILE');
+                    }
+
+                    return app.makePath(language.flag.path);
+                },
+            });
+
+            return response.header('Cache-Control', 'no-cache, no-store, must-revalidate').header('Pragma', 'no-cache').header('Expires', '0').download(filePath);
+        } catch (error: any) {
+            if (error.message === 'NO_FILE') {
+                return response.notFound({ error: i18n.t('messages.file.serve-language-flag.error.no-file') });
+            } else {
+                return response.notFound({ error: i18n.t('messages.file.serve-language-flag.error.language-not-found') });
             }
         }
     }

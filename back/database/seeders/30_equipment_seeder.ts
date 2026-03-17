@@ -9,7 +9,10 @@ import FileRepository from '#repositories/file_repository';
 import EquipmentRepository from '#repositories/equipment_repository';
 import Equipment from '#models/equipment';
 import EquipmentType from '#models/equipment_type';
-import { Translation } from '@stouder-io/adonis-translatable';
+import Language from '#models/language';
+import LanguageRepository from '#repositories/language_repository';
+import EquipmentTranslation from '#models/equipment_translation';
+import EquipmentTypeTranslation from '#models/equipment_type_translation';
 
 interface LocalEquipment {
     category: string;
@@ -30,6 +33,7 @@ export default class extends BaseSeeder {
     private readonly fileService: FileService = new FileService();
     private readonly equipmentRepository: EquipmentRepository = new EquipmentRepository();
     private readonly fileRepository: FileRepository = new FileRepository();
+    private readonly languageRepository: LanguageRepository = new LanguageRepository();
 
     public async run(): Promise<void> {
         const equipments: LocalEquipment[] = [
@@ -146,6 +150,9 @@ export default class extends BaseSeeder {
             },
         ];
 
+        const english: Language = await this.languageRepository.firstOrFail({ code: 'en' });
+        const french: Language = await this.languageRepository.firstOrFail({ code: 'fr' });
+
         for (const equipmentData of equipments) {
             let thumbnail: File | null = await this.fileRepository.findOneBy({ name: `${equipmentData.category}.svg`, type: FileTypeEnum.EQUIPMENT_THUMBNAIL });
             if (!thumbnail) {
@@ -164,18 +171,41 @@ export default class extends BaseSeeder {
 
             // Assume that if it exists, all of its types & related translations also exist
             if (!(await this.equipmentRepository.findOneBy({ category: equipmentData.category }))) {
-                const equipment: Equipment = await Equipment.create({
-                    name: Translation.from({ ...equipmentData.translations }),
+                const equipment: Equipment = await Equipment.firstOrCreate({
                     category: equipmentData.category,
                     thumbnailId: thumbnail.id,
                 });
                 await equipment.refresh();
 
+                await EquipmentTranslation.firstOrCreate({
+                    name: equipmentData.translations.en,
+                    languageId: english.id,
+                    equipmentId: equipment.id,
+                });
+
+                await EquipmentTranslation.firstOrCreate({
+                    name: equipmentData.translations.fr,
+                    languageId: french.id,
+                    equipmentId: equipment.id,
+                });
+
                 for (const type of equipmentData.types) {
-                    await EquipmentType.create({
+                    const equipmentType: EquipmentType = await EquipmentType.firstOrCreate({
                         code: type.code,
-                        name: Translation.from({ ...type.translations }),
                         equipmentId: equipment.id,
+                    });
+                    await equipmentType.refresh();
+
+                    await EquipmentTypeTranslation.firstOrCreate({
+                        name: type.translations.en,
+                        languageId: english.id,
+                        equipmentTypeId: equipmentType.id,
+                    });
+
+                    await EquipmentTypeTranslation.firstOrCreate({
+                        name: type.translations.fr,
+                        languageId: french.id,
+                        equipmentTypeId: equipmentType.id,
                     });
                 }
             }

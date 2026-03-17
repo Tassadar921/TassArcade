@@ -3,20 +3,20 @@
     import { m } from '#lib/paraglide/messages';
     import { page } from '$app/state';
     import { onMount } from 'svelte';
-    import type { PaginatedUsers, SerializedUser } from 'backend/types';
+    import type { PaginatedUsers } from 'backend/types';
     import { wrappedFetch } from '#lib/services/requestService';
     import { DataTable } from '#lib/components/ui/data-table';
     import { getUserColumns } from './columns';
     import { Breadcrumb } from '#lib/components/ui/breadcrumb';
 
     let paginatedUsers: PaginatedUsers | undefined = $state();
-    let selectedUsers: string[] = $state([]);
+    let selectedUsers: { id: string; label: string }[] = $state([]);
     let query: string = $state('');
-    let sortBy: string = $state('email:asc');
+    let sortBy: string = $state('users.username:asc');
 
     onMount(async (): Promise<void> => {
         if (page.data.isSuccess) {
-            paginatedUsers = page.data.data;
+            paginatedUsers = page.data.users;
         } else {
             await getUsers();
         }
@@ -27,27 +27,24 @@
         getUsers();
     };
 
-    const handleDelete = (ids: string[]): void => {
+    const handleDelete = async (): Promise<void> => {
         if (!paginatedUsers) {
             return;
         }
 
-        ids.forEach((id: string): void => {
-            paginatedUsers!.users = paginatedUsers!.users.filter((user: SerializedUser): boolean => user.id !== id);
-            paginatedUsers!.total = paginatedUsers!.total - 1;
-        });
+        await getUsers(paginatedUsers.currentPage, paginatedUsers.limit);
     };
 
     const getUsers = async (page: number = 1, limit: number = 10): Promise<void> => {
-        await wrappedFetch(`/admin/user?page=${page}&limit=${limit}&query=${query}&sortBy=${sortBy}`, { method: 'GET' }, ({ data }): void => {
-            paginatedUsers = data;
+        await wrappedFetch(`/admin/user?page=${page}&limit=${limit}&query=${query}&sortBy=${sortBy}`, { method: 'GET' }, ({ users }): void => {
+            paginatedUsers = users;
         });
     };
 </script>
 
 <Title title={m['admin.user.title']()} hasBackground />
 
-<Breadcrumb items={[{ title: 'Admin', href: '/admin' }, { title: m['admin.user.title']() }]} />
+<Breadcrumb items={[{ title: m['admin.title'](), href: '/admin' }, { title: m['admin.user.title']() }]} />
 
 {#if paginatedUsers}
     <div class="mt-3">
@@ -59,9 +56,10 @@
             bind:query
             bind:selectedRows={selectedUsers}
             onBatchDelete={handleDelete}
-            batchDeleteTitle={m['admin.user.delete.title']({ users: selectedUsers })}
-            batchDeleteText={m['admin.user.delete.text']({ users: selectedUsers, count: selectedUsers.length })}
-            onPaginationChange={async (page: number, limit: number) => await getUsers(page, limit)}
+            batchDeleteTitle={m['admin.user.delete.title']({ users: selectedUsers.map((user) => user.label).join(', ') })}
+            batchDeleteText={m['admin.user.delete.text']({ users: selectedUsers.map((user) => user.label).join(', '), count: selectedUsers.length })}
+            onPaginationChange={getUsers}
+            batchDeleteKey="username"
         />
     </div>
 {/if}

@@ -6,7 +6,7 @@
     import { onMount } from 'svelte';
     import { MultiSelectWithTags, type SelectItem } from '#lib/components/ui/multi-select-with-tags';
     import { page } from '$app/state';
-    import type { Cluster, SerializedCompanyEquipmentType, SerializedEquipment, SerializedEquipmentType, SerializedEquipmentLight, SerializedCompany } from 'backend/types';
+    import type { Cluster, SerializedCompanyEquipmentType, SerializedEquipment, SerializedEquipmentType, SerializedEquipmentLight, SerializedCompanyLight } from 'backend/types';
     import MapControls from '#lib/partials/map/MapControls.svelte';
     import { mode } from 'mode-watcher';
     import { wrappedFetch } from '#lib/services/requestService';
@@ -24,7 +24,7 @@
 
     let selectedEquipments: SelectItem[] = $state([]);
 
-    let selectedCompany: SerializedCompany | null = $state(null);
+    let selectedCompany: SerializedCompanyLight | null = $state(null);
     let selectedCompanyEquipment: SerializedCompanyEquipmentType | null = $state(null);
     let reorganizedEquipments: Record<string, { category: SerializedEquipmentLight; items: SerializedCompanyEquipmentType[] }> | undefined = $state();
 
@@ -32,6 +32,18 @@
         light: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
         dark: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
     };
+
+    const categories = $derived(
+        page.data.equipments.map((equipment: SerializedEquipment) => ({
+            label: equipment.name,
+            thumbnailPath: `/assets/equipment-thumbnail/${equipment.id}`,
+            items: equipment.types.map((type: SerializedEquipmentType) => ({
+                value: type.id,
+                label: type.name,
+                category: equipment.name,
+            })),
+        }))
+    );
 
     let showCompanyDialog: boolean = $state(false);
     let showCompanyEquipmentDialog: boolean = $state(false);
@@ -105,6 +117,14 @@
         );
     };
 
+    const fetchClustersFromSelector = (): void => {
+        if (!mapInstance) {
+            return;
+        }
+
+        fetchClusters({ target: mapInstance } as MapMoveEvent);
+    };
+
     const handleMarkerClick = (point: Partial<Cluster>): void => {
         selectedCompany = point.companies![0];
         reorganizedEquipments = selectedCompany.equipments.reduce(
@@ -167,23 +187,12 @@
 
 <Title title={m['home.title']()} />
 
-<MultiSelectWithTags
-    categories={page.data.equipments.map((equipment: SerializedEquipment) => ({
-        label: equipment.name,
-        thumbnailPath: `/assets/equipment-thumbnail/${equipment.id}`,
-        items: equipment.types.map((type: SerializedEquipmentType) => ({
-            value: type.id,
-            label: type.name,
-            category: equipment.name,
-        })),
-    }))}
-    bind:selectedItems={selectedEquipments}
-/>
+<MultiSelectWithTags {categories} bind:selectedItems={selectedEquipments} onChange={fetchClustersFromSelector} />
 
 <MapLibre
     center={[longitude, latitude]}
     style={'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'}
-    class="relative w-full aspect-[9/16] h-[800px] sm:max-h-full sm:aspect-video"
+    class="relative w-full aspect-9/16 h-200 sm:max-h-full sm:aspect-video"
     zoom={7}
     attributionControl={false}
     onload={handleLoad}
@@ -211,7 +220,7 @@
 
 <Dialog bind:open={showCompanyDialog} onOpenChange={handleCloseCompanyDialog}>
     <DialogPortal>
-        <DialogContent class="min-w-[90%] md:min-w-[750px]">
+        <DialogContent class="min-w-[90%] md:min-w-187.5">
             <CompanyDialogContent {handleCompanyEquipmentClicked} {selectedCompany} {reorganizedEquipments} />
         </DialogContent>
     </DialogPortal>
@@ -219,7 +228,7 @@
 
 <Dialog bind:open={showCompanyEquipmentDialog} onOpenChange={handleCloseCompanyEquipmentsDialog}>
     <DialogPortal>
-        <DialogContent class="min-w-[90%] md:min-w-[750px]">
+        <DialogContent class="min-w-[90%] md:min-w-187.5">
             <CompanyEquipmentDialogContent {selectedCompany} {selectedCompanyEquipment} />
         </DialogContent>
     </DialogPortal>

@@ -1,0 +1,79 @@
+<script lang="ts">
+    import type { PaginatedSearchCompanyAdministrators, SearchCompanyAdministrator } from 'backend/types';
+    import { DataTable } from '#lib/components/ui/data-table';
+    import { wrappedFetch } from '#lib/services/requestService';
+    import { page } from '$app/state';
+    import { m } from '#lib/paraglide/messages';
+    import { getSearchCompanyAdministratorsColumns } from '../../../../../routes/profile/companies/edit/[id]/administrators/columns';
+
+    type Props = {
+        paginatedUsers: PaginatedSearchCompanyAdministrators;
+        parentLimit: number;
+        parentPage: number;
+        getAdministrators: (currentPage: number, limit: number) => void;
+    };
+
+    let { paginatedUsers = $bindable(), parentLimit, parentPage, getAdministrators }: Props = $props();
+
+    let query: string = $state('');
+    let sortBy: string = $state('users.username:asc');
+
+    const handleSort = (field: string, order: 'asc' | 'desc'): void => {
+        sortBy = `${field}:${order}`;
+        getUsers();
+    };
+
+    const getUsers = async (currentPage: number = 1, limit: number = 10): Promise<void> => {
+        await wrappedFetch(
+            `/profile/companies/edit/${page.params.id}/administrators/search?page=${currentPage}&limit=${limit}&query=${query}&sortBy=${sortBy}`,
+            { method: 'GET' },
+            ({ data }): void => {
+                paginatedUsers = data;
+            }
+        );
+    };
+
+    const addAdministrator = async (userId: string): Promise<void> => {
+        const index: number = paginatedUsers.users.findIndex((searchUser: SearchCompanyAdministrator) => searchUser.user.id === userId);
+        if (index < 0) {
+            return;
+        }
+
+        await wrappedFetch(`/profile/companies/edit/${page.params.id}/administrators/add`, { method: 'POST', body: { userId } }, (): void => {
+            paginatedUsers.users = paginatedUsers.users.map((user: SearchCompanyAdministrator, i: number): SearchCompanyAdministrator => (i === index ? { ...user, isAdministrator: true } : user));
+            getAdministrators(parentPage, parentLimit);
+        });
+    };
+
+    const removeAdministrator = async (userId: string): Promise<void> => {
+        const index: number = paginatedUsers.users.findIndex((searchUser: SearchCompanyAdministrator) => searchUser.user.id === userId);
+        if (index < 0) {
+            return;
+        }
+
+        await wrappedFetch(`/profile/companies/edit/${page.params.id}/administrators/remove`, { method: 'POST', body: { userId } }, (): void => {
+            paginatedUsers.users = paginatedUsers.users.map((user: SearchCompanyAdministrator, i: number): SearchCompanyAdministrator => (i === index ? { ...user, isAdministrator: false } : user));
+            getAdministrators(parentPage, parentLimit);
+        });
+    };
+
+    const onPaginationChange = async (page: number, limit: number) => await getUsers(page, limit);
+</script>
+
+<h2>{m['company.edit.administrators.add']()}</h2>
+
+{#if paginatedUsers}
+    <div class="mt-3">
+        <DataTable
+            paginatedObject={paginatedUsers}
+            data={paginatedUsers.users}
+            columns={getSearchCompanyAdministratorsColumns(handleSort, addAdministrator, removeAdministrator)}
+            onSearch={getUsers}
+            selectable={false}
+            bind:query
+            {onPaginationChange}
+            editable={false}
+            creatable={false}
+        />
+    </div>
+{/if}

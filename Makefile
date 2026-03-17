@@ -20,7 +20,12 @@ upgrade:
 list-routes:
 	cd back && node ace list:routes
 
+cache:
+	docker exec redis redis-cli FLUSHALL
+	docker restart back
+
 db-fresh:
+	rm -rf back/static
 	./compose-env.sh exec -T backend node ace migration:fresh
 	./compose-env.sh exec -T backend node ace migration:fresh --connection=logs
 
@@ -37,7 +42,7 @@ db-factory:
 init-logs-db:
 	./init-logs-db.sh
 
-db: init-logs-db db-fresh db-seed db-factory
+db: init-logs-db db-fresh db-seed db-factory cache
 
 paraglide:
 	cd front && npx paraglide-js compile

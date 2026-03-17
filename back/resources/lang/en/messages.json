@@ -1,23 +1,5 @@
 {
     "admin": {
-        "language": {
-            "delete": {
-                "success": "Successfully deleted {name}",
-                "error": {
-                    "fallback": "You cannot delete the default language ({name})",
-                    "default": "Error while deleting language with code {code}"
-                }
-            },
-            "create": {
-                "success": "Successfully created language {name}",
-                "error": {
-                    "already-exists": "Language with code {code} already exists"
-                }
-            },
-            "update": {
-                "success": "Successfully updated language {name}"
-            }
-        },
         "user": {
             "get": {
                 "error": {
@@ -39,6 +21,54 @@
             },
             "update": {
                 "success": "Successfully updated {username}"
+            }
+        },
+        "equipment": {
+            "get": {
+                "error": {
+                    "not-found": "Equipment not found"
+                }
+            },
+            "delete": {
+                "success": "Successfully deleted equipment {name}",
+                "error": {
+                    "default": "Error while deleting equipment with identifier {id}"
+                }
+            },
+            "create": {
+                "success": "Successfully created equipment {name}",
+                "error": {
+                    "already-exists": "Equipment with category {category} already exists"
+                }
+            },
+            "update": {
+                "success": "Successfully updated equipment {name}"
+            }
+        },
+        "equipment-type": {
+            "get": {
+                "error": {
+                    "not-found": "Equipment type not found"
+                }
+            },
+            "delete": {
+                "success": "Successfully deleted equipment type {name}",
+                "error": {
+                    "default": "Error while deleting equipment type with identifier {id}"
+                }
+            },
+            "create": {
+                "success": "Successfully created equipment type {name}",
+                "error": {
+                    "already-exists": "Equipment type with code {code} already exists",
+                    "equipment-not-found": "Equipment not found"
+                }
+            },
+            "update": {
+                "success": "Successfully updated equipment type {name}",
+                "error": {
+                    "equipment-not-found": "Equipment not found"
+                }
             }
         }
     },
@@ -74,16 +104,22 @@
                 "no-file": "User's profile picture not found"
             }
         },
-        "serve-language-flag": {
-            "error": {
-                "language-not-found": "Language not found",
-                "no-file": "Language flag not found"
-            }
-        },
         "serve-equipment-thumbnail": {
             "error": {
                 "equipment-not-found": "Equipment not found",
                 "no-file": "Equipment thumbnail not found"
+            }
+        },
+        "serve-company-logo": {
+            "error": {
+                "company-not-found": "Company not found",
+                "no-file": "Company logo not found"
+            }
+        },
+        "serve-language-flag": {
+            "error": {
+                "language-not-found": "Language not found",
+                "no-file": "Language flag not found"
             }
         }
     },
@@ -163,6 +199,44 @@
                 "no-document": "No document provided",
                 "openai-error": "An error occurred while verifying the document",
                 "openai-mismatch": "The document does not match the provided data"
+            }
+        },
+        "equipment": {
+            "add": {
+                "success": "Equipment {name} successfully added"
+            },
+            "update": {
+                "success": "Equipment {name} successfully updated",
+                "error": {
+                    "not-found": "Equipment not found"
+                }
+            },
+            "remove": {
+                "success": "{name} successfully removed",
+                "error": {
+                    "default": "Error while deleting {name}",
+                    "not-found": "Company equipment with identifier {id} not found"
+                }
+            },
+            "get": {
+                "error": {
+                    "not-found": "Company equipment with identifier {id} not found"
+                }
+            }
+        },
+        "administrator": {
+            "add": {
+                "success": "Added {username} to administrators",
+                "error": {
+                    "already-exists": "{username} is already administrator"
+                }
+            },
+            "delete": {
+                "success": "Removed {username} from administrators",
+                "error": {
+                    "not-found": "Administrator not found",
+                    "ceo": "You cannot remove the CEO of this company"
+                }
             }
         }
     }

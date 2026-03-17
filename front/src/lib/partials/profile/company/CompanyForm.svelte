@@ -17,6 +17,7 @@
     import AdminForm from '#lib/partials/AdminForm.svelte';
     import type { SerializedCompany } from 'backend/types';
     import ConfirmCompanyForm from '#lib/partials/profile/company/ConfirmCompanyForm.svelte';
+    import FileUpload from '#components/FileUpload.svelte';
 
     type Props = {
         company?: SerializedCompany;
@@ -35,15 +36,16 @@
 
     const country: Country | undefined = $derived(page.data.countries.find((country: Country): boolean => country.data.name === company?.address.country));
 
-    let siret: string = $state(company?.siret ?? '10000000000000');
-    let name: string = $state(company?.name ?? '');
-    let address: string = $state(company?.address.address ?? '');
-    let postalCode: string = $state(company?.address.postalCode ?? '');
-    let city: string = $state(company?.address.city ?? '');
-    let complement: string = $state(company?.address.complement ?? '');
-    let countryCode: string = $state(company?.address.country ? (country?.data.code ?? 'FR') : 'FR');
-    let email: string | undefined = $state(company?.email ?? undefined);
+    let siret: string = $derived(company?.siret ?? '10000000000000');
+    let name: string = $derived(company?.name ?? '');
+    let address: string = $derived(company?.address.address ?? '');
+    let postalCode: string = $derived(company?.address.postalCode ?? '');
+    let city: string = $derived(company?.address.city ?? '');
+    let complement: string = $derived(company?.address.complement ?? '');
+    let countryCode: string = $derived(company?.address.country ? (country?.data.code ?? 'FR') : 'FR');
+    let email: string | undefined = $derived(company?.email ?? undefined);
     let phoneNumber: string | undefined = $derived(company?.phoneNumber?.replace(country?.data.dial_code ?? '', '') ?? undefined);
+    let logo: File | undefined = $state();
 
     let phoneValue = $derived(phoneNumber ?? '');
 
@@ -60,6 +62,7 @@
             countryCode,
             email,
             phoneNumber,
+            logo,
         })
     );
 
@@ -104,9 +107,16 @@
         });
     };
 
-    const handleFormSubmitError = (): void => {
-        email = undefined;
-        phoneNumber = undefined;
+    const handleError = (): void => {
+        siret = company?.siret ?? '10000000000000';
+        name = company?.name ?? '';
+        address = company?.address.address ?? '';
+        postalCode = company?.address.postalCode ?? '';
+        city = company?.address.city ?? '';
+        complement = company?.address.complement ?? '';
+        countryCode = company?.address.country ? (country?.data.code ?? 'FR') : 'FR';
+        email = company?.email ?? undefined;
+        phoneNumber = company?.phoneNumber?.replace(country?.data.dial_code ?? '', '') ?? undefined;
     };
 
     $effect((): void => {
@@ -127,8 +137,8 @@
     {canSubmit}
     deleteTitle={m['company.delete.title']({ name: company?.name ?? '' })}
     deleteText={m['company.delete.text']({ name: company?.name ?? '' })}
-    action={company ? '/update' : ''}
-    onError={handleFormSubmitError}
+    action={company ? '?/update' : ''}
+    onError={handleError}
 >
     <div class="flex gap-3">
         <Input
@@ -226,4 +236,15 @@
             error={errors.properties?.phoneNumber?.errors?.[0]}
         />
     </div>
+    <FileUpload
+        name="logo"
+        accept="png jpg jpeg webp svg"
+        title={m['company.fields.logo.title']()}
+        description={m['company.fields.logo.description']()}
+        pathPrefix="company-logo"
+        id={company?.id || ''}
+        fileName={company?.logo?.name}
+        bind:file={logo}
+        error={errors.properties?.logo?.errors?.[0]}
+    />
 </AdminForm>

@@ -14,10 +14,16 @@
 
     let { user }: Props = $props();
 
-    let email = $state(user?.email || '');
-    let username = $state(user?.username || '');
-    let enabled = $state(user?.enabled || false);
+    let email = $derived(user?.email || '');
+    let username = $derived(user?.username || '');
+    let enabled = $derived(user?.enabled || false);
     let profilePicture: File | undefined = $state();
+
+    const handleError = (): void => {
+        email = user?.email || '';
+        username = user?.username || '';
+        enabled = user?.enabled || false;
+    };
 
     const validation = $derived(
         adminUserValidator.safeParse({
@@ -40,7 +46,13 @@
     });
 </script>
 
-<AdminForm id={user?.id} {canSubmit} deleteTitle={m['admin.user.delete.title']({ users: [user?.email] })} deleteText={m['admin.user.delete.text']({ users: [user?.email], count: 1 })}>
+<AdminForm
+    id={user?.id}
+    {canSubmit}
+    deleteTitle={m['admin.user.delete.title']({ users: [user?.email] })}
+    deleteText={m['admin.user.delete.text']({ users: [user?.email], count: 1 })}
+    onError={handleError}
+>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="flex flex-col gap-8">
             <Input name="username" label={m['admin.user.fields.username']()} min={3} max={50} bind:value={username} error={errors.properties?.username?.errors?.[0]} required />

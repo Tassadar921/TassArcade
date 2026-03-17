@@ -1,10 +1,8 @@
 import { DateTime } from 'luxon';
-import { BaseModel, beforeFetch, beforeFind, belongsTo, column } from '@adonisjs/lucid/orm';
+import { afterCreate, afterUpdate, BaseModel, belongsTo, column } from '@adonisjs/lucid/orm';
 import type { BelongsTo } from '@adonisjs/lucid/types/relations';
 import Company from '#models/company';
 import EquipmentType from '#models/equipment_type';
-import { Translation, translation } from '@stouder-io/adonis-translatable';
-import Language from '#models/language';
 import { SerializedCompanyEquipmentType } from '#types/serialized/serialized_company_equipment_type';
 
 export default class CompanyEquipmentType extends BaseModel {
@@ -13,8 +11,11 @@ export default class CompanyEquipmentType extends BaseModel {
     @column({ isPrimary: true })
     declare id: string;
 
-    @translation()
-    declare description: Translation;
+    @column()
+    declare name: string | undefined;
+
+    @column()
+    declare description: string | undefined;
 
     @column()
     declare companyId: string;
@@ -34,24 +35,21 @@ export default class CompanyEquipmentType extends BaseModel {
     @column.dateTime({ autoCreate: true, autoUpdate: true })
     declare updatedAt: DateTime;
 
-    @beforeFind()
-    @beforeFetch()
-    public static preloadDefaults(companyEquipmentTypeQuery: any): void {
-        companyEquipmentTypeQuery.preload('equipmentType', (equipmentTypeQuery: any): void => {
-            equipmentTypeQuery.preload('equipment', (equipmentQuery: any): void => {
-                equipmentQuery.preload('thumbnail');
-            });
-        });
+    @afterCreate()
+    @afterUpdate()
+    public static async refresh(companyEquipment: CompanyEquipmentType): Promise<void> {
+        await companyEquipment.refresh();
     }
 
-    public apiSerialize(language: Language): SerializedCompanyEquipmentType {
+    public apiSerialize(): SerializedCompanyEquipmentType {
         return {
             id: this.id,
-            category: this.equipmentType.equipment.apiSerializeLight(language),
-            name: this.equipmentType.name.get(language.code) || this.equipmentType.name.get(Language.LANGUAGE_ENGLISH.code) || '',
-            description: this.description?.get(language.code) || this.description?.get(Language.LANGUAGE_ENGLISH.code) || undefined,
-            createdAt: this.createdAt?.toString(),
-            updatedAt: this.updatedAt?.toString(),
+            name: this.name ?? undefined,
+            description: this.description ?? undefined,
+            category: this.equipmentType.equipment.apiSerializeLight(),
+            type: this.equipmentType.apiSerialize(),
+            createdAt: this.createdAt.toString(),
+            updatedAt: this.updatedAt.toString(),
         };
     }
 }

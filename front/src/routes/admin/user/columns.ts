@@ -4,7 +4,7 @@ import type { SerializedUser } from 'backend/types';
 import { renderComponent } from '#lib/components/ui/data-table/render-helpers';
 import { Checkbox } from '#lib/components/ui/checkbox';
 import { SortableColumn, DataTableActions } from '#lib/components/ui/data-table';
-import DatatableProfilePicture from './datatable-profile-picture.svelte';
+import DatatableProfilePicture from '#lib/partials/admin/user/DatatableProfilePicture.svelte';
 
 export const getUserColumns = (onSort: (field: string, order: 'asc' | 'desc') => void, onDelete: (ids: string[]) => void): ColumnDef<SerializedUser>[] => [
     {
@@ -29,7 +29,7 @@ export const getUserColumns = (onSort: (field: string, order: 'asc' | 'desc') =>
         header: ({ column }) =>
             renderComponent(SortableColumn, {
                 title: m['admin.user.fields.email'](),
-                field: 'email',
+                field: 'users.email',
                 onclick: onSort,
             }),
         enableHiding: false,
@@ -53,7 +53,7 @@ export const getUserColumns = (onSort: (field: string, order: 'asc' | 'desc') =>
         header: ({ column }) =>
             renderComponent(SortableColumn, {
                 title: m['admin.user.fields.username'](),
-                field: 'username',
+                field: 'users.username',
                 onclick: onSort,
             }),
     },
@@ -66,7 +66,7 @@ export const getUserColumns = (onSort: (field: string, order: 'asc' | 'desc') =>
         header: ({ column }) =>
             renderComponent(SortableColumn, {
                 title: m['admin.user.fields.enabled'](),
-                field: 'enabled',
+                field: 'users.enabled',
                 onclick: onSort,
             }),
     },

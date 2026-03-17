@@ -10,6 +10,8 @@
         "delete": "Delete",
         "create": "Create",
         "cancel": "Cancel",
+        "remove": "Remove",
+        "add": "Add",
         "back-to-home": "Back to homepage",
         "name": "Name",
         "created-at": "Created at",
@@ -17,6 +19,7 @@
         "public": "Public",
         "private": "Private",
         "confirm": "Confirm",
+        "choose": "Choose",
         "error": {
             "default-message": "Something went wrong"
         },
@@ -209,10 +212,9 @@
                 "introduction": "Company Verification\n\nPlease upload a recent Kbis extract (less than 3 months old) or an INPI registration certificate or equivalent to activate your professional account.",
                 "file-upload": {
                     "title": "Upload your document",
-                    "description": "Accepted formats: PDF, JPG, PNG\nMaximum size: 5 MB\nRequired document: Complete and legible Kbis extract, recent INPI certificate or equivalent",
+                    "description": "Accepted formats: PDF, JPG, JPEG, PNG\nMaximum size: 5 MB\nRequired document: Complete and legible Kbis extract, recent INPI certificate or equivalent",
                     "error": {
-                        "type": "The file must be a PDF, JPG or PNG.",
-                        "format": "The file must be a PDF, JPG or PNG.",
+                        "type": "The file must be a PDF, JPG, JPEG or PNG.",
                         "size": "The file must be less than 5 MB."
                     }
                 },
@@ -220,6 +222,69 @@
                 "popover": {
                     "title": "Data Processing",
                     "content": "The Kbis extract or INPI certificate is automatically analyzed to verify the legal existence of your company.\n\nUploaded files are not retained after verification.\n\nOnly the data necessary for identification (company name, SIRET, address, legal representative) is stored.\n\nThis processing is carried out as part of the execution of the service, in accordance with GDPR.\n\nFor any questions or to exercise your rights (access, correction, deletion), contact:\n dpo@yourapp.com"
+                }
+            },
+            "administrators": {
+                "title": "Manage administrators",
+                "meta": {
+                    "title": "Edit Administrators",
+                    "description": "Manage the administrators of your company. Search for users and update access permissions easily."
+                },
+                "fields": {
+                    "role": "Role"
+                },
+                "add": "Add administrator"
+            },
+            "equipments": {
+                "title": "Manage equipments",
+                "meta": {
+                    "title": "Edit Equipments",
+                    "description": "Manage your company's equipments. Add, edit, or remove equipments directly from your company settings."
+                },
+                "add": {
+                    "title": "Add new equipment"
+                },
+                "delete": {
+                    "title": "Delete {equipments}",
+                    "text": [
+                        {
+                            "declarations": ["input equipments", "input count", "local countPlural = count: plural"],
+                            "selectors": ["countPlural"],
+                            "match": {
+                                "countPlural=zero": "Are you sure you want to delete {equipments} ? This action cannot be undone and will permanently remove the equipments and all related data.",
+                                "countPlural=one": "Are you sure you want to delete {equipments} ? This action cannot be undone and will permanently remove the equipment and all related data.",
+                                "countPlural=other": "Are you sure you want to delete {equipments} ? This action cannot be undone and will permanently remove the equipments and all related data."
+                            }
+                        }
+                    ]
+                },
+                "edit": {
+                    "title": "Edit equipment",
+                    "meta": {
+                        "title": "Edit equipment",
+                        "description": "Edit your company's equipment. Update the equipment details easily from your company settings."
+                    },
+                    "choose-equipment": "Choose equipment type"
+                },
+                "fields": {
+                    "category": "Category",
+                    "type": "Type",
+                    "name": {
+                        "placeholder": "Blue billiard",
+                        "label": "Name",
+                        "error": {
+                            "min": "The name must have at least {min} characters.",
+                            "max": "The name must not exceed {max} characters."
+                        }
+                    },
+                    "description": {
+                        "placeholder": "Elegant billiard table with blue felt, perfect for friendly games.",
+                        "label": "Description",
+                        "error": {
+                            "min": "The description must have at least {min} characters.",
+                            "max": "The description must not exceed {max} characters."
+                        }
+                    }
                 }
             }
         },
@@ -229,7 +294,7 @@
         },
         "fields": {
             "siret": {
-                "placeholder": "732 829 320 00074",
+                "placeholder": "73282932000074",
                 "label": "SIRET",
                 "popover": {
                     "content": "By clicking this button, this will fill the form from public official company data"
@@ -289,6 +354,14 @@
             "email": {
                 "placeholder": "ceo@ashfordandco.com",
                 "label": "Email"
+            },
+            "logo": {
+                "title": "Logo",
+                "description": "Accepted formats: JPG, JPEG, PNG, WEBP\nMaximum size: 2 MB",
+                "error": {
+                    "type": "The logo must be an image.",
+                    "size": "The logo must be less than 5 MB."
+                }
             },
             "enabled": "Enabled"
         }
@@ -377,6 +450,93 @@
                     "title": "Profile picture",
                     "description": "User profile picture (square image recommended)"
                 }
+            }
+        },
+        "equipment": {
+            "title": "Equipments",
+            "fields": {
+                "name": {
+                    "error": {
+                        "min": "The name is too short.",
+                        "max": "The name is too long."
+                    }
+                },
+                "language-code": {
+                    "error": {
+                        "length": "The language code must be exactly 2 letters."
+                    }
+                },
+                "category": {
+                    "label": "Category",
+                    "error": {
+                        "min": "The category is too short.",
+                        "max": "The category is too long."
+                    }
+                },
+                "thumbnail": {
+                    "title": "Thumbnail",
+                    "description": "Language flag (square image recommended), SVG only."
+                }
+            },
+            "delete": {
+                "title": "Delete {equipments}",
+                "text": [
+                    {
+                        "declarations": ["input equipments", "input count", "local countPlural = count: plural"],
+                        "selectors": ["countPlural"],
+                        "match": {
+                            "countPlural=zero": "Are you sure you want to delete {equipments} ? This action cannot be undone and will permanently remove the equipments and all related data.",
+                            "countPlural=one": "Are you sure you want to delete {equipments} ? This action cannot be undone and will permanently remove the equipment and all related data.",
+                            "countPlural=other": "Are you sure you want to delete {equipments} ? This action cannot be undone and will permanently remove the equipments and all related data."
+                        }
+                    }
+                ]
+            },
+            "new": {
+                "title": "New equipment"
+            }
+        },
+        "equipment-type": {
+            "title": "Equipment Types",
+            "fields": {
+                "name": {
+                    "error": {
+                        "min": "The name is too short.",
+                        "max": "The name is too long."
+                    }
+                },
+                "language-code": {
+                    "error": {
+                        "length": "The language code must consist of exactly 2 letters."
+                    }
+                },
+                "code": {
+                    "label": "Code",
+                    "error": {
+                        "min": "The code is too short.",
+                        "max": "The code is too long."
+                    }
+                }
+            },
+            "delete": {
+                "title": "Delete {equipmentTypes}",
+                "text": [
+                    {
+                        "declarations": ["input equipmentTypes", "input count", "local countPlural = count: plural"],
+                        "selectors": ["countPlural"],
+                        "match": {
+                            "countPlural=zero": "Are you sure you want to delete {equipmentTypes}? This action is irreversible and will permanently delete the equipment types as well as all associated data.",
+                            "countPlural=one": "Are you sure you want to delete {equipmentTypes}? This action is irreversible and will permanently delete the equipment type as well as all associated data.",
+                            "countPlural=other": "Are you sure you want to delete {equipmentTypes}? This action is irreversible and will permanently delete the equipment types as well as all associated data."
+                        }
+                    }
+                ]
+            },
+            "new": {
+                "title": "New Equipment Type"
+            },
+            "edit": {
+                "choose-equipment": "Choose equipment"
             }
         }
     }

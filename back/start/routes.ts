@@ -8,9 +8,12 @@ const UnsubscribeController = () => import('@adonisjs/transmit/controllers/unsub
 
 // Admin controllers
 const AdminUserController = () => import('#controllers/admin/user_controller');
+const AdminEquipmentController = () => import('#controllers/admin/equipment_controller');
+const AdminEquipmentTypeController = () => import('#controllers/admin/equipment_type_controller');
 
 // App controllers
 const HealthCheckController = () => import('#controllers/health_checks_controller');
+const LanguageController = () => import('#controllers/language_controller');
 const AuthController = () => import('#controllers/auth_controller');
 const ProfileController = () => import('#controllers/profile_controller');
 const FileController = () => import('#controllers/file_controller');
@@ -19,6 +22,8 @@ const EquipmentController = () => import('#controllers/equipment_controller');
 const ClusterController = () => import('#controllers/cluster_controller');
 const CountryController = () => import('#controllers/country_controller');
 const CompanyController = () => import('#controllers/company_controller');
+const CompanyAdministratorController = () => import('#controllers/company_administrator_controller');
+const CompanyEquipmentTypeController = () => import('#controllers/company_equipment_type_controller');
 
 router.get('healthcheck', [HealthCheckController]);
 
@@ -88,6 +93,26 @@ router
                                 router.get('/:id', [AdminUserController, 'get']);
                             })
                             .prefix('user');
+
+                        router
+                            .group((): void => {
+                                router.get('/', [AdminEquipmentController, 'getAll']);
+                                router.post('/delete', [AdminEquipmentController, 'delete']);
+                                router.post('/create', [AdminEquipmentController, 'create']);
+                                router.post('/update', [AdminEquipmentController, 'update']);
+                                router.get('/:id', [AdminEquipmentController, 'get']);
+                            })
+                            .prefix('equipment');
+
+                        router
+                            .group((): void => {
+                                router.get('/', [AdminEquipmentTypeController, 'getAll']);
+                                router.post('/delete', [AdminEquipmentTypeController, 'delete']);
+                                router.post('/create', [AdminEquipmentTypeController, 'create']);
+                                router.post('/update', [AdminEquipmentTypeController, 'update']);
+                                router.get('/:id', [AdminEquipmentTypeController, 'get']);
+                            })
+                            .prefix('equipment-type');
                     })
                     .prefix('admin')
                     .use([middleware.isAdmin()]);
@@ -104,7 +129,31 @@ router
                                 router.post('/delete', [CompanyController, 'delete']);
                                 router.post('/update', [CompanyController, 'update']);
                                 router.post('/confirm', [CompanyController, 'confirm']);
-                                router.get('/:companyId', [CompanyController, 'get']);
+                                router
+                                    .group((): void => {
+                                        router.get('/', [CompanyController, 'getOne']);
+                                        router
+                                            .group((): void => {
+                                                router.get('/init', [CompanyAdministratorController, 'init']);
+                                                router.get('/', [CompanyAdministratorController, 'getAll']);
+                                                router.get('/search', [CompanyAdministratorController, 'searchUsers']);
+                                                router.post('/add', [CompanyAdministratorController, 'addAdministrator']);
+                                                router.post('/remove', [CompanyAdministratorController, 'removeAdministrator']);
+                                            })
+                                            .prefix('administrators');
+
+                                        router
+                                            .group((): void => {
+                                                router.get('/init', [CompanyEquipmentTypeController, 'init']);
+                                                router.get('/', [CompanyEquipmentTypeController, 'getAll']);
+                                                router.get('/:companyEquipmentTypeId', [CompanyEquipmentTypeController, 'getOne']);
+                                                router.post('/add', [CompanyEquipmentTypeController, 'addEquipment']);
+                                                router.post('/:companyEquipmentTypeId/update', [CompanyEquipmentTypeController, 'updateEquipment']);
+                                                router.post('/remove', [CompanyEquipmentTypeController, 'removeEquipment']);
+                                            })
+                                            .prefix('equipments');
+                                    })
+                                    .prefix(':companyId');
                             })
                             .prefix('company');
                     })
@@ -122,17 +171,21 @@ router
                         router.get('/profile-picture/:userId', [FileController, 'serveStaticProfilePictureFile']);
                     })
                     .prefix('static');
+
+                router.get('/languages/all', [LanguageController, 'getAll']);
             })
             .use([middleware.auth()]);
 
-        router.get('/equipments', [EquipmentController, 'getAll']);
+        router.get('/equipments/all', [EquipmentController, 'getAll']);
+        router.get('/equipments', [EquipmentController, 'searchEquipments']);
         router.get('/countries', [CountryController, 'getAll']);
         router.post('/clusters', [ClusterController, 'get']);
 
         router
             .group((): void => {
-                router.get('/language-flag/:languageCode', [FileController, 'serveStaticLanguageFlagFile']);
                 router.get('/equipment-thumbnail/:equipmentId', [FileController, 'serveStaticEquipmentThumbnailFile']);
+                router.get('/company-logo/:companyId', [FileController, 'serveStaticCompanyLogoFile']);
+                router.get('/language-flag/:languageId', [FileController, 'serveStaticLanguageFlagFile']);
             })
             .prefix('static');
     })

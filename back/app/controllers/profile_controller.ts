@@ -29,20 +29,21 @@ export default class ProfileController {
         private readonly slugifyService: SlugifyService
     ) {}
 
-    public async getProfile({ response, user }: HttpContext): Promise<void> {
+    public async getProfile({ response, user }: HttpContext) {
         return response.ok({
             user: await cache.getOrSet({
                 key: `user:${user.id}`,
                 tags: [`user:${user.id}`],
                 ttl: '1h',
-                factory: (): SerializedUser => {
+                factory: async (): Promise<SerializedUser> => {
+                    await user.load('profilePicture');
                     return user.apiSerialize();
                 },
             }),
         });
     }
 
-    public async sendResetPasswordEmail({ request, response, i18n }: HttpContext): Promise<void> {
+    public async sendResetPasswordEmail({ request, response, i18n }: HttpContext) {
         const { email } = await request.validateUsing(sendResetPasswordEmailValidator);
 
         const user: User = await this.userRepository.firstOrFail({ email });
@@ -76,7 +77,7 @@ export default class ProfileController {
         });
     }
 
-    public async resetPassword({ request, response, i18n }: HttpContext): Promise<void> {
+    public async resetPassword({ request, response, i18n }: HttpContext) {
         const { token } = await resetPasswordParamsValidator.validate(request.params());
 
         const userToken: UserToken = await this.userTokenRepository.firstOrFail(
@@ -99,7 +100,7 @@ export default class ProfileController {
         });
     }
 
-    public async updateProfile({ request, response, user, i18n }: HttpContext): Promise<void> {
+    public async updateProfile({ request, response, user, i18n }: HttpContext) {
         const { username, profilePicture } = await request.validateUsing(updateProfileValidator);
 
         user.username = username;
@@ -108,30 +109,33 @@ export default class ProfileController {
             if (user.profilePictureId) {
                 // Physically delete the file
                 this.fileService.delete(user.profilePicture);
+
+                const oldProfilePicture: File = user.profilePicture;
+                user.profilePictureId = null;
                 await user.save();
+                await oldProfilePicture.delete();
             }
 
-            profilePicture.clientName = `${cuid()}-${this.slugifyService.slugify(profilePicture.clientName)}`;
-            const profilePicturePath: string = `static/profile-picture`;
-            await profilePicture.move(app.makePath(profilePicturePath));
+            const originalName: string = profilePicture.clientName;
+            const slugifiedName: string = this.slugifyService.slugify(originalName);
+            const extension: string = path.extname(originalName);
+            const uniqueFilename: string = `${slugifiedName.replace(extension, '')}-${Date.now()}${extension}`;
+
+            const profilePicturePath: string = 'static/profile-picture';
+            const fullPath: string = app.makePath(profilePicturePath);
+
+            await profilePicture.move(fullPath, { name: uniqueFilename });
             const newProfilePicture: File = await File.create({
-                name: profilePicture.clientName,
-                path: `${profilePicturePath}/${profilePicture.clientName}`,
-                extension: path.extname(profilePicture.clientName),
+                name: uniqueFilename,
+                path: `${profilePicturePath}/${uniqueFilename}`,
+                extension,
                 mimeType: `${profilePicture.type}/${profilePicture.subtype}`,
                 size: profilePicture.size,
                 type: FileTypeEnum.PROFILE_PICTURE,
             });
-            await newProfilePicture.refresh();
             user.profilePictureId = newProfilePicture.id;
 
-            await cache.deleteByTag({ tags: [`user:${user.id}`, `admin-users`, `admin-user:${user.id}`] });
-            await cache.set({
-                key: `user-profile-picture:${user.id}`,
-                tags: [`user:${user.id}`],
-                ttl: '1h',
-                value: app.makePath(newProfilePicture.path),
-            });
+            await cache.deleteByTag({ tags: [`user:${user.id}`, 'users', `user:${user.id}`] });
         }
 
         await user.save();

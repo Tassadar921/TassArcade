@@ -11,7 +11,7 @@ export const confirmCompanyValidator = zod.object({
                 return mimeOk || extOk;
             },
             {
-                message: m['company.edit.confirm.file-upload.error.format'](),
+                message: m['company.edit.confirm.file-upload.error.type'](),
             }
         )
         .refine((file: File): boolean => file.size <= 5 * 1024 * 1024, {

@@ -14,26 +14,29 @@ import { cuid } from '@adonisjs/core/helpers';
 import SlugifyService from '#services/slugify_service';
 import PaginatedUsers from '#types/paginated/paginated_users';
 import SerializedUser from '#types/serialized/serialized_user';
+import StringService from '#services/string_service';
+import { DeleteUserResult } from '#types/delete_user_result';
 
 @inject()
 export default class AdminUserController {
     constructor(
         private readonly userRepository: UserRepository,
         private readonly fileService: FileService,
-        private readonly slugifyService: SlugifyService
+        private readonly slugifyService: SlugifyService,
+        private readonly stringService: StringService
     ) {}
 
-    public async getAll({ request, response }: HttpContext): Promise<void> {
+    public async getAll({ request, response }: HttpContext) {
         const { query, page, limit, sortBy: inputSortBy } = await request.validateUsing(searchAdminUsersValidator);
 
         return response.ok(
             await cache.getOrSet({
                 key: `admin-users:query:${query.toLowerCase()}:page:${page}:limit:${limit}:sortBy:${inputSortBy}`,
-                tags: [`admin-users`],
+                tags: [`users`],
                 ttl: '1h',
                 factory: async (): Promise<PaginatedUsers> => {
                     const [field, order] = inputSortBy.split(':');
-                    const sortBy = { field: field as keyof User['$attributes'], order: order as 'asc' | 'desc' };
+                    const sortBy = { field: this.stringService.toSnakeCase(field) as keyof User['$attributes'], order: order as 'asc' | 'desc' };
 
                     return await this.userRepository.getAdminUsers(query.toLowerCase(), page, limit, sortBy);
                 },
@@ -41,16 +44,15 @@ export default class AdminUserController {
         );
     }
 
-    public async delete({ request, response, i18n, user }: HttpContext): Promise<void> {
+    public async delete({ request, response, i18n, user }: HttpContext) {
         const { users } = await request.validateUsing(deleteUsersValidator);
-
-        const statuses: { isDeleted: boolean; isCurrentUser?: boolean; username?: string; id: string }[] = await this.userRepository.delete(users, user);
+        const statuses: DeleteUserResult[] = await this.userRepository.delete(users, user);
 
         return response.ok({
             messages: await Promise.all(
-                statuses.map(async (status: { isDeleted: boolean; isCurrentUser?: boolean; username?: string; id: string }): Promise<{ id: string; message: string; isSuccess: boolean }> => {
+                statuses.map(async (status: DeleteUserResult): Promise<{ id: string; message: string; isSuccess: boolean }> => {
                     if (status.isDeleted) {
-                        await cache.deleteByTag({ tags: ['admin-users', `admin-user:${status.id}`] });
+                        await cache.deleteByTag({ tags: ['users', `user:${status.id}`] });
                         return { id: status.id, message: i18n.t(`messages.admin.user.delete.success`, { username: status.username }), isSuccess: true };
                     } else {
                         if (status.isCurrentUser) {
@@ -64,7 +66,7 @@ export default class AdminUserController {
         });
     }
 
-    public async create({ request, response, i18n }: HttpContext): Promise<void> {
+    public async create({ request, response, i18n }: HttpContext) {
         const { username, email, profilePicture: inputProfilePicture } = await request.validateUsing(createUserValidator);
 
         let user: User | null = await this.userRepository.findOneBy({ email });
@@ -84,15 +86,7 @@ export default class AdminUserController {
             password: cuid(),
         });
 
-        await user.refresh();
-
-        const promises: any[] = [cache.deleteByTag({ tags: ['admin-users'] })];
-
-        if (profilePicture) {
-            promises.push(user.load('profilePicture'));
-        }
-
-        await Promise.all(promises);
+        await Promise.all([user.load('profilePicture'), cache.deleteByTag({ tags: ['users'] })]);
 
         return response.created({ user: user.apiSerialize(), message: i18n.t('messages.admin.user.create.success', { email, username }) });
     }
@@ -100,7 +94,7 @@ export default class AdminUserController {
     public async update({ request, response, i18n }: HttpContext) {
         const { username, email, profilePicture: inputProfilePicture } = await request.validateUsing(updateUserValidator);
 
-        const user: User = await this.userRepository.firstOrFail({ email });
+        const user: User = await this.userRepository.firstOrFail({ email }, ['profilePicture']);
 
         user.username = username;
 
@@ -110,7 +104,15 @@ export default class AdminUserController {
             }
             const profilePicture: File = await this.processInputProfilePicture(inputProfilePicture);
             user.profilePictureId = profilePicture.id;
-            await cache.delete({ key: `user-profile-picture:${user.id}` });
+            await Promise.all([
+                user.load('profilePicture'),
+                cache.set({
+                    key: `user-profile-picture:${user.id}`,
+                    tags: [`user:${user.id}`],
+                    ttl: '1h',
+                    value: app.makePath(profilePicture.path),
+                }),
+            ]);
         }
 
         await user.save();
@@ -119,14 +121,14 @@ export default class AdminUserController {
             await user.profilePicture.delete();
         }
 
-        await Promise.all([user.load('profilePicture'), cache.deleteByTag({ tags: ['admin-users', `admin-user:${user.id}`] })]);
+        await Promise.all([cache.deleteByTag({ tags: ['users', `user:${user.id}`] })]);
 
         return response.ok({ user: user.apiSerialize(), message: i18n.t('messages.admin.user.update.success', { username }) });
     }
 
-    public async get({ request, response, i18n }: HttpContext): Promise<void> {
+    public async get({ request, response, i18n }: HttpContext) {
         const { id } = await getAdminUserValidator.validate(request.params());
-        const user: User | null = await this.userRepository.findOneBy({ id });
+        const user: User | null = await this.userRepository.findOneBy({ id }, ['profilePicture']);
         if (!user) {
             return response.notFound({ error: i18n.t('messages.admin.user.get.error.not-found') });
         }
@@ -134,7 +136,7 @@ export default class AdminUserController {
         return response.ok(
             await cache.getOrSet({
                 key: `admin-user:${user.id}`,
-                tags: [`admin-user:${user.id}`],
+                tags: [`user:${user.id}`],
                 ttl: '1h',
                 factory: (): SerializedUser => {
                     return user.apiSerialize();
@@ -144,28 +146,31 @@ export default class AdminUserController {
     }
 
     private async processInputProfilePicture(inputProfilePicture: MultipartFile): Promise<File> {
-        const extension: string = path.extname(inputProfilePicture.clientName);
-        inputProfilePicture.clientName = `${cuid()}-${this.slugifyService.slugify(inputProfilePicture.clientName)}`;
-        const profilePicturePath: string = `static/profile-picture`;
-        await inputProfilePicture.move(app.makePath(profilePicturePath));
-        const flag: File = await File.create({
-            name: inputProfilePicture.clientName,
-            path: `${profilePicturePath}/${inputProfilePicture.clientName}`,
-            extension,
-            mimeType: `${inputProfilePicture.type}/${inputProfilePicture.subtype}`,
-            size: inputProfilePicture.size,
-            type: FileTypeEnum.PROFILE_PICTURE,
-        });
+        try {
+            const originalName: string = inputProfilePicture.clientName;
+            const slugifiedName: string = this.slugifyService.slugify(originalName);
+            const extension: string = path.extname(originalName);
+            const uniqueFilename: string = `${slugifiedName.replace(extension, '')}-${Date.now()}${extension}`;
 
-        return await flag.refresh();
+            const profilePicturePath: string = 'static/profile-picture';
+            const fullPath: string = app.makePath(profilePicturePath);
+
+            await inputProfilePicture.move(fullPath, { name: uniqueFilename });
+
+            return await File.create({
+                name: uniqueFilename,
+                path: `${profilePicturePath}/${uniqueFilename}`,
+                extension,
+                mimeType: inputProfilePicture.headers['content-type'],
+                size: inputProfilePicture.size,
+                type: FileTypeEnum.PROFILE_PICTURE,
+            });
+        } catch (error) {
+            throw error;
+        }
     }
 
     private areSameFiles(file: File, multipartFile: MultipartFile): boolean {
-        return (
-            file.extension === path.extname(multipartFile.clientName) &&
-            file.mimeType === `${multipartFile.type}/${multipartFile.subtype}` &&
-            file.size === multipartFile.size &&
-            file.type === multipartFile.type
-        );
+        return file.extension === path.extname(multipartFile.clientName) && file.mimeType === multipartFile.headers['content-type'] && file.size === multipartFile.size;
     }
 }

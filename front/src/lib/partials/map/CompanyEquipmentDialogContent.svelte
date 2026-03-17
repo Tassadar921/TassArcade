@@ -1,10 +1,10 @@
 <script lang="ts">
     import AddressExternalLink from '#components/AddressExternalLink.svelte';
     import { DialogDescription, DialogHeader, DialogTitle } from '#lib/components/ui/dialog';
-    import type { SerializedCompany, SerializedCompanyEquipmentType } from 'backend/types';
+    import type { SerializedCompanyEquipmentType, SerializedCompanyLight } from 'backend/types';
 
     type Props = {
-        selectedCompany: SerializedCompany | null;
+        selectedCompany: SerializedCompanyLight | null;
         selectedCompanyEquipment: SerializedCompanyEquipmentType | null;
     };
 
@@ -13,8 +13,9 @@
 
 {#if selectedCompany && selectedCompanyEquipment}
     <DialogHeader>
-        <DialogTitle>{selectedCompany.name} - {selectedCompanyEquipment.name}</DialogTitle>
+        <DialogTitle>{selectedCompany.name} {selectedCompanyEquipment.name ? `- ${selectedCompanyEquipment.name}` : ''}</DialogTitle>
         <DialogDescription>
+            <p>{selectedCompanyEquipment.category.name} - {selectedCompanyEquipment.type.name}</p>
             <AddressExternalLink latitude={selectedCompany.address.latitude} longitude={selectedCompany.address.longitude} address={selectedCompany.address.fullAddress} />
             <p>{selectedCompanyEquipment.description}</p>
         </DialogDescription>

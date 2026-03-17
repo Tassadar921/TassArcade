@@ -37,12 +37,17 @@
         columns: ColumnDef<any>[];
         onSearch: () => void;
         query: string;
-        selectedRows?: string[];
+        selectedRows?: { id: string; label: string }[];
         batchDeleteTitle?: string;
         batchDeleteText?: string;
+        batchDeleteKey?: string;
         selectable?: boolean;
         onBatchDelete?: (ids: string[]) => void;
         onPaginationChange: (page: number, limit: number) => void;
+        editable?: boolean;
+        createText?: string;
+        onCreateClick?: () => void;
+        creatable?: boolean;
     };
 
     let {
@@ -54,20 +59,28 @@
         selectedRows = $bindable([]),
         batchDeleteTitle,
         batchDeleteText,
+        batchDeleteKey,
         selectable = true,
         onBatchDelete,
         onPaginationChange,
+        editable = true,
+        createText,
+        onCreateClick,
+        creatable = true,
     }: Props = $props();
 
     let rowSelection = $state<RowSelectionState>({});
     let columnVisibility = $state<VisibilityState>({});
 
     let showDialog: boolean = $state(false);
-    const deletable: boolean = $state(!!(batchDeleteTitle && batchDeleteText));
+    const deletable: boolean = $derived(!!(batchDeleteTitle && batchDeleteText));
 
     const table = createSvelteTable({
         get data() {
             return data;
+        },
+        get columns() {
+            return columns;
         },
         onRowSelectionChange: (updater) => {
             if (!selectable) return;
@@ -92,14 +105,13 @@
                 return columnVisibility;
             },
         },
-        columns,
         getCoreRowModel: getCoreRowModel(),
         enableRowSelection: true,
     });
 
     const handleDelete = async (): Promise<void> => {
         showDialog = false;
-        await wrappedFetch(`${$location}/delete`, { method: 'POST', body: { data: [...selectedRows] } }, (data) => {
+        await wrappedFetch(`${$location}/delete`, { method: 'POST', body: { data: selectedRows.map((row: { id: string }) => row.id) } }, (data) => {
             const filteredStatuses: { isSuccess: boolean; message: string; id: string }[] = data.messages.filter((status: { isSuccess: boolean; message: string; id: string }) => {
                 showToast(status.message, status.isSuccess ? 'success' : 'error');
                 return status.isSuccess;
@@ -115,8 +127,10 @@
         });
     };
 
+    const handlePaginationChange = (page: number, limit: number) => onPaginationChange(page, limit);
+
     $effect((): void => {
-        selectedRows = table.getFilteredSelectedRowModel().rows.map((row: Row<any>): string => row.original.id);
+        selectedRows = table.getFilteredSelectedRowModel().rows.map((row: Row<any>): { id: string; label: string } => ({ id: row.original.id, label: row.original[batchDeleteKey || 'id'] }));
     });
 </script>
 
@@ -147,7 +161,7 @@
                         {#each headerGroup.headers as header (header.id)}
                             <TableHead colspan={header.colSpan} class={`w-1/${headerGroup.headers.length}`}>
                                 {#if !header.isPlaceholder}
-                                    <FlexRender content={header.column.columnDef.header} context={header.getContext()} />
+                                    <FlexRender content={header.column.columnDef.header} context={header.getContext()} {editable} />
                                 {/if}
                             </TableHead>
                         {/each}
@@ -156,15 +170,10 @@
             </TableHeader>
             <TableBody>
                 {#each table.getRowModel().rows as row (row.id)}
-                    <TableRow
-                        data-state={row.getIsSelected() && 'selected'}
-                        onclick={() => {
-                            row.toggleSelected(!row.getIsSelected());
-                        }}
-                    >
+                    <TableRow data-state={row.getIsSelected() && 'selected'} onclick={() => row.toggleSelected(!row.getIsSelected())}>
                         {#each row.getVisibleCells() as cell (cell.id)}
                             <TableCell>
-                                <FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} id={row.original.id} />
+                                <FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} id={row.original.id} {editable} />
                             </TableCell>
                         {/each}
                     </TableRow>
@@ -185,7 +194,7 @@
         </div>
     {/if}
 
-    <Pagination {paginatedObject} onChange={(page: number, limit: number) => onPaginationChange(page, limit)} />
+    <Pagination {paginatedObject} onChange={handlePaginationChange} />
 
     <div class="w-full flex justify-end gap-5">
         {#if deletable}
@@ -193,11 +202,19 @@
                 {m['common.delete']()}
             </Button>
         {/if}
-        <Button variant="secondary">
-            <Link href={`${$location}/new`} class="p-0 !no-underline">
-                {m['common.create']()}
-            </Link>
-        </Button>
+        {#if creatable}
+            {#if onCreateClick}
+                <Button variant="secondary" onclick={onCreateClick}>
+                    {createText || m['common.create']()}
+                </Button>
+            {:else}
+                <Button variant="secondary">
+                    <Link href={`${$location}/new`} class="p-0 no-underline!">
+                        {createText || m['common.create']()}
+                    </Link>
+                </Button>
+            {/if}
+        {/if}
     </div>
 </div>
 

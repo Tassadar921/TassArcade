@@ -21,13 +21,14 @@ export default class AuthController {
         private readonly mailService: BrevoMailService
     ) {}
 
-    public async login({ request, response, i18n }: HttpContext): Promise<void> {
+    public async login({ request, response, i18n }: HttpContext) {
         try {
             const { email, password } = await request.validateUsing(loginValidator);
 
             const user: User = await User.verifyCredentials(email, password);
 
             const token: AccessToken = await User.accessTokens.create(user);
+            await user.load('profilePicture');
 
             return response.ok({
                 message: i18n.t('messages.auth.login.success'),
@@ -39,14 +40,14 @@ export default class AuthController {
         }
     }
 
-    public async logout({ auth, response, i18n }: HttpContext): Promise<void> {
+    public async logout({ auth, response, i18n }: HttpContext) {
         const user: User = await auth.use('api').authenticate();
         await User.accessTokens.delete(user, user.currentAccessToken!.identifier);
 
         return response.ok({ message: i18n.t('messages.auth.logout.success') });
     }
 
-    public async sendAccountCreationEmail({ request, response, language, i18n }: HttpContext): Promise<void> {
+    public async sendAccountCreationEmail({ request, response, language, i18n }: HttpContext) {
         const { username, email, password, consent } = await request.validateUsing(sendAccountCreationEmailValidator);
 
         if (!consent) {
@@ -80,7 +81,6 @@ export default class AuthController {
                 role: UserRoleEnum.USER,
                 acceptedTermsAndConditions: true,
             });
-            await existingUser.refresh();
         }
 
         try {
@@ -99,7 +99,7 @@ export default class AuthController {
         return response.ok({ message: i18n.t('messages.auth.send-account-creation-email.success') });
     }
 
-    public async confirmAccountCreation({ request, response, i18n }: HttpContext): Promise<void> {
+    public async confirmAccountCreation({ request, response, i18n }: HttpContext) {
         const { token: creationToken } = await confirmAccountCreationValidator.validate(request.params());
 
         const token: UserToken | null = await this.userTokenRepository.findOneBy({ token: creationToken }, ['user']);
@@ -116,6 +116,7 @@ export default class AuthController {
         await token.delete();
 
         const accessToken: AccessToken = await User.accessTokens.create(user);
+        await user.load('profilePicture');
 
         return response.created({
             message: i18n.t('messages.auth.confirm-account-creation.success'),

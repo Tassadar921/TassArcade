@@ -5,7 +5,12 @@ export { LogRouteMethodEnum } from './enum/log_route_method_enum.js';
 export { UserRoleEnum } from './enum/user_role_enum.js';
 
 export type { PaginatedUsers } from './paginated/paginated_users.js';
+export type { PaginatedCompanyAdministrators } from './paginated/paginated_company_administrators.js';
+export type { PaginatedSearchCompanyAdministrators } from './paginated/paginated_search_company_administrators.js';
+export type { PaginatedCompanyEquipmentTypes } from './paginated/paginated_company_equipment_types.js';
 export type { PaginatedCompanies } from './paginated/paginated_companies.js';
+export type { PaginatedEquipments } from './paginated/paginated_equipments.js';
+export type { PaginatedEquipmentTypes } from './paginated/paginated_equipment_types.js';
 
 export type { SerializedFile } from './serialized/serialized_file.js';
 export type { SerializedLog } from './serialized/serialized_log.js';
@@ -13,11 +18,18 @@ export type { SerializedLogUser } from './serialized/serialized_log_user.js';
 export type { SerializedUser } from './serialized/serialized_user.js';
 export type { SerializedEquipment } from './serialized/serialized_equipment.js';
 export type { SerializedEquipmentType } from './serialized/serialized_equipment_type.js';
+export type { SerializedEquipmentTypeExtended } from './serialized/serialized_equipment_type_extended.js';
 export type { SerializedCompany } from './serialized/serialized_company.js';
+export type { SerializedCompanySuperLight } from './serialized/serialized_company_super_light.js';
 export type { SerializedCompanyLight } from './serialized/serialized_company_light.js';
 export type { SerializedCompanyAdministrator } from './serialized/serialized_company_administrator.js';
 export type { SerializedAddress } from './serialized/serialized_address.js';
 export type { SerializedCompanyEquipmentType } from './serialized/serialized_company_equipment_type.js';
 export type { SerializedEquipmentLight } from './serialized/serialized_equipment_light.js';
+export type { SerializedLanguage } from './serialized/serialized_language.js';
+export type { SerializedEquipmentTranslation } from './serialized/serialized_equipment_translation.js';
+export type { SerializedEquipmentTypeTranslation } from './serialized/serialized_equipment_type_translation.js';
+
+export type { SearchCompanyAdministrator } from './search_company_administrator.js';
 
 export type { Cluster } from './cluster.js';

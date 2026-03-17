@@ -34,7 +34,7 @@
 
     let { children, ref, onclick, onmouseover, onfocus, onblur, onmouseout, href, target = '_self', class: className = '', ariaLabel, size = 'default', disabled }: LinkProps = $props();
 
-    let isAbsolute: boolean = href.startsWith('http://') || href.startsWith('https://');
+    const isAbsolute = $derived(href.startsWith('http://') || href.startsWith('https://'));
 
     const defaultClasses: string =
         "cursor-pointer focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0 text-primary underline-offset-4 hover:underline hover:bg-transparent";
@@ -42,10 +42,6 @@
     const handleClick = (event: MouseEvent) => {
         event.preventDefault();
         event.stopPropagation();
-
-        // if (disabled) {
-        //     return;
-        // }
 
         if (href) {
             onclick?.(event);

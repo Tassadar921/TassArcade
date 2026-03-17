@@ -1,0 +1,95 @@
+import { redirect } from 'sveltekit-flash-message/server';
+import type { PageServerLoad } from './$types';
+import { type Actions, fail, type RequestEvent } from '@sveltejs/kit';
+import type { FormError } from '../../../../../app';
+import { extractFormData, extractFormErrors } from '#lib/services/requestService';
+
+export const load: PageServerLoad = async (event) => {
+    const { locals, params, cookies } = event;
+    try {
+        const response = await locals.client.get(`/api/admin/equipment-type/${params.id}`);
+
+        if (response.status < 200 || response.status >= 300) {
+            throw response;
+        }
+
+        return {
+            isSuccess: true,
+            ...response.data,
+        };
+    } catch (error: any) {
+        const form: FormError = {
+            data: {},
+            errors: extractFormErrors(error?.response?.data),
+        };
+
+        cookies.set('formError', JSON.stringify(form), {
+            path: '/',
+            httpOnly: true,
+            sameSite: 'lax',
+            maxAge: 60 * 60 * 24 * 7,
+        });
+
+        redirect(303, `/${cookies.get('PARAGLIDE_LOCALE')}/admin/equipment-type`);
+    }
+};
+
+export const actions: Actions = {
+    default: async (event: RequestEvent): Promise<void> => {
+        const { request, cookies, locals } = event;
+
+        const formData: FormData = await request.formData();
+
+        const equipmentId: FormDataEntryValue | null = formData.get('equipment-id');
+        if (!equipmentId) {
+            throw 'Missing variable';
+        }
+
+        formData.append('equipmentId', equipmentId);
+        formData.delete('equipment-id');
+
+        let data: any;
+        let isSuccess: boolean = true;
+
+        try {
+            const response = await locals.client.post('/api/admin/equipment-type/update', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            if (response.status < 200 || response.status >= 300) {
+                throw response;
+            }
+
+            data = response.data;
+        } catch (error: any) {
+            isSuccess = false;
+            data = error?.response?.data;
+        }
+
+        if (isSuccess) {
+            redirect(
+                {
+                    type: 'success',
+                    message: data?.message,
+                },
+                event
+            );
+        } else {
+            const form: FormError = {
+                data: extractFormData(formData),
+                errors: extractFormErrors(data),
+            };
+
+            cookies.set('formError', JSON.stringify(form), {
+                path: '/',
+                httpOnly: true,
+                sameSite: 'lax',
+                maxAge: 60 * 60 * 24 * 7,
+            });
+
+            fail(400);
+        }
+    },
+};

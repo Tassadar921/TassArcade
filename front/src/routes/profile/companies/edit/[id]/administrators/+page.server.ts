@@ -1,0 +1,106 @@
+import { m } from '#lib/paraglide/messages';
+import { redirect } from 'sveltekit-flash-message/server';
+import type { PageServerLoad } from './$types';
+import { type Actions, fail, type RequestEvent } from '@sveltejs/kit';
+import { extractFormData, extractFormErrors } from '#lib/services/requestService';
+import type { FormError } from '../../../../../../app';
+
+export const load: PageServerLoad = async (event) => {
+    const { locals, params, cookies } = event;
+    try {
+        const response = await locals.client.get(`/api/profile/company/${params.id}/administrators/init`);
+
+        if (response.status < 200 || response.status >= 300) {
+            throw response;
+        }
+
+        const headers = {
+            title: m['company.edit.administrators.title'](),
+            meta: {
+                title: m['company.edit.administrators.meta.title'](),
+                description: m['company.edit.administrators.meta.description'](),
+                pathname: `/profile/companies/edit/${params.id}/administrators`,
+            },
+            breadcrumb: [
+                { title: m['profile.title'](), href: '/profile' },
+                { title: m['profile.companies.title'](), href: '/profile/companies' },
+                { title: m['company.edit.title']({ name: response.data.company.name }), href: `/profile/companies/edit/${params.id}` },
+                { title: m['company.edit.administrators.title']() },
+            ],
+        };
+
+        return {
+            isSuccess: true,
+            company: response.data.company,
+            administrators: response.data.administrators,
+            users: response.data.users,
+            ...headers,
+        };
+    } catch (error: any) {
+        const form: FormError = {
+            data: {},
+            errors: extractFormErrors(error?.response?.data),
+        };
+
+        cookies.set('formError', JSON.stringify(form), {
+            path: '/',
+            httpOnly: true,
+            sameSite: 'lax',
+            maxAge: 60 * 60 * 24 * 7,
+        });
+
+        redirect(303, `/${cookies.get('PARAGLIDE_LOCALE')}/profile/companies/edit/${params.id}`);
+    }
+};
+
+export const actions: Actions = {
+    default: async (event: RequestEvent): Promise<void> => {
+        const { request, cookies, locals, params } = event;
+
+        const formData: FormData = await request.formData();
+
+        let data: any;
+        let isSuccess: boolean = true;
+
+        try {
+            const response = await locals.client.post('/api/profile/company/update', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            if (response.status < 200 || response.status >= 300) {
+                throw response;
+            }
+
+            data = response.data;
+        } catch (error: any) {
+            isSuccess = false;
+            data = error?.response?.data;
+        }
+
+        if (isSuccess) {
+            redirect(
+                {
+                    type: 'success',
+                    message: data?.message,
+                },
+                event
+            );
+        } else {
+            const form: FormError = {
+                data: extractFormData(formData),
+                errors: extractFormErrors(data),
+            };
+
+            cookies.set('formError', JSON.stringify(form), {
+                path: '/',
+                httpOnly: true,
+                sameSite: 'lax',
+                maxAge: 60 * 60 * 24 * 7,
+            });
+
+            fail(400);
+        }
+    },
+};

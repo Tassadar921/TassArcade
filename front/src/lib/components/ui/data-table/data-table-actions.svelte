@@ -4,7 +4,7 @@
     import { EllipsisIcon, Trash, Pencil } from '@lucide/svelte';
     import { m } from '#lib/paraglide/messages';
     import { Link } from '#lib/components/ui/link/index.js';
-    import { location, navigate } from '#lib/stores/locationStore';
+    import { location } from '#lib/stores/locationStore';
     import {
         AlertDialog,
         AlertDialogAction,
@@ -28,7 +28,7 @@
     let { id, onDelete, deleteTitle, deleteText }: Props = $props();
 
     let showDialog: boolean = $state(false);
-    const deletable: boolean = $state(!!(deleteTitle && deleteText));
+    const deletable: boolean = $derived(!!(deleteTitle && deleteText));
 
     const handleDelete = async (): Promise<void> => {
         showDialog = false;
@@ -59,7 +59,7 @@
     </DropdownMenuTrigger>
     <DropdownMenuContent>
         <DropdownMenuItem>
-            <Link href={`${$location}/edit/${id}`} class="flex gap-1 justify-start !p-0 w-full">
+            <Link href={`${$location}/edit/${id}`} class="flex gap-1 justify-start p-0! w-full">
                 <Pencil class="size-4" />
                 {m['common.edit']()}
             </Link>
@@ -76,8 +76,8 @@
 <AlertDialog bind:open={showDialog}>
     <AlertDialogContent>
         <AlertDialogHeader>
-            <AlertDialogTitle>{deleteTitle}</AlertDialogTitle>
-            <AlertDialogDescription>{deleteText}</AlertDialogDescription>
+            <AlertDialogTitle class="wrap-break-word whitespace-normal">{deleteTitle}</AlertDialogTitle>
+            <AlertDialogDescription class="wrap-break-word whitespace-normal">{deleteText}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
             <AlertDialogCancel>{m['common.cancel']()}</AlertDialogCancel>

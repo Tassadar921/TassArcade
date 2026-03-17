@@ -3,7 +3,7 @@ import { m } from '#lib/paraglide/messages';
 
 export const GET: RequestHandler = async ({ locals }): Promise<Response> => {
     try {
-        const response = await locals.client.get('/api/equipments');
+        const response = await locals.client.get('/api/equipments/all');
 
         if (response.status < 200 || response.status >= 300) {
             throw response;
@@ -17,7 +17,7 @@ export const GET: RequestHandler = async ({ locals }): Promise<Response> => {
         return json(
             {
                 isSuccess: false,
-                message: error?.response?.data?.error || m['common.error.default-message'](),
+                message: error?.response?.data?.error || error?.response?.data?.errors[0].message || m['common.error.default-message'](),
             },
             { status: error?.response?.status || 500 }
         );

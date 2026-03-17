@@ -8,7 +8,7 @@ import Company from '#models/company';
 export default class ClusterController {
     constructor(private readonly companyRepository: CompanyRepository) {}
 
-    public async get({ request, response, language }: HttpContext): Promise<void> {
+    public async get({ request, response, language }: HttpContext) {
         const { minLat, maxLat, minLng, maxLng, zoom, equipments: equipmentIds, company: companyId } = await request.validateUsing(getClustersValidator);
 
         let precision: number = 2;
@@ -28,11 +28,11 @@ export default class ClusterController {
             precision = 9;
         }
 
-        const company: Company | null = companyId ? await this.companyRepository.findOneBy({ id: companyId }, ['address', 'equipments']) : null;
+        const company: Company | null = companyId ? await this.companyRepository.getOne(companyId, language) : null;
 
         return response.ok({
             clusters: await this.companyRepository.getClusters(minLat, maxLat, minLng, maxLng, precision, language, equipmentIds ?? []),
-            company: company?.apiSerialize(language),
+            company: company?.apiSerializeLight(),
         });
     }
 }
